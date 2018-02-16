@@ -1,0 +1,8 @@
+
+The images in the tiles/ directory are a selection of images from https://github.com/CleverRaven/Cataclysm-DDA 
+
+The images in this directory are licensed under the Creative Commons Attribution ShareAlike 3.0 license as 
+part of the above repository, by the original contributors to the above repository. 
+
+For more information on the license, see http://creativecommons.org/licenses/by-sa/3.0/ for details.
+

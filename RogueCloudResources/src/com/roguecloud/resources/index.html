@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<script src="resources/jquery-3.2.1.js"></script>
+
+<style>
+html, body {
+	width: 100%;
+	height: 100%;
+ 	margin: 0px; 
+}
+<!-- 	overflow: hidden -->
+
+/* CSS RESET */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+ 	margin: 0; 
+ 	padding: 0; 
+ 	border: 0; 
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+a {
+	color: white;
+}
+
+a:visited {
+	color: white;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+html {
+    height: 100%;
+}
+body.presenter {
+    height: 100%;
+    display: flex;
+}
+
+/*
+.presenter img {
+    max-width: 100%; 
+    display:block; 
+}*/
+
+.presenter .wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.presenter .player-actions {
+    background-color: #6F9970;
+    height: 80%;
+    width: 80%;
+}
+
+.presenter .leader-board {
+    background-color: #27782e;
+    height: 80%;
+    width: 20%;
+    color: white;
+}
+
+.presenter .events-console {
+    background-color: rgb(30, 30, 30);
+    color: white;
+    height: 20%;
+    width: 50%;
+}
+
+.presenter .metrics-panel {
+    background-color: black;
+    color: white;
+    height: 20%;
+    width: 50%;
+}
+
+#leaderboard_span {
+	display: block;
+	margin-top: 20px;
+	margin-left: 20px;
+	color: white;
+	font-family: sans-serif;
+	font-size: smaller;
+}
+
+#ldb_html {
+	display: block;
+	margin-top: 20px;
+	margin-left: 20px;
+	color: white;
+	font-family: sans-serif;
+	font-size: smaller;
+}
+
+#metrics_span {
+	display: block;
+	margin-top: 20px;
+	margin-left: 20px;
+	color: white;
+	font-family: sans-serif;
+	font-size: smaller;
+}
+
+#console_span {
+	display: block;
+	margin-top: 20px;
+	margin-left: 20px;
+	color: white;
+	font-family: sans-serif;
+	font-size: smaller;
+	line-height: normal;
+}
+
+#metrics_table {
+/* 	padding: 30px; */
+}
+
+#metrics_table tr {
+  padding: 5px;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+.metric-even {
+  background-color: rgb(40, 40, 40);
+}
+
+.metric-odd {
+  background-color: rgb(25, 25, 25);
+}
+
+#metrics_table th {
+  background-color: rgb(60, 60, 60);
+  text-align: center;
+  padding: 5px;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+#metrics_table td {
+	padding: 5px;
+	padding-left: 25px;
+  	padding-right: 25px;
+	text-align: center;
+}
+
+#creatureInfoSpan table {
+	border: 0px;
+	text-align: center;
+	vertical-align: middle;
+	font-family: sans-serif;
+}
+
+#creatureInfoSpan td {
+	font-family: sans-serif;
+}
+
+.has-box-shadow-bottom {
+	-webkit-box-shadow: 0px 5px 10px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 0px 5px 10px 0px rgba(0,0,0,0.75);
+	box-shadow: 0px 5px 10px 0px rgba(0,0,0,0.75);
+}
+
+.gradient {
+  height: 100px;
+  background-color: red;
+  background-image:
+    linear-gradient(
+      to right,
+      red,
+      yellow 10%
+    );
+}
+</style>
+
+<title>Rogue Cloud</title>
+</head>
+
+<body class="presenter">
+
+<div class="wrapper">
+    <div class="player-actions" id="player-actions-id">
+	    <canvas id="myCanvas" width="100%" height="100%" style="border: 0px solid #d3d3d3;">
+			Your browser does not support the HTML5 canvas tag.
+		</canvas>
+    </div>
+    <div class="leader-board" id="leader-board-div-id"><span id="leader-board-id"></span>
+    <span id="ldb_html">
+    <br/>
+    <a href='{{ page.serverWebUrl }}/database/round' target="_blank">Current Leaderboard Results</a>
+    </span>
+    	
+    
+    	<!--  <div id="logo"><img src="resources/logo.png" width="100%"></div>  -->
+    </div>
+    <div class="events-console" id="events-console-id">
+        
+    </div>
+    <div class="metrics-panel" id="metrics-panel-id">
+        
+    </div>
+</div>
+
+
+<div id="creatureInfo" class="moveAble has-box-shadow-bottom" style="position: absolute; opacity: 0.88; background-color: #151515; padding: 10px; /* border-radius: 10px;*/ display:none; color: white; border: 1px solid #777777; "> </div>
+
+<div id="roundPopover" class="has-box-shadow-bottom" style="position: absolute; opacity: 0.92; background-color: #151515; padding: 20px; color: white; display:none; border: 1px solid #777777;">
+<span id="roundPopover_timeleft"></span>
+<span id="roundPopover_yourscore"></span>
+<span id="roundPopover_leaderboard"></span>
+<span id="roundPopover_overall"></span>
+</div> <!--  display:none;  -->
+
+<script>
+
+var addEvent = function(object, type, callback) {
+    if (object == null || typeof(object) == 'undefined') return;
+    if (object.addEventListener) {
+        object.addEventListener(type, callback, false);
+    } else if (object.attachEvent) {
+        object.attachEvent("on" + type, callback);
+    } else {
+        object["on"+type] = callback;
+    }
+};
+
+addEvent(window, "resize", function(event) {
+	resizeCanvas("myCanvas", "player-actions-id");
+});
+
+function resizeCanvas(canvasId, divId) {
+	var myCanvas = document.getElementById(canvasId);
+	console.log('resized');
+	
+	var playerActionsDiv = document.getElementById(divId);
+	
+	console.log("resize trigggered");
+	
+	var canvas = myCanvas.getContext("2d").canvas;
+	
+	canvas.width = playerActionsDiv.offsetWidth;
+	canvas.height = playerActionsDiv.offsetHeight;
+	
+	canvas.style.width='100%';
+	canvas.style.height='100%';
+	canvas.width  = canvas.offsetWidth;
+	canvas.height = canvas.offsetHeight;
+	
+}
+</script>
+
+
+
+<script>
+		var IS_SERVER_VIEW = {{ page.isViewOnly}};
+	
+		var WEBSOCKET_URL = "{{ page.websocketUrl }}"; // Not currently used.
+		
+		var SERVER_WEB_URL = "{{ page.serverWebUrl }}"; // Only used for client
+	
+		var GLOBAL_UUID = "{{ page.uuid }}";
+	
+		var GLOBAL_USERNAME = "{{ page.username }}";
+		var GLOBAL_PASSWORD = "{{ page.password }}";
+	
+		var GLOBAL_TILES_JSON = {{ page.tilesJson }};
+		
+		resizeCanvas("myCanvas", "player-actions-id");
+		
+ 		var myCanvas = document.getElementById("myCanvas");
+		console.log("not view only.");
+		
+	</script>
+
+
+<script src="resources/classes.js"></script>
+<script src="resources/canvas.js"></script>
+
+<script>
+
+var serverViewFollowPos = null;
+
+canvasJs(22, document.getElementById("myCanvas"), document.getElementById("events-console-id"), document.getElementById("leader-board-id"), document.getElementById("metrics-panel-id"), IS_SERVER_VIEW ? "SERVER_VIEW_FOLLOW" : "CLIENT_VIEW", IS_SERVER_VIEW ? null : GLOBAL_UUID);
+
+</script>
+
+
+</body>
+</html>

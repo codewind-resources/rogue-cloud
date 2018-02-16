@@ -1,0 +1,16 @@
+
+
+# name, numAttackDice, attackDiceSize, attackPlus, hitRating
+
+One-handed:
+Bare Hands, 1, 4, 0, 20, 341
+
+Dagger, 2, 4, 0, 20, 2419
+Axe, 3, 4, 0, 20, 2449
+Short Sword, 3, 4, 1, 20, 2415 
+
+Two-handed:  
+Great Axe, 1, 14, 2, 20, 2449
+Halberd, 2, 8, 3, 20, 2562
+Broad Sword, 2, 6, 2, 20, 2560
+
