@@ -25,5 +25,5 @@ Rogue Cloud is designed to showcase the capabilities of our Kubernetes-based **I
 
 Have we picqued your interest? Learn more about the game and then get started playing! See [Getting Started](docs/GettingStarted.md) to begin.
 
-![Screenshot](https://github.ibm.com/jgwest/hackathon/blob/master/docs/resources/screenshot.png "Screenshot")
+![Screenshot](docs/resources/screenshot.png "Screenshot")
 

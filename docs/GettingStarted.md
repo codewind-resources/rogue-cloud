@@ -6,8 +6,8 @@
 ```
 mkdir (new repo directory)
 cd (your new repo directory)
-git clone git@github.ibm.com:jgwest/hackathon
-cd hackathon
+git clone https://github.com/microclimate-dev2ops/rogue-cloud.git
+cd rogue-cloud
 ```
 2) Verify the install by building using Maven
 * **Linux/Mac**: ``./mvnw clean package ``

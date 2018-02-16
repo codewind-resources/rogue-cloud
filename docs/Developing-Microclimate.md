@@ -65,7 +65,7 @@ Next, we will need to download the standalone Rogue Cloud client ZIP and unzip i
 * In the build logs window, you should the Maven build log with 'BUILD SUCCESS' at the bottom.
 
 8) Download and unzip the standalone game client, as follows:
-* Download the file from here http://wdt-file-repo.canlab.ibm.com/RogueCloudLibertyStandalone.zip
+* Download the file from here: http://www-rogue-cloud.mybluemix.net/RogueCloudLibertyStandalone.zip
 * On the Terminal (or Command Prompt):
     #### Linux:
     ```
