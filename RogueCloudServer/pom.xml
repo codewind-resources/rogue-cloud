@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>RogueCloud</groupId>
+	<artifactId>RogueCloudServer</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+
+	<!-- <parent> <groupId>net.wasdev.wlp.maven.parent</groupId> <artifactId>liberty-maven-app-parent</artifactId> 
+		<version>2.1.1</version> </parent> -->
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+
+		<app.name>RogueCloudServer</app.name>
+		<testServerHttpPort>29080</testServerHttpPort>
+		<testServerHttpsPort>29443</testServerHttpsPort>
+		<warContext>${app.name}</warContext>
+		<package.file>${project.build.directory}/${project.artifactId}-${project.version}.zip</package.file>
+		<packaging.type>usr</packaging.type>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>RogueCloudShared</groupId>
+			<artifactId>RogueCloudShared</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>RogueCloudResources</groupId>
+			<artifactId>RogueCloudResources</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.9.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.9.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>2.9.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>au.com.codeka</groupId>
+			<artifactId>carrot</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+		
+		
+
+		<!-- <dependency> <groupId>com.ibm.websphere.appserver.api</groupId> <artifactId>com.ibm.websphere.appserver.api.servlet</artifactId> 
+			<version>1.1.18</version> <scope>provided</scope> </dependency> <dependency> 
+			<groupId>com.ibm.websphere.appserver.api</groupId> <artifactId>com.ibm.websphere.appserver.api.jaxrs20</artifactId> 
+			<version>1.0.18</version> <scope>provided</scope> </dependency> -->
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.websocket</groupId>
+			<artifactId>javax.websocket-api</artifactId>
+			<version>1.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<packagingExcludes>pom.xml</packagingExcludes>
+					<webResources>
+						<resource>
+							<directory>WebContent</directory>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+			<!-- Plugin to run unit tests -->
+			<!-- 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.18.1</version>
+				<executions>
+					<execution>
+						<phase>test</phase>
+						<id>default-test</id>
+						<configuration>
+							<excludes>
+								<exclude>**/it/**</exclude>
+							</excludes>
+							<reportsDirectory>${project.build.directory}/test-reports/unit</reportsDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> -->
+			<!-- Enable liberty-maven plugin -->
+			<plugin>
+				<groupId>net.wasdev.wlp.maven.plugins</groupId>
+				<artifactId>liberty-maven-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<assemblyArtifact>
+						<groupId>com.ibm.websphere.appserver.runtime</groupId>
+						<artifactId>wlp-webProfile7</artifactId>
+						<version>17.0.0.3</version>
+						<type>zip</type>
+					</assemblyArtifact>
+					<configFile>${basedir}/files/server.xml</configFile>
+					<serverEnv>${basedir}/files/server.env</serverEnv>
+					<jvmOptionsFile>${basedir}/files/jvm.options</jvmOptionsFile>
+					<packageFile>${package.file}</packageFile>
+					<include>${packaging.type}</include>
+					<bootstrapProperties>
+						<app.location>${project.artifactId}-${project.version}.war</app.location>
+						<default.http.port>${testServerHttpPort}</default.http.port>
+						<default.https.port>${testServerHttpsPort}</default.https.port>
+					</bootstrapProperties>
+					<looseApplication>false</looseApplication>
+				</configuration>
+				<executions>
+					<execution>
+						<id>install-feature</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>install-feature</goal>
+						</goals>
+						<configuration>
+							<features>
+								<acceptLicense>true</acceptLicense>
+							</features>
+							<outputDirectory>target/liberty-alt-output-dir</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> 
+			<!-- Plugin to run functional tests -->
+			<!-- 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.18.1</version>
+				<executions>
+					<execution>
+						<phase>integration-test</phase>
+						<id>integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<includes>
+								<include>**/it/**</include>
+							</includes>
+							<systemPropertyVariables>
+								<liberty.test.port>${testServerHttpPort}</liberty.test.port>
+								<war.context>${warContext}</war.context>
+							</systemPropertyVariables>
+						</configuration>
+					</execution>
+					<execution>
+						<id>verify-results</id>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<summaryFile>${project.build.directory}/test-reports/it/failsafe-summary.xml</summaryFile>
+					<reportsDirectory>${project.build.directory}/test-reports/it</reportsDirectory>
+				</configuration>
+			</plugin> -->
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>net.wasdev.wlp.maven.plugins</groupId>
+					<artifactId>liberty-maven-plugin</artifactId>
+					<configuration>
+						<!-- set install-apps goal parameters -->
+						<looseApplication>true</looseApplication>
+						<installAppPackages>project</installAppPackages>
+					</configuration>
+					<executions>
+						<execution>
+							<id>stop-server-before-clean</id>
+							<phase>pre-clean</phase>
+							<goals>
+								<goal>stop-server</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>create-server</id>
+							<phase>prepare-package</phase>
+							<goals>
+								<goal>install-server</goal>
+								<goal>create-server</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>install-apps</id>
+							<phase>package</phase>
+							<goals>
+								<goal>install-apps</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>package-server</id>
+							<phase>package</phase>
+							<goals>
+								<goal>package-server</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>target/wlp-package</outputDirectory>
+							</configuration>
+						</execution>
+						<execution>
+							<id>test-start-server</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<goal>test-start-server</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>test-stop-server</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>test-stop-server</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>runnable</id>
+			<properties>
+				<package.file>${project.build.directory}/${app.name}.jar</package.file>
+				<packaging.type>runnable</packaging.type>
+			</properties>
+		</profile>
+	</profiles>
+</project>

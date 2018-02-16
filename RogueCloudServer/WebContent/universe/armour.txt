@@ -1,0 +1,33 @@
+# Name, Defense, Tile Type
+
+Head:
+Bronze Helmet, 2, 3681 
+Silver Helmet, 4, 3681
+Gold Helmet, 6, 2574
+Obsidian Helmet, 8, 2577
+
+Chest:
+Bronze Chestplate, 2, 3744
+Silver Chestplate, 4, 3728
+Gold Chestplate, 6, 3744
+Obsidian Chestplate, 8, 3740
+
+Legs:
+Bronze Legplate, 2, 3522
+Silver Legplate, 4, 3522
+Gold Legplate, 6, 3522
+Obsidian Legplate, 8, 3522
+
+Feet:
+Bronze Boots, 2, 276
+Silver Boots, 4, 274
+Gold Boots, 6, 272
+Obsidian Boots, 8, 277
+
+
+Shield:
+Bronze Shield, 2, 4041
+Silver Shield, 4, 4041
+Gold Shield, 6, 4041
+Obsidian Shield, 8, 4041
+

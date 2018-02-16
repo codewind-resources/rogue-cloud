@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="RogueCloudServer">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/.apt_generated"/>
+        <dependent-module archiveName="RogueCloudResources.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/RogueCloudResources/RogueCloudResources">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="RogueCloudShared.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/RogueCloudShared/RogueCloudShared">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="java-output-path" value="/RogueCloudServer/WebContent/WEB-INF/classes"/>
+        <property name="context-root" value="RogueCloudServer"/>
+    </wb-module>
+</project-modules>
