@@ -48,10 +48,9 @@ The Microclimate CLI will download the Microclimate Docker images and start the 
 
 If your browser did not automatically open, you may access the browser UI by running ``mcdev open`` or visiting: http://localhost:9090/
 
-
 ### C) Add Rogue Cloud to Microclimate
 
-Next, we will need to download the standalone Rogue Cloud client ZIP and unzip it into the appropriate spot in the ``microclimate-workspace directory``. First, however, we need to create a new project to contain it.
+Next, we will create a new project to contain the game code, then we will need to download the standalone Rogue Cloud client ZIP and unzip it into the appropriate spot in the ``microclimate-workspace directory`.
 
 1) In the Microclimate browser UI, click the ``here`` link to open the project creation dialog. Select the '.java' icon.
 2) Specify ``gameclient`` as the project name. You must specify this name *EXACTLY*, as we will be importing files into this directory in later steps.
