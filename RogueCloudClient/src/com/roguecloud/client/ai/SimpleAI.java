@@ -127,18 +127,19 @@ public class SimpleAI extends RemoteClient {
 		SelfState selfState = getSelfState();
 		WorldState worldState = getWorldState();
 		
+		ICreature creatureToAttack = null;
+		
 		// Default behaviour: Attack the first creature that I see.
 		for(ICreature c : visibleMonsters) {
 			
 			int creatureLevel = c.getLevel();
 			
-			return c;
-			
-			// Uncomment me to attack a creature! Might want to check their level first!
-			// return c;
+			if(creatureToAttack == null) {
+				creatureToAttack = c;
+			}
 		}
 		
-		return null;
+		return creatureToAttack;
 		
 	}
 	
