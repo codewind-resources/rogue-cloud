@@ -31,4 +31,6 @@ public interface IDBBackend {
 
 	void writeNewOrExistingLeaderboardEntries(List<DbLeaderboardEntry> dbe);
 
+	long getAndIncrementNextRoundId();
+
 }

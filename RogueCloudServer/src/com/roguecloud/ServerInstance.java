@@ -84,11 +84,10 @@ public final class ServerInstance {
 				currentRound_synch_lock.dispose();
 			}
 
+			// TODO: This is a case where the main thread is waiting on the database. Is this oK?
 			long id = DatabaseInstance.get().getAndIncrementNextRoundId();
 			
-			long roundEndInNanos = System.nanoTime() + RCConstants.ROUND_LENGTH_IN_NANOS;
-			
-			currentRound_synch_lock = new RoundScope(id, roundEndInNanos, id+1, this);
+			currentRound_synch_lock = new RoundScope(id, RCConstants.ROUND_LENGTH_IN_NANOS, id+1, this);
 
 			// Each game context gets a new id generator, based on a prototypical generator
 			// which contains the armour/weapons/monsters.

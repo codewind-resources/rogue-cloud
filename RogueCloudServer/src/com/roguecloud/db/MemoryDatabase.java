@@ -24,7 +24,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.roguecloud.db.cloudant.CloudantDbBackend;
 import com.roguecloud.db.file.FileDbBackend;
+import com.roguecloud.db.file.IDBBackend;
 import com.roguecloud.utils.Logger;
 
 public class MemoryDatabase implements IDatabase {
@@ -39,20 +41,28 @@ public class MemoryDatabase implements IDatabase {
 	
 	private List<IDBObject> objectsToWrite_synch_lock = new ArrayList<>();
 
-	private final FileDbBackend backend;
+	private final IDBBackend backend;
 	
 	private final MemoryDatabaseWriteThread thread;
 	
 	public MemoryDatabase() {
-		File dir = new File(System.getProperty("user.home"), ".roguecloud");
-		if(!dir.exists() && !dir.mkdirs()) {
-			String msg = "Unable to create directory: "+dir.getPath();
-			log.severe(msg, null);
-			throw new RuntimeException(msg);
+	
+		if(CloudantDbBackend.isCloudAntDbConfigured()) {
+			System.out.println("* Using Cloudant persistence backend.");
+			backend = new CloudantDbBackend();
+		} else {
+			System.out.println("* Using local file system persistence backend.");
+			File dir = new File(System.getProperty("user.home"), ".roguecloud");
+			if(!dir.exists() && !dir.mkdirs()) {
+				String msg = "Unable to create directory: "+dir.getPath();
+				log.severe(msg, null);
+				throw new RuntimeException(msg);
+			}
+			
+			backend = new FileDbBackend(dir);
+			
 		}
-		
-		backend = new FileDbBackend(dir);
-		
+
 		users_synch_lock.addAll(backend.getAllUsers());
 		leaderboard_synch_lock.addAll(backend.getAllLeaderboardEntries());
 		
