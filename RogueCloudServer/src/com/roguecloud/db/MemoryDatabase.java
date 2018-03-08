@@ -328,7 +328,7 @@ public class MemoryDatabase implements IDatabase {
 				// TODO: LOW - Simulate slow writes to the backend database, to verify this works as expected.
 				
 				// Remove duplicate user writes, then write
-				{
+				try {
 					Map<Long, Boolean> userIdSeen = new HashMap<>();
 					
 					// Flip to descending chronological order (most recent entries are nearest to index 0)
@@ -346,10 +346,13 @@ public class MemoryDatabase implements IDatabase {
 					if(usersToWrite.size() > 0) {
 						backend.writeNewOrExistingUsers(usersToWrite);
 					}
+				} catch(Exception e) {
+					e.printStackTrace();
+					log.severe("Unexpected rror occurred during db user write", e, null);
 				}
 				
 				// Remove duplicate leaderboard entries, then write
-				{
+				try {
 					Map<LeaderboardPrimaryKey, Boolean> leaderboardEntrySeen = new HashMap<>();
 					Collections.reverse(leaderboardEntriesToWrite);
 					
@@ -367,6 +370,9 @@ public class MemoryDatabase implements IDatabase {
 						backend.writeNewOrExistingLeaderboardEntries(leaderboardEntriesToWrite);
 					}
 					
+				} catch(Exception e) {
+					e.printStackTrace();
+					log.severe("Unexpected error occurred during db ldb write", e, null);					
 				}
 				
 			}

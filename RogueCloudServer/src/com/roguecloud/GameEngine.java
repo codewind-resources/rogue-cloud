@@ -220,8 +220,9 @@ public final class GameEngine {
 	private boolean gameLoop(RCArrayMap map, GameContext gc) throws InterruptedException {
 		
 		if(gc.roundScope.getCurrentRoundEndInNanos() == null) {
-			// TODO: SEVERE - log me.
-			throw new RuntimeException();
+			String MSG = "The game loop started with no round end in nanos, which should not happen.";
+			log.severe(MSG, null);
+			throw new RuntimeException(MSG);
 		}
 		
 		boolean continueGameThread = true;

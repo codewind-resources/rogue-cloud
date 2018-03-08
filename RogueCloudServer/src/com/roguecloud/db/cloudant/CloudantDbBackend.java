@@ -35,10 +35,13 @@ import com.google.gson.JsonParser;
 import com.roguecloud.db.DbLeaderboardEntry;
 import com.roguecloud.db.DbUser;
 import com.roguecloud.db.file.IDBBackend;
+import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.ServerUtil;
 
 public class CloudantDbBackend implements IDBBackend {
 
+	private final static Logger log = Logger.getInstance();
+	
 	private static final boolean LOGGING = true;
 	
 	private final Object lock = new Object();
@@ -131,8 +134,8 @@ public class CloudantDbBackend implements IDBBackend {
 		for(DbUser dbu : users) {
 			
 			if(dbu.getUserId() <= 0) {
-				// TODO: Handle this better.
-				throw new IllegalArgumentException("Invalid user id: "+dbu.getUsername());
+				log.severe("Invalid user value: "+dbu, null);
+				continue;
 			}
 			
 			boolean create;
@@ -176,8 +179,8 @@ public class CloudantDbBackend implements IDBBackend {
 		for(DbLeaderboardEntry dle : dbe) {
 
 			if(!DbLeaderboardEntry.isValid(dle)) {
-				// TODO: Handle this better. Ignore?
-				throw new IllegalArgumentException("Invalid leaderboard entry: "+dle.toString());
+				log.severe("Invalid leaderboard entry: "+dle, null);
+				return;
 			}
 			
 			boolean create;
@@ -287,8 +290,9 @@ public class CloudantDbBackend implements IDBBackend {
 		}
 		
 		if(!result && matchedFields > 0) {
-			// TODO: EASY - Convert to severe error.
-			System.err.println("WARNING: More than one cloudant db field matched, but not all could be found. There may be missing properties.");
+			String MSG = "WARNING: More than one cloudant db field matched, but not all could be found. There may be missing properties.";
+			log.severe(MSG, null);
+			// An exception will be thrown by the caller.
 		}
 			
 		return result;

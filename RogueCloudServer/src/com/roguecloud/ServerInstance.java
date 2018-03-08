@@ -84,7 +84,7 @@ public final class ServerInstance {
 				currentRound_synch_lock.dispose();
 			}
 
-			// TODO: This is a case where the main thread is waiting on the database. Is this oK?
+			// TODO: CURRENT - This is a case where the main thread is waiting on the database. 
 			long id = DatabaseInstance.get().getAndIncrementNextRoundId();
 			
 			currentRound_synch_lock = new RoundScope(id, RCConstants.ROUND_LENGTH_IN_NANOS, id+1, this);

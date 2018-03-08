@@ -30,6 +30,7 @@ import com.roguecloud.server.ActiveWSClient.ViewType;
 import com.roguecloud.utils.CompressionUtils;
 import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
+import com.roguecloud.utils.ServerUtil;
 
 public class ActiveWSClientSession {
 	
@@ -240,12 +241,13 @@ public class ActiveWSClientSession {
 			} finally {
 				log.info("AWSClientSessionSender ended for "+session_synch, logContext);
 				
-				try {
-					// TODO: EASY - Add this to new thread.
-					session_synch.close(); // intentional non-synch
-				} catch (IOException e) {
-					/* ignore*/
-				}
+				ServerUtil.runInAnonymousThread( () -> {
+					try {
+						session_synch.close(); // intentional non-synch
+					} catch (IOException e) {
+						/* ignore*/
+					}
+				});
 
 			}
 			

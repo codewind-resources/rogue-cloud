@@ -16,14 +16,9 @@
 
 package com.roguecloud.db.cloudant;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cloudant.client.api.ClientBuilder;
-import com.cloudant.client.api.CloudantClient;
-import com.cloudant.client.api.Database;
-import com.cloudant.client.api.views.AllDocsResponse;
 import com.roguecloud.db.DbLeaderboardEntry;
 import com.roguecloud.db.DbUser;
 
@@ -64,6 +59,7 @@ public class CloudAntStandaloneMain {
 		
 	}
 	
+	@SuppressWarnings("unused")
 	private static void createUsers() {
 		CloudantDbBackend cdbb = new CloudantDbBackend();
 		
@@ -83,42 +79,4 @@ public class CloudAntStandaloneMain {
 		});
 				
 	}
-	
-	
-	
-	private static void hi() {
-		try {
-			CloudantClient client = ClientBuilder.url(new URL(
-					"https://daf20d4d-fa27-485b-9093-e93be75eee43-bluemix:abd199f821dfe865d2e778ae8aaaffaad9b0c794c59a6eb0016da19926cc414c@daf20d4d-fa27-485b-9093-e93be75eee43-bluemix.cloudant.com"))
-					.username("daf20d4d-fa27-485b-9093-e93be75eee43-bluemix")
-					.password("abd199f821dfe865d2e778ae8aaaffaad9b0c794c59a6eb0016da19926cc414c").build();
-
-			// Get a Database instance to interact with, but don't create it if it doesn't already exist
-			Database db = client.database("example_db", true);
-			
-			
-//			CloudantDbUser dbu = new CloudantDbUser();
-//			dbu.setUserId(10);
-//			dbu.setPassword("hi");
-//			dbu.setUsername("username");
-//			
-//			dbu.set_id("user:"+dbu.getUserId());
-//			
-//			db.save(dbu);
-//			
-			
-//			CloudantDbUser cdbu = db.find(CloudantDbUser.class, "user:"+10);
-//			System.out.println(cdbu.getUsername());
-			
-			AllDocsResponse adr = db.getAllDocsRequestBuilder().includeDocs(true).build().getResponse();
-						
-			
-			
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-
 }

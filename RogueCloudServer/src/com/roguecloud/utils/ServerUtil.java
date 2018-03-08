@@ -90,4 +90,12 @@ public class ServerUtil {
 	public static long maxAStarSearch(IMap m) {
 		return (long)((m.getXSize()+m.getYSize())/3);
 	}
+	
+	/** Run a runnable in a simple thread. */
+	public static void runInAnonymousThread(Runnable r) {
+		Thread t = new Thread(r);
+		t.setName(r.getClass().getName());
+		t.setDaemon(true);
+		t.start();		
+	}
 }
