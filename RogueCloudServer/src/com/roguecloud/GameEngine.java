@@ -1081,7 +1081,7 @@ public final class GameEngine {
 				if(creature != null) {
 					action = new CombatAction(creature);
 				} else {
-					log.severe("Could not ifnd creature with id "+jca.getTargetCreatureId()+" in database.", lc);
+					log.severe("Could not find creature with id "+jca.getTargetCreatureId()+" in database.", lc);
 					action = null;
 				}
 				
