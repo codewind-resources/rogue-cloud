@@ -24,7 +24,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.roguecloud.db.cloudant.CloudantDbBackend;
 import com.roguecloud.db.file.FileDbBackend;
+import com.roguecloud.db.file.IDBBackend;
 import com.roguecloud.utils.Logger;
 
 public class MemoryDatabase implements IDatabase {
@@ -39,20 +41,28 @@ public class MemoryDatabase implements IDatabase {
 	
 	private List<IDBObject> objectsToWrite_synch_lock = new ArrayList<>();
 
-	private final FileDbBackend backend;
+	private final IDBBackend backend;
 	
 	private final MemoryDatabaseWriteThread thread;
 	
 	public MemoryDatabase() {
-		File dir = new File(System.getProperty("user.home"), ".roguecloud");
-		if(!dir.exists() && !dir.mkdirs()) {
-			String msg = "Unable to create directory: "+dir.getPath();
-			log.severe(msg, null);
-			throw new RuntimeException(msg);
+	
+		if(CloudantDbBackend.isCloudAntDbConfigured()) {
+			System.out.println("* Using Cloudant persistence backend.");
+			backend = new CloudantDbBackend();
+		} else {
+			System.out.println("* Using local file system persistence backend.");
+			File dir = new File(System.getProperty("user.home"), ".roguecloud");
+			if(!dir.exists() && !dir.mkdirs()) {
+				String msg = "Unable to create directory: "+dir.getPath();
+				log.severe(msg, null);
+				throw new RuntimeException(msg);
+			}
+			
+			backend = new FileDbBackend(dir);
+			
 		}
-		
-		backend = new FileDbBackend(dir);
-		
+
 		users_synch_lock.addAll(backend.getAllUsers());
 		leaderboard_synch_lock.addAll(backend.getAllLeaderboardEntries());
 		
@@ -318,7 +328,7 @@ public class MemoryDatabase implements IDatabase {
 				// TODO: LOW - Simulate slow writes to the backend database, to verify this works as expected.
 				
 				// Remove duplicate user writes, then write
-				{
+				try {
 					Map<Long, Boolean> userIdSeen = new HashMap<>();
 					
 					// Flip to descending chronological order (most recent entries are nearest to index 0)
@@ -336,10 +346,13 @@ public class MemoryDatabase implements IDatabase {
 					if(usersToWrite.size() > 0) {
 						backend.writeNewOrExistingUsers(usersToWrite);
 					}
+				} catch(Exception e) {
+					e.printStackTrace();
+					log.severe("Unexpected rror occurred during db user write", e, null);
 				}
 				
 				// Remove duplicate leaderboard entries, then write
-				{
+				try {
 					Map<LeaderboardPrimaryKey, Boolean> leaderboardEntrySeen = new HashMap<>();
 					Collections.reverse(leaderboardEntriesToWrite);
 					
@@ -357,6 +370,9 @@ public class MemoryDatabase implements IDatabase {
 						backend.writeNewOrExistingLeaderboardEntries(leaderboardEntriesToWrite);
 					}
 					
+				} catch(Exception e) {
+					e.printStackTrace();
+					log.severe("Unexpected error occurred during db ldb write", e, null);					
 				}
 				
 			}

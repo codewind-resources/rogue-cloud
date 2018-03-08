@@ -58,6 +58,12 @@ public class DbLeaderboardEntry implements IDBObject {
 		this.roundId = roundId;
 	}
 	
+	public void copyFromParam(DbLeaderboardEntry dle) {
+		setRoundId(dle.getRoundId());
+		setScore(dle.getScore());
+		setUserId(dle.getUserId());
+	}
+	
 	@Override
 	public String toString() {
 		return userId+" "+this.score+" "+this.roundId;

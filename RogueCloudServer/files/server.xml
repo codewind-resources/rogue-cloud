@@ -1,26 +1,35 @@
 <server description="Sample Liberty server">
 
-  <featureManager>
-        <feature>localConnector-1.0</feature>
-        <feature>websocket-1.1</feature>
-        <feature>jsp-2.3</feature>
-    	<feature>jsonp-1.0</feature>
-	    <feature>jaxrs-2.0</feature>
-        <feature>jndi-1.0</feature>
-    	<feature>transportSecurity-1.0</feature>
-  </featureManager>
+	<featureManager>
+		<feature>localConnector-1.0</feature>
+		<feature>websocket-1.1</feature>
+		<feature>jsp-2.3</feature>
+		<feature>jsonp-1.0</feature>
+		<feature>jaxrs-2.0</feature>
+		<feature>jndi-1.0</feature>
+		<feature>transportSecurity-1.0</feature>
+	</featureManager>
 
-  <httpEndpoint httpPort="${default.http.port}" httpsPort="${default.https.port}"
-      id="defaultHttpEndpoint" host="*" />
-
-
-    <jndiEntry jndiName="rc_admin_user" value="admin"/>
-    <jndiEntry jndiName="rc_admin_password" value="admin"/>
+	<httpEndpoint httpPort="${default.http.port}" httpsPort="${default.https.port}"
+		id="defaultHttpEndpoint" host="*" />
 
 
-  <!-- Automatically expand WAR files and EAR files -->
-  <applicationManager autoExpand="true"/>
+	<jndiEntry jndiName="rc_admin_user" value="admin" />
+	<jndiEntry jndiName="rc_admin_password" value="admin" />
 
-  <webApplication name="RogueCloudServer" location="${app.location}"/>
+	<!-- Uncomment these lines to use Cloudant as the database persistence backend. --> 
+	<!-- If Cloudant credentials are not specified, the local filesystem will be used instead. -->
+	
+	<!--
+	<jndiEntry jndiName="cloudant_url" value="https://"/>
+	<jndiEntry jndiName="cloudant_username" value=""/>
+	<jndiEntry jndiName="cloudant_password" value=""/>
+	<jndiEntry jndiName="cloudant_db_name" value="my_db"/>
+	-->
+
+	<!-- Automatically expand WAR files and EAR files -->
+	<applicationManager autoExpand="true" />
+
+	<webApplication name="RogueCloudServer" location="${app.location}" />
 
 </server>

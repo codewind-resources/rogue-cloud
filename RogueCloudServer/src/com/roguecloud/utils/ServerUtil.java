@@ -47,36 +47,32 @@ public class ServerUtil {
 	
 	public static String getAdminUserName() {
 		
-		String val = null;
-		try {
-			val = (String) new InitialContext().lookup(RC_ADMIN_USER);
-		} catch (NamingException e) { /* ignore */ }
-		
-		if(val == null) {
-			val = System.getProperty(RC_ADMIN_USER);
-		}
-		if(val == null) {
-			val = System.getenv(RC_ADMIN_USER);
-		}
-		return val;
+		return getConfigValue(RC_ADMIN_USER);
 	}
 	
 	public static String getAdminPassword() {
+		return getConfigValue(RC_ADMIN_PASSWORD);
+	}
+
+	
+	/** Look for a pre-defined configuration value: first in server.xml, then -D properties, then system env vars. */
+	public static String getConfigValue(String field) {
 		String val = null;
 		try {
-			val = (String) new InitialContext().lookup(RC_ADMIN_PASSWORD);
+			val = (String) new InitialContext().lookup(field);
 		} catch (NamingException e) { /* ignore */ }
 		
 		if(val == null) {
-			val = System.getProperty(RC_ADMIN_PASSWORD);
+			val = System.getProperty(field);
 		}
 		
 		if(val == null) {
-			val = System.getenv(RC_ADMIN_PASSWORD);
+			val = System.getenv(field);
 		}
 		return val;
+		
 	}
-
+	
 	public static String getCookie(HttpServletRequest request, String key) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies == null) { return null; }
@@ -93,5 +89,13 @@ public class ServerUtil {
 	// At most search 33% of the space
 	public static long maxAStarSearch(IMap m) {
 		return (long)((m.getXSize()+m.getYSize())/3);
+	}
+	
+	/** Run a runnable in a simple thread. */
+	public static void runInAnonymousThread(Runnable r) {
+		Thread t = new Thread(r);
+		t.setName(r.getClass().getName());
+		t.setDaemon(true);
+		t.start();		
 	}
 }

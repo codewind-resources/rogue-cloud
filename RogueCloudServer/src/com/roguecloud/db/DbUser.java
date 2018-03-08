@@ -70,6 +70,12 @@ public class DbUser implements IDBObject {
 	public DbUser fullClone() {
 		return new DbUser(this.userId, this.username, this.password);
 	}
+	
+	public void copyFromParam(DbUser user) {
+		this.userId  = user.getUserId();
+		this.username = user.getUsername();
+		this.password = user.getPassword();
+	}
 		
 	public static String isValid(DbUser user, boolean checkUserId) {
 		if(checkUserId && user.getUserId() < 0) {

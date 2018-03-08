@@ -28,20 +28,23 @@ public class RoundScope {
 	
 	private final long nextRoundId;
 	
-	
 	/** This is only set if isRoundComplete  is FALSE*/
 	private Long nextRoundStartInNanos_synch_lock = null;
 	
-	private final long currentRoundEndInNanos;
+	private Long currentRoundEndInNanos_synch_lock = null;
+	
+	private final long roundLengthInNanos;
 	
 	private boolean isRoundComplete_synch_lock = false;
 	
 	private boolean isDisposed_synch_lock = false;
 	
-	public RoundScope(long roundId, long currentRoundEndInNanos, long nextRoundId, ServerInstance parent) {
+	public RoundScope(long roundId, long roundLengthInNanos, long nextRoundId, ServerInstance parent) {
 		this.roundId = roundId;
 		this.nextRoundId = nextRoundId;
-		this.currentRoundEndInNanos = currentRoundEndInNanos;
+		
+		this.roundLengthInNanos = roundLengthInNanos;
+		
 		this.activeClients = new ActiveWSClientList(parent);
 	}
 
@@ -73,8 +76,16 @@ public class RoundScope {
 		return nextRoundId;
 	}
 	
-	public long getCurrentRoundEndInNanos() {
-		return currentRoundEndInNanos;
+	public void beginAbsoluteRoundEndTimeInNanos() {
+		synchronized (lock) {
+			currentRoundEndInNanos_synch_lock = System.nanoTime() + roundLengthInNanos;
+		}
+	}
+	
+	public Long getCurrentRoundEndInNanos() {
+		synchronized(lock) {
+			return currentRoundEndInNanos_synch_lock;
+		}
 	}
 	
 	public void setNextRoundStartInNanos(Long nextRoundStartInNanos) {

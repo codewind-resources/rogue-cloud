@@ -121,6 +121,7 @@ import com.roguecloud.map.Tile;
 import com.roguecloud.map.TileType;
 import com.roguecloud.map.TileTypeList;
 import com.roguecloud.server.ActiveWSClient;
+import com.roguecloud.server.ActiveWSClientList;
 import com.roguecloud.server.ActiveWSClient.ReceivedAction;
 import com.roguecloud.server.ActiveWSClient.ViewType;
 import com.roguecloud.server.ActiveWSClientSession;
@@ -186,6 +187,9 @@ public final class GameEngine {
 
 	private void gameThreadRun(GameContext gc) throws IOException {
 	
+		waitForActiveClient(roundScope);
+		roundScope.beginAbsoluteRoundEndTimeInNanos();
+		
 		boolean continueLoop = true;
 		// Game loop
 		while(continueLoop) {
@@ -214,6 +218,12 @@ public final class GameEngine {
 	private long elapsedNanosSinceReset = 0;
 	
 	private boolean gameLoop(RCArrayMap map, GameContext gc) throws InterruptedException {
+		
+		if(gc.roundScope.getCurrentRoundEndInNanos() == null) {
+			String MSG = "The game loop started with no round end in nanos, which should not happen.";
+			log.severe(MSG, null);
+			throw new RuntimeException(MSG);
+		}
 		
 		boolean continueGameThread = true;
 		
@@ -1072,7 +1082,7 @@ public final class GameEngine {
 				if(creature != null) {
 					action = new CombatAction(creature);
 				} else {
-					log.severe("Could not ifnd creature with id "+jca.getTargetCreatureId()+" in database.", lc);
+					log.severe("Could not find creature with id "+jca.getTargetCreatureId()+" in database.", lc);
 					action = null;
 				}
 				
@@ -2143,7 +2153,7 @@ public final class GameEngine {
 			if(mc != null) {
 				return mc;
 			}
-		}		
+		}
 		
 //		if(me != null) {
 //			IMutableCreature mc = gc.creatureEntryMap.get(me.getKey()).getCreature();
@@ -2153,6 +2163,25 @@ public final class GameEngine {
 //		} 		
 		
 		return null;
+	}
+
+	private static void waitForActiveClient(RoundScope rs) {
+		ActiveWSClientList activeWSClientList = rs.getActiveClients();
+		
+		long timeBetweenMessages = TimeUnit.NANOSECONDS.convert(5, TimeUnit.MINUTES); 
+		long nextOutputMessageInNanos = System.nanoTime() + timeBetweenMessages;
+		
+		System.out.println("* Waiting for first client to connect for round #"+rs.getRoundId());
+		
+		while(activeWSClientList.getList().size() == 0) {
+			
+			try {Thread.sleep(5000); } catch(Exception e) { /* ignore */ }
+			
+			if(System.nanoTime() > nextOutputMessageInNanos) {
+				nextOutputMessageInNanos = System.nanoTime() + timeBetweenMessages;
+				System.out.println("* Waiting for first client to connect for round #"+rs.getRoundId());
+			}
+		}
 	}
 	
 	protected static class GameContext {
@@ -2507,12 +2536,12 @@ public final class GameEngine {
 		@Override
 		public void run() {
 			try {
-				System.out.println("Game thread started.");
+				System.out.println("Game thread started for round "+roundScope.getRoundId());
 				gameThreadRun(gc);
 			} catch (Throwable e) {
 				e.printStackTrace();
 			} finally {
-				System.err.println("Game thread terminated.");
+				System.err.println("Game thread terminated for round "+roundScope.getRoundId());
 			}
 		}
 		
