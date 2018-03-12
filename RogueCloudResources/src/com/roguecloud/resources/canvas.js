@@ -371,11 +371,21 @@ addEvent(window, "resize", function(event) {
 });
 
 
+var lastFrameTime = 0;
+
+
 globalState.interval = setInterval( function() {
 	
 	var frameQueue = globalState.frameQueue;
 
 //	console.log("fq length: "+frameQueue.length);
+
+	// Depending on how far behind we are in drawing the latest frames, we wait between 30 and 100 msecs.
+	var minimumElapsed = 30+7*Math.max(0, (10-frameQueue.length));	
+	if(window.performance.now() - lastFrameTime < minimumElapsed ) {
+		return;
+	}
+	
 	
 	while(true) {
 	
@@ -408,8 +418,10 @@ globalState.interval = setInterval( function() {
 				drawFrameNewer(frameQueue[x],  /*globalState.nextFrameId % 10 != 0 &&*/ frameQueue.length > 10  );
 				frameQueue.splice(x, 1);
 				frameFound = true;
+				lastFrameTime = window.performance.now();
 				
-				break outer;
+				return;
+				// break outer;
 			}	
 		}
 				

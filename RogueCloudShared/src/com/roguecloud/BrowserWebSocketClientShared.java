@@ -98,7 +98,7 @@ public class BrowserWebSocketClientShared {
 					for(int y = newWorldPosY; y < newWorldPosY+newHeight; y++) {
 						for(int x = newWorldPosX; x < newWorldPosX+newWidth; x++) {
 							
-							data = getAndConvertTile(x, y, map, data, creaturesSeen, factory);
+							data = getAndConvertTile(x, y, map, data, factory, ticks);
 //							Tile t = map.getTile(x, y);					
 //							data = data.add(convertSingle(t));
 							
@@ -128,7 +128,7 @@ public class BrowserWebSocketClientShared {
 						for(int y = newWorldPosY; y < newWorldPosY+newHeight; y++) {
 							for(int x = newWorldPosX+newWidth-deltaX; x < newWorldPosX+newWidth; x++) {
 
-								data = getAndConvertTile(x, y, map, data, creaturesSeen, factory);
+								data = getAndConvertTile(x, y, map, data, factory, ticks);
 //								Tile t = map.getTile(x, y);		
 //								data = data.add(convertSingle(t));
 								
@@ -153,7 +153,7 @@ public class BrowserWebSocketClientShared {
 						for(int y = newWorldPosY; y < newWorldPosY+newHeight; y++) {
 							for(int x = newWorldPosX; x < newWorldPosX+Math.abs(deltaX); x++) {
 								
-								data = getAndConvertTile(x, y, map, data, creaturesSeen, factory);
+								data = getAndConvertTile(x, y, map, data, factory, ticks);
 //								Tile t = map.getTile(x, y);		
 //								data = data.add(convertSingle(t));
 								
@@ -178,7 +178,7 @@ public class BrowserWebSocketClientShared {
 						for(int y = newWorldPosY+newHeight-deltaY; y < newWorldPosY+newHeight; y++) {
 							for(int x = newWorldPosX; x < newWorldPosX+newWidth; x++) {
 								
-								data = getAndConvertTile(x, y, map, data, creaturesSeen, factory);
+								data = getAndConvertTile(x, y, map, data, factory, ticks);
 //								Tile t = map.getTile(x, y);		
 //								data = data.add(convertSingle(t));
 								
@@ -202,7 +202,7 @@ public class BrowserWebSocketClientShared {
 						for(int y = newWorldPosY; y < newWorldPosY+Math.abs(deltaY); y++) {
 							for(int x = newWorldPosX; x < newWorldPosX+newWidth; x++) {
 
-								data = getAndConvertTile(x, y, map, data, creaturesSeen, factory);
+								data = getAndConvertTile(x, y, map, data, factory, ticks);
 								
 //								Tile t = map.getTile(x, y);		
 //								data = data.add(convertSingle(t));
@@ -228,7 +228,7 @@ public class BrowserWebSocketClientShared {
 			outer = outer.add("fullSent", false);
 		}
 		
-		if(!fullThingSent) {		
+		if(!fullThingSent) {
 			for(Position p : changedTiles) {
 			
 				if(!Position.containedInBox(p, newWorldPosX, newWorldPosY, newWidth, newHeight)) { continue; }
@@ -242,7 +242,7 @@ public class BrowserWebSocketClientShared {
 				
 //				Tile t = map.getTile(p);
 //				data = data.add(convertSingle(t));
-				data = getAndConvertTile(p.getX(), p.getY(), map, data, creaturesSeen, factory);
+				data = getAndConvertTile(p.getX(), p.getY(), map, data, factory, ticks);
 				
 				frame = frame.add("data", data);
 				
@@ -283,7 +283,7 @@ public class BrowserWebSocketClientShared {
 		
 	}
 	
-	private static JsonArrayBuilder getAndConvertTile(int x, int y, IMap map, JsonArrayBuilder data, Map<Long, ICreature> creaturesSeen, JsonBuilderFactory factory) {
+	private static JsonArrayBuilder getAndConvertTile(int x, int y, IMap map, JsonArrayBuilder data, JsonBuilderFactory factory, long ticks) {
 		
 		Tile t = map.getTile(x, y);
 		
@@ -291,20 +291,22 @@ public class BrowserWebSocketClientShared {
 //			creaturesSeen.put(e.getId(), e);
 //		});
 		
-		data = data.add(convertSingle(t, factory));
+		data = data.add(convertSingle(t, factory, ticks));
 	
 		return data;
 	}
 	
 	
-	private static JsonArrayBuilder convertSingle(Tile t, JsonBuilderFactory factory) {
+	private static JsonArrayBuilder convertSingle(Tile t, JsonBuilderFactory factory, long ticks) {
 		JsonArrayBuilder outer = factory.createArrayBuilder();
 		
 		if(t == null) {
 			throw new IllegalArgumentException();
 		}
 		
-		TileType[] ttArr = t.getTileTypeLayers();
+		// When there are multiple creatures on the same tile, alternate between them every 500 msecs.
+		TileType[] ttArr = t.getTileTypeLayersForBrowserPresentation((int)(ticks/5));
+		// TODO: LOWER - I have hardcoded an assumption of a tick rate of 100 msecs per frame for the above line.
 		
 //		// [
 		

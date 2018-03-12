@@ -28,6 +28,7 @@ import javax.websocket.server.ServerEndpoint;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.roguecloud.RCRuntime;
 import com.roguecloud.RoundScope;
 import com.roguecloud.ServerInstance;
 import com.roguecloud.ServerInstanceList;
@@ -47,6 +48,17 @@ import com.roguecloud.utils.ResourceLifecycleUtil;
 public class WebSocketClientEndpoint {
 
 	private static final Logger log = Logger.getInstance();
+
+	private final RCServerUtilLatencySim latencySim;
+	
+	public WebSocketClientEndpoint() {
+		
+		if(RCRuntime.ENABLE_LATENCY_SIM) {
+			latencySim = new RCServerUtilLatencySim();
+		} else {
+			latencySim = null;
+		}
+	}
 	
 	@OnOpen
 	public void open(Session session) {
@@ -179,8 +191,13 @@ public class WebSocketClientEndpoint {
 			}
 				
 		} else {
-			ActiveWSClientSession acs = client.getAWSClientSession(session);
-			client.getMessageReceiver().receiveMessage(message, acs, client);	
+			ActiveWSClientSession acs = client.getAWSClientSession(session);			
+			
+			if(latencySim != null) {
+				latencySim.addMessage(acs, client, message);
+			} else {
+				client.getMessageReceiver().receiveMessage(message, acs, client);
+			}
 		}
 
 	}

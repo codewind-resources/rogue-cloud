@@ -24,7 +24,9 @@ public class RCConstants {
 	
 	public static final long TIME_BETWEEN_ROUNDS_IN_NANOS = TimeUnit.NANOSECONDS.convert(20, TimeUnit.SECONDS);
 	
-	public static final long NS_PER_FRAME = TimeUnit.NANOSECONDS.convert(100, TimeUnit.MILLISECONDS);
+	public static final long MSECS_PER_FRAME = 100;
+	
+	public static final long NS_PER_FRAME = TimeUnit.NANOSECONDS.convert(MSECS_PER_FRAME, TimeUnit.MILLISECONDS);
 	
 	public static final long REVIVE_DEAD_PLAYER_AFTER_X_TICKS = 100;
 
