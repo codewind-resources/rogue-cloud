@@ -10,7 +10,7 @@ Pre-requisite: This requires Java 8 JDK be installed. The Java JDK is available 
 4) Enter ***Liberty Developer Tools*** into the 'Find:' search box, and click Go.
 5) Find the ***IBM Liberty Developer Tools for Oxygen*** entry and click Install.
 6) Click Confirm.
-7) Accept the licenses, then click Finish. 
+7) Accept the licenses, then click Finish.
 8) IBM Liberty Developer Tools will now install. When prompted to restart, click Restart Now.
 
 ### B) Create a new Liberty Server in Eclipse
@@ -22,27 +22,27 @@ Pre-requisite: This requires Java 8 JDK be installed. The Java JDK is available 
 5) Specify a path to download the Liberty server to, then select 'Download and install a new runtime environment from ibm.com'.
 6) Select 'WAS Liberty with Java EE 7 Web Profile'. Click Next.
 7) On the 'Install Additional Content' dialog, click Next.
-8) Accept the the license and click Next.
+8) Accept the license, and then click Next.
 9) Click Next, then Finish.
 10) Wait for the WAS Liberty server to download (about 45 seconds.)
 11) You should now see your server in the Servers view.
 
 ### C) Import your Rogue Cloud git repository into Eclipse.
 1) Select File (menu item) > Import..., then select Git > Projects from Git. Click Next.
-2) Select 'Existing local repository', then click Next. 
+2) Select 'Existing local repository', and then click Next.
 3) Click 'Add...' and a new dialog will open. In the 'Directory:' field, specify the directory containing your Rogue Cloud git repo. Click Search if needed.
-4) Select the checkbox that corresponds to your git repo, then click Finish.
+4) Select the checkbox that corresponds to your git repo, and then click Finish.
 5) Click Next.
-6) On the 'Import Projects' page, ensure that all the RogueCloud* projects are checked, and click Finish.
-7) A 'Workspace Migration' dialog may appear after you click Finish. Click Next, then Next, then Finish.
+6) On the 'Import Projects' page, ensure that all the RogueCloud* projects are checked, and then click Finish.
+7) A 'Workspace Migration' dialog may appear after you click Finish. Click Next, then Next, and then Finish.
 8) You should now have workspace containing all the RogueCloud projects from the Git repository. None of the projects should have build errors.
 
 ### D) Publish the 'RogueCloudClientLiberty' project to the Liberty server
 
-1) Select Window (menu item) > Show View > Other. Select Server > Servers, and click Open.
-2) In the Servers view, right-click on 'Liberty Server at localhost' and select 'Add and Remove...'.
+1) Select Window (menu item) > Show View > Other. Select Server > Servers, and then click Open.
+2) In the Servers view, right-click on 'Liberty Server at localhost' and then select 'Add and Remove...'.
 3) Click 'RogueCloudClientLiberty', then 'Add >'. Click Finish.
-4) In the Servers view, right-click on 'Liberty Server at localhost' and select 'Start'.
+4) In the Servers view, right-click on 'Liberty Server at localhost' and then select 'Start'.
 
 
 ### E) Register a user and then make changes to the SimpleAI class
@@ -68,7 +68,7 @@ To watch your agent as it interacts with the game world, look for following mess
 ```
 ***********************************************************************************************
 *                                                                                             *
-*    Agent has started. Watch at: http://localhost:9080/RogueCloudClientLiberty/StartAgent   *
+*    Agent has started. Watch at: http://localhost:9080/RogueCloudClientLiberty/StartAgent    *
 *                                                                                             *
 ***********************************************************************************************
 ```

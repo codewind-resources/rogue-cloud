@@ -3,7 +3,7 @@
 
 * Pre-requisite: Ensure that the Java 8 JDK is installed. [Learn more on installing Java](Installing-Java.md).
 
-This section is assuming that you are familiar with an existing developer text editor such as Visual Studio Code, Atom, or Sublime Text. For Visual Studio code, we recommend the 'Java Extension Pack', which includes tighter integration with the Java platform.
+This section assumes that you are familiar with an existing developer text editor such as Visual Studio Code, Atom, or Sublime Text. For Visual Studio code, we recommend the 'Java Extension Pack', which includes tighter integration with the Java platform.
 
 ### A) Open StartAgentServlet.java and register a new username and password
 
@@ -13,7 +13,7 @@ This section is assuming that you are familiar with an existing developer text e
 	public static final String USERNAME = "(specify a username here!)";
 	public static final String PASSWORD = "(specify a password here!)";
 	```
-The username and password you specify here will be automatically registered the first time they are used.
+The username and password you specify here are automatically registered the first time they are used.
 
 ### B) Open SimpleAI.java -- this is where you will be writing AI code to control your game character.
 
@@ -35,7 +35,7 @@ cd (path to git repo)
 cd RogueCloudClientLiberty
 ../mvnw liberty:run-server
 ```
-This will start an instance of Websphere Liberty, and your game client code will automatically connect to the game server and begin controlling your character.
+This starts an instance of WebSphere Liberty, and your game client code automatically connects to the game server and begins controlling your character.
 
 To stop the game client, hit CTRL-C (on Windows, you may need to hit Y or CTRL-C, to terminate the batch file).
 
