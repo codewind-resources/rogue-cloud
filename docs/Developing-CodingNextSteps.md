@@ -29,8 +29,8 @@ More [information on key concepts are available here](README.md).
 While hacking on your agent code, it is important to be able to learn about the agent API classes and their methods. The best way to do this is to open their source in the git repo.
 
 To locate the source and documentation for a Rogue Cloud class, use the 'Goto' key/shortcut for your development environment of choice.
+* **Microclimate**: CTRL-P  (Command-P on Mac)
 * **Eclipse**: CTRL-R
-* **Microclimate/Orion**: CTRL-SHIFT-F
 * **Visual Studio Code**: CTRL-P
 * **Sublime Text**: CTRL-P
 * **Atom**: CTRL-P
@@ -38,7 +38,7 @@ To locate the source and documentation for a Rogue Cloud class, use the 'Goto' k
 
 So, for example, if you are using Visual Studio Code, and you are looking for the ICreature class, hit CTRL-P, type ``ICreature.java``, and hit Enter.
 
-Likewise in Microclimate, hit CTRL-SHIFT-F, type ``ICreature``, and look for the .java file in the list (Command-Shift-F on Mac).
+Likewise in Microclimate, hit CTRL-P (Command-P on Mac), type ``ICreature``, and look for the .java file in the list.
 
 ### Javadocs for the Agent API classes
 
