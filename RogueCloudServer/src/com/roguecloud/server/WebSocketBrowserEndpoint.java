@@ -45,7 +45,6 @@ public class WebSocketBrowserEndpoint {
 	@OnOpen
 	public void open(Session session) {
 		System.out.println("open.");
-		
 		ResourceLifecycleUtil.getInstance().addNewSession(ServerWsClientUtil.convertSessionToManagedResource(session));
 		
 	}

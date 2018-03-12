@@ -281,6 +281,8 @@ public class SimpleAI extends RemoteClient {
 	
 	// ------------------------------- ( Agent implementation) ------------------------------------------------------------
 	
+	private static final boolean SYNC_DEBUG = false; 
+	
 	public static enum State { WANDERING, GETTING_ITEM, KILLING_MONSTER };
 	
 	private State currentState = State.WANDERING;
@@ -291,8 +293,48 @@ public class SimpleAI extends RemoteClient {
 	
 	private PickUpItemData pickUpItemData = null;
 	
-	private List<ActionResponseFuture> waitingForActionResponse = new ArrayList<>();
+	private List<ARFEntry> waitingForActionResponse = new ArrayList<>();
 //	private ActionResponseFuture waitingForActionResponse;
+	
+	
+	private static class ARFEntry {
+		final ActionResponseFuture arf;
+		final long gameTick;
+		final IAction action;
+		
+		public ARFEntry(ActionResponseFuture arf, IAction action, long gameTick) {
+			this.arf = arf;
+			this.gameTick = gameTick;
+			this.action = action;
+		}
+		
+		public ActionResponseFuture get() {
+			return arf;
+		}
+		
+		public long getGameTick() {
+			return gameTick;
+		}
+		
+		public IAction getAction() {
+			return action;
+		}
+	}
+	
+	private Position getOurPosition() {
+		Position result = selfState.getPlayer().getPosition();
+		
+		for(int x = waitingForActionResponse.size()-1; x >= 0; x--) {
+			ARFEntry ae = waitingForActionResponse.get(x);
+			if(ae.getAction() instanceof StepAction) {
+				result = ((StepAction)ae.getAction()).getDestPosition();
+				break;
+			}
+		}
+		
+		return result;
+		
+	}
 	
 	
 	@Override
@@ -303,10 +345,14 @@ public class SimpleAI extends RemoteClient {
 		if(me.isDead()) {
 			return;
 		}
+		if(SYNC_DEBUG) { System.out.println("stateUpdate:  size: "+waitingForActionResponse.size()); }
 		
-		for(Iterator<ActionResponseFuture> it = waitingForActionResponse.iterator(); it.hasNext();) {
-			IActionResponse response = it.next().getOrReturnNullIfNoResponse();
+		for(Iterator<ARFEntry> it = waitingForActionResponse.iterator(); it.hasNext();) {
+			ARFEntry arfEntry = it.next();
+			
+			IActionResponse response = arfEntry.get().getOrReturnNullIfNoResponse();
 			if(response != null) {
+				if(SYNC_DEBUG) {  System.err.println("action performed: "+response.actionPerformed()+" "+response.getClass().getName()+" game time:"+arfEntry.getGameTick()+" action:" +arfEntry.getAction()); }
 				
 				if(response.actionPerformed()) {
 					// Success
@@ -327,7 +373,6 @@ public class SimpleAI extends RemoteClient {
 								}
 							}
 						}
-						miiar.getObjectId();
 					}
 					
 				}
@@ -336,7 +381,9 @@ public class SimpleAI extends RemoteClient {
 				if(!response.actionPerformed()) {
 					
 					if(response instanceof NullActionResponse) {
-						/* ignore, this is expected */
+						it.remove();
+						/* ignore, this is expected - null actions are never performed by definition. */
+						break;
 					} else if(currentState == State.WANDERING) {
 						wanderingStateDate = null;
 					} else if(currentState == State.KILLING_MONSTER) {
@@ -348,6 +395,7 @@ public class SimpleAI extends RemoteClient {
 						currentState = State.WANDERING;
 					}
 					
+					if(SYNC_DEBUG) {  System.err.println("clearing actions. "+response+" "+arfEntry.getGameTick()); }
 					waitingForActionResponse.clear();
 					
 					break;
@@ -384,7 +432,8 @@ public class SimpleAI extends RemoteClient {
 	
 	private void sendActionAndAddToList(IAction action) {
 		ActionResponseFuture arf = sendAction(action);
-		waitingForActionResponse.add(arf);
+		waitingForActionResponse.add(new ARFEntry(arf, action, worldState.getCurrentGameTick()));
+		if(SYNC_DEBUG) { System.out.println("["+currentState.name()+"] adding action: "+action+" | "+worldState.getCurrentGameTick()); }
 	}
 
 	
@@ -392,6 +441,7 @@ public class SimpleAI extends RemoteClient {
 
 		IMap map = worldState.getMap();
 		ICreature me = selfState.getPlayer();
+		Position ourPosition = getOurPosition();
 		
 		if(pickUpItemData == null) {
 			pickUpItemData = new PickUpItemData();
@@ -421,7 +471,7 @@ public class SimpleAI extends RemoteClient {
 			}
 		}
 		
-		if(AIUtils.canReach(me.getPosition(), go.getPosition(), map)) {
+		if(AIUtils.canReach(ourPosition, go.getPosition(), map)) {
 			currentState = State.WANDERING;
 			pickUpItemData = null;
 			return new MoveInventoryItemAction(go.getId(), Type.PICK_UP_ITEM );
@@ -434,7 +484,7 @@ public class SimpleAI extends RemoteClient {
 		
 		if(pickUpItemData.ourCurrentRoute == null) {
 			// Find a new route to the ground object
-			List<Position> routeToDestination = FastPathSearch.doSearchWithAStar(selfState.getPlayer().getPosition(), go.getPosition(), worldState.getMap());
+			List<Position> routeToDestination = FastPathSearch.doSearchWithAStar(ourPosition, go.getPosition(), worldState.getMap());
 
 			if(routeToDestination.size() > 1) {
 				// Remove the first item, which is our current position
@@ -459,6 +509,7 @@ public class SimpleAI extends RemoteClient {
 		
 		IMap map = worldState.getMap();
 		ICreature me = selfState.getPlayer();
+		Position ourPosition = getOurPosition();
 		
 		if(attackingStateData == null) {
 			// If the state doesn't exist, create it
@@ -494,7 +545,7 @@ public class SimpleAI extends RemoteClient {
 			}
 		}
 		
-		if(AIUtils.canReach(selfState.getPlayer().getPosition(), creatureToAttack.getPosition(), map)) {
+		if(AIUtils.canReach(ourPosition, creatureToAttack.getPosition(), map)) {
 			// If we can attack the creature from where we are standing, then do it!
 			return new CombatAction(creatureToAttack);
 		}
@@ -504,23 +555,66 @@ public class SimpleAI extends RemoteClient {
 			attackingStateData.ourCurrentRoute = null;
 		}
 		
-		int distance = me.getPosition().manhattanDistanceBetween(creatureToAttack.getPosition());
+		int distance = ourPosition.manhattanDistanceBetween(creatureToAttack.getPosition());
 		
+		// If we already have a route to the creature, and then creature hasn't moved, then continue to use the route
+		if(attackingStateData.ourCurrentRoute != null && attackingStateData.ourCurrentRoute.size() > 0 
+				&& attackingStateData.creatureToAttackLastPosition != null
+				
+				/*&& attackingStateData.creatureToAttackLastPosition.manhattanDistanceBetween(creatureToAttack.getPosition()) < 10*/  ) {
+
+			// Continue on our current path if it gets us closer
+//			Position nextPosition = attackingStateData.ourCurrentRoute.get(0);
+	
+//			{
+//				ArrayList<Position> routePositions = new ArrayList<>();
+//				routePositions.addAll(attackingStateData.ourCurrentRoute);
+//				Collections.reverse(routePositions);
+//				for(int x = 0; x < routePositions.size(); x++) {
+//					Position currPos = routePositions.get(x);
+//				}
+//				for(Iterator<Position> it = routePositions.iterator(); it.hasNext();) {
+//					
+//				}
+//				
+//			}
+
+			if(false) {
+				int closestPosition = Integer.MAX_VALUE;
+				for(Position p : attackingStateData.ourCurrentRoute) {
+					int distanceFromPToCreature = creatureToAttack.getPosition().manhattanDistanceBetween(p);
+					if(distanceFromPToCreature < closestPosition) {
+						closestPosition = distanceFromPToCreature;
+					}
+				}
+				if(closestPosition < distance) {
+					if(SYNC_DEBUG) {  System.err.println("still good: "+attackingStateData.ourCurrentRoute+" "+creatureToAttack.getPosition()); }
+					Position nextMove = attackingStateData.ourCurrentRoute.remove(0);
+					return new StepAction(nextMove);					
+				} else {
+					if(SYNC_DEBUG) {   System.err.println("no longer good: "+attackingStateData.ourCurrentRoute+" "+creatureToAttack.getPosition()); }
+				}
+			}
+			
+		}
 		
-		List<Position> fastPathSearchResult = AStarSearch.findPath(selfState.getPlayer().getPosition(), creatureToAttack.getPosition(), worldState.getMap());
+		List<Position> fastPathSearchResult = AStarSearch.findPath(ourPosition, creatureToAttack.getPosition(), worldState.getMap());
 		if(fastPathSearchResult.size() > 1) {
 			fastPathSearchResult.remove(0);
 			attackingStateData.ourCurrentRoute = fastPathSearchResult;
+			attackingStateData.creatureToAttackLastPosition = creatureToAttack.getPosition();
+			if(SYNC_DEBUG) { System.err.println("setting current route in fast path: "+fastPathSearchResult+" ["+worldState.getCurrentGameTick()+"]"); }
 		
 		} else if(attackingStateData.ourCurrentRoute == null || distance < 15) {
 			// Find a new route to the creature
-			List<Position> routeToDestination = AStarSearch.findPath(selfState.getPlayer().getPosition(), creatureToAttack.getPosition(), worldState.getMap());
+			List<Position> routeToDestination = AStarSearch.findPath(ourPosition, creatureToAttack.getPosition(), worldState.getMap());
 			if(routeToDestination.size() > 1) {
 				// Remove the first item, which is our current position
 				routeToDestination.remove(0);
 				
 				attackingStateData.ourCurrentRoute = routeToDestination;
-
+				attackingStateData.creatureToAttackLastPosition = creatureToAttack.getPosition();
+				if(SYNC_DEBUG) {  System.err.println("setting current route in slow path: "+routeToDestination+" ["+worldState.getCurrentGameTick()+"]"); }
 			}
 			
 		}
@@ -538,6 +632,7 @@ public class SimpleAI extends RemoteClient {
 	private IAction doWandering(SelfState selfState, WorldState worldState, IEventLog eventLog) {
 
 		ICreature me = selfState.getPlayer();
+		Position ourPosition = getOurPosition();
 		IMap map = worldState.getMap();
 
 		// Did any creatures attack us last turn?
@@ -561,9 +656,9 @@ public class SimpleAI extends RemoteClient {
 		
 		// Are there any creatures we might want to attack?
 		{
-			List<ICreature> creatures = AIUtils.findCreaturesInRange(worldState.getViewWidth(), worldState.getViewHeight(), selfState.getPlayer().getPosition(), worldState.getMap());
+			List<ICreature> creatures = AIUtils.findCreaturesInRange(worldState.getViewWidth(), worldState.getViewHeight(), ourPosition, worldState.getMap());
 			AIUtils.removePlayerCreaturesFromList(creatures);
-			AIUtils.sortClosestCreatures(selfState.getPlayer().getPosition(), creatures);
+			AIUtils.sortClosestCreatures(ourPosition, creatures);
 			
 			ICreature creatureToAttack = shouldIAttackCreature(creatures);
 			if(creatureToAttack != null) {
@@ -579,7 +674,7 @@ public class SimpleAI extends RemoteClient {
 		
 		// Are there any items we might want to pickup?
 		{
-			List<IGroundObject> groundObjects = AIUtils.findAndSortGroundObjectsInRange(worldState.getViewWidth(), worldState.getViewHeight(), me.getPosition(), map);
+			List<IGroundObject> groundObjects = AIUtils.findAndSortGroundObjectsInRange(worldState.getViewWidth(), worldState.getViewHeight(), ourPosition, map);
 			
 			IGroundObject objectToPickup = shouldIPickUpItem(groundObjects);
 			if(objectToPickup != null) {
@@ -606,7 +701,7 @@ public class SimpleAI extends RemoteClient {
 			Position destination = whereShouldIGo();
 			if(destination == null) { return NullAction.INSTANCE; }
 			
-			List<Position> routeToDestination = FastPathSearch.doSearchWithAStar(me.getPosition(), destination, worldState.getMap());
+			List<Position> routeToDestination = FastPathSearch.doSearchWithAStar(ourPosition, destination, worldState.getMap());
 			if(routeToDestination.size() > 1) {
 				// Success!
 				
@@ -636,6 +731,7 @@ public class SimpleAI extends RemoteClient {
 	
 	private static class AttackingStateData {
 		ICreature creatureToAttack = null;
+		Position creatureToAttackLastPosition = null;
 		List<Position> ourCurrentRoute = new ArrayList<Position>();
 	}
 

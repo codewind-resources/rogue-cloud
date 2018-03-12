@@ -128,13 +128,13 @@ public final class Tile {
 	
 	// Internal methods ------------------------------------------------------------------------------
 	
-		
-	public TileType[] getTileTypeLayers() { 
-		
+	public TileType[] getTileTypeLayersForBrowserPresentation(int creatureArrayOffset) {
 		TileType fg = null;
 		
 		if(creatures.size() > 0) {
-			ICreature creature = creatures.get( (int) (Math.random() * creatures.size())  );
+			int index = (0+creatureArrayOffset) % creatures.size();
+			
+			ICreature creature = creatures.get( index  );
 			if(creature != null) {
 				TileType creatureFg = creature.getTileType();
 				
@@ -170,9 +170,12 @@ public final class Tile {
 			// bg no, fg no
 			return new TileType[] {};
 		}
-
 	}
-
+	
+	public TileType[] getTileTypeLayers() { 
+		return getTileTypeLayersForBrowserPresentation(0); // (int)(Math.random()*1024) );
+	}
+	
 	public List<ICreature> getCreaturesForModification() {
 		if(RCRuntime.CHECK && isTileForRead) {
 			throw new RuntimeException("Invalid thread write.");

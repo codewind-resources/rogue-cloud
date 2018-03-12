@@ -355,6 +355,7 @@ public class LibertySessionWrapper implements ISessionWrapper {
 				} else if(jccr.getConnectResult().equals(ConnectResult.FAIL_ROUND_OVER.name())) {
 					System.out.println("Update: Round is over, waiting for new round..");
 					changeState(WrapperState.COMPLETE);
+					parent.informRoundIsComplete(5);
 				} else {
 					errorOccurred(session);
 				}
