@@ -1,7 +1,7 @@
 
 ## Coding a Rogue Cloud Agent
 
-This page focuses on coding for Rogue Cloud within the development environment you've setup. 
+This page focuses on coding for Rogue Cloud within the development environment you've setup.
 * Click here to [learn about setting up a development environment](GettingStarted.md).
 * Click here to [learn more about the key concepts of Rogue Cloud](README.md).
 
@@ -10,7 +10,7 @@ This page focuses on coding for Rogue Cloud within the development environment y
 
 The ``SimpleAI`` class provides a sample implementation and framework to easily begin hacking on your agent code. In fact, the ``SimpleAI`` class is ready to go right out of the box! To start your agent code, follow the build and run instructions from the development environment setup page.
 
-Once you've got your code running, the next step is to focus on improving it. The ``SimpleAI`` class acts based on the implementation that you provide in each of the following methods:
+When you've got your code running, the next step is to focus on improving it. The ``SimpleAI`` class acts based on the implementation that you provide in each of the following methods:
 * **whereShouldIGo**: What coordinate on the map should I start moving towards?
 * **shouldIPickUpItem**: I see an item, should I pick it up?
 * **shouldIAttackCreature**: I see a creature, should I attack them?
