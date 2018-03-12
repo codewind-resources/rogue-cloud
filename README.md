@@ -1,7 +1,7 @@
 
 ## Introduction
 
-Rogue Cloud is an open-world top-down 2D multiplayer game, but unlike a traditional game where you control it with a controller/keyboard/mouse, with Rogue Cloud you are actually writing code to control your character as it interacts with vast, dangerous game world. Behind the scenes the code that you write is packaged into a websocket-based microservice, which like a traditional microservice, provides or supports a variety of cloud-native requirements.
+Rogue Cloud is an open-world top-down 2D multiplayer game, but unlike a traditional game where you control it with a controller, keyboard, or mouse, with Rogue Cloud you are actually writing code to control your character as it interacts with a vast and dangerous game world. Behind the scenes, the code that you write is packaged into a websocket-based microservice, which like a traditional microservice, provides or supports a variety of cloud-native requirements.
 
 ## Getting Started
 
@@ -19,7 +19,7 @@ Building microservices and cloud-native applications requires tools that lets de
   * Learn more about **Microclimate**, our [container-based development tools driving end-to-end delivery and rapid iteration of Node/Java/Swift application development](https://microclimate-dev2ops.github.io/).
 	
 Rogue Cloud is designed to showcase the capabilities of our Kubernetes-based **IBM Cloud Private** and **IBM Cloud Containers** services. 
-  * Learn about deploying your containers to Kubernetes using the [IBM Cloud Private](https://www.ibm.com/cloud-computing/products/ibm-cloud-private/) and the [IBM Cloud Containers](https://www.ibm.com/cloud/container-service) services.
+  * Learn more about deploying your containers to Kubernetes using the [IBM Cloud Private](https://www.ibm.com/cloud-computing/products/ibm-cloud-private/) and the [IBM Cloud Containers](https://www.ibm.com/cloud/container-service) services.
 	
 ## Playing the game
 
