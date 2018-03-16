@@ -40,8 +40,15 @@
 ### B) Start Microclimate
 
 To start Microclimate, run the ``mcdev start -o`` command.
+
+**Windows**:
 ```
 mcdev start -o
+```
+
+**Mac/Linux**:
+```
+~/mcdev start -o
 ```
 
 The Microclimate CLI downloads the Microclimate Docker images and starts the development containers. Once complete, you should see a Microclimate has started message, and the Microclimate browser UI will open in your browser.
@@ -97,61 +104,8 @@ Next, [visit the next steps page to learn more about coding an agent for Rogue C
 
 ## To uninstall Microclimate and Rogue Cloud
 
-#### Linux/Mac OS - Run the following commands:
-
-1) Stop the Microclimate docker containers:
-```
-mcdev stop
-```
-
-2) Remove the .microclimate and microclimate-workspace directories:
-```
-cd ~
-cd .microclimate
-rm *.yaml
-rm mcdev
-rm -r .env
-cd ..
-rmdir .microclimate
-rm -r microclimate-workspace
-cd ..
-```
-
-3) Remove the Microclimate images
-  * Either remove dangling Docker images:
-    ```
-    docker system prune
-    ```
-  * Or, remove all Docker images:
-    * *Warning*: this will [delete all Docker images](https://docs.docker.com/engine/reference/commandline/system_prune/), not just Microclimate Docker images.
-    ```
-    docker system prune --all
-    ```
-
-
-#### Windows - Run the following commands:
-
-1) Stop the Microclimate docker containers:
-```
-mcdev stop
-```
-
-2) Remove the .microclimate and microclimate-workspace directories, from the Command Prompt:
-```
-cd c:\Users\(your login name)
-cd .microclimate
-del *.yaml
-del mcdev
-del .env
-cd ..
-rmdir .microclimate
-rmdir /s /q microclimate-workspace
-```
-
-3) Remove the Microclimate images:
-```
-docker system prune
-```
+To uninstall, see the instructions on the Microclimate installation page:
+* https://microclimate-dev2ops.github.io/gettingstarted
 
 ## Troubleshooting Microclimate and Rogue Cloud
 
@@ -183,7 +137,7 @@ docker ps | grep "microclimate-dev"
 ```
 
 Look for the line that looks like this: 0.0.0.0:**32771**->9080/tcp, 0.0.0.0:32770->9443/tcp"
-In this case, **32771** is the new port we Use the port (not 9080 or 9443).
+In this case, **32771** is the new port (not 9080 or 9443).
 
 In Microclimate, click on the **Open application** icon and replace the old port with the new one, by entering the following URL:
 * ``http://localhost:(port from above)/gameclient/StartAgent``
