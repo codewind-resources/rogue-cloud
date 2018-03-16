@@ -40,8 +40,15 @@
 ### B) Start Microclimate
 
 To start Microclimate, run the ``mcdev start -o`` command.
+
+**Windows**:
 ```
 mcdev start -o
+```
+
+**Mac/Linux**:
+```
+~/mcdev start -o
 ```
 
 The Microclimate CLI downloads the Microclimate Docker images and starts the development containers. Once complete, you should see a Microclimate has started message, and the Microclimate browser UI will open in your browser.
@@ -50,43 +57,23 @@ If your browser did not automatically open, you may access the browser UI by run
 
 ### C) Add Rogue Cloud to Microclimate
 
-Next, we create a new project to contain the game code, then we need to download the standalone Rogue Cloud client ZIP and unzip it into the appropriate spot in the ``microclimate-workspace directory`.
-
-1) In the Microclimate browser UI, click the ``here`` link to open the project creation dialog. Select the '.java' icon.
-2) Specify ``gameclient`` as the project name. You must specify this name *EXACTLY*, as we will be importing files into this directory in later steps.
-3) Click ``Next``.
-4) Click ``Microprofile``, and do NOT edit the 'Context root' field from the default (the default is gameclient.) Click ``Create``.
-5) Once the code is generated, click ``Edit Code``. You are redirected to the code editor.
-  *  Note: You might see 'You are not authorized to access /file/anonymous-OrionContent/gameclient', this warning can be safely ignored.
-6) Before you start building the code, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This takes a while -- up to 8 minutes depending on CPU and network connection (this is an early beta of Microclimate: we're working on speeding up this step dramatically! Thanks for your patience! :)   ). You can use ``docker logs -f microclimate-file-watcher`` to watch its progress.
-7) Once the build has initialized and downloaded the required dependencies, the build icon displays a red circle notification, like so:
-![Orion ready to go](resources/gameclient-orion-ready.png "Orion ready to go")
-* In the build logs window, you should the Maven build log with 'BUILD SUCCESS' at the bottom.
-
-8) Download and unzip the standalone game client, as follows:
-* Download the file from here: http://www-rogue-cloud.mybluemix.net/RogueCloudLibertyStandalone.zip
-* On the Terminal (or Command Prompt):
-    #### Linux:
-    ```
-    cd ~/microclimate-workspace
-    sudo unzip -o (path to downloaded ZIP)/RogueCloudLibertyStandalone.zip
-    ```
-
-    #### Mac OS:
-    ```
-    cd ~/microclimate-workspace
-    unzip -o (path to downloaded ZIP)/RogueCloudLibertyStandalone.zip
-    ```
-    
-    #### Windows OS:
-    1) In File Explorer, go to the previous installation directory of Microclimate (where you downloaded and extracted the microclimate.zip file)
-    2) Open the ``microclimate-workspace`` directory.
-    3) Download and copy the ``RogueCloudLibertyStandalone.zip`` into this directory, then extract it. (When prompted, overwrite any existing files.)
-
+Next, we import the Rogue Cloud game client into our Microclimate workspace:
+1) Download and unzip the standalone game client source code:
+  * Download the source ZIP from here: http://www-rogue-cloud.mybluemix.net/gameclient.zip
+2) In the Microclimate browser UI, click the ``Import Project`` button.
+3) Click the ``Project archive`` radio button, then click the ``Select archive file`` button.
+4) Specify the location of the ``gameclient.zip`` file that you downloaded in step 1, then click ``Open``.
+  * In the Microclimate UI, you should now see a message indicating the size of the archive file.
+5) Click ``Next``, then click the ``Import`` button.
+6) Once the code is generated, click ``Edit Code``. You are now redirected to the code editor.
+7) Before you start building the code, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This takes a while -- up to 8 minutes depending on CPU and network connection (this is an early beta of Microclimate: we're working on speeding up this step dramatically! Thanks for your patience! :)   ). You can use ``docker logs -f microclimate-file-watcher`` to watch its progress.
+8) Once the build has initialized and downloaded the required dependencies, the build icon displays a green circle notification, like so: ![Rogue Cloud project is built](resources/gameclient-microclimate-ready.png "Rogue Cloud project is built")
+* In the ``Build logs`` window, you should the Maven build log with 'BUILD SUCCESS' at the bottom.
+ 
 ### D) Register a user and then make changes to the SimpleAI class
 
-1) In the code editor, hit ``CTRL-SHIFT-F`` (``Command-Shift-F`` on Mac) and type ``StartAgentServlet.java``, and select ``StartAgentServlet.java``.
-* ``CTRL-SHIFT-F/Command-Shift-F`` is a great way to find quickly Java classes in the Microclimate code editor.
+1) In the code editor, hit ``CTRL-P`` (``Command-P`` on Mac) and type ``StartAgentServlet.java``, and select ``StartAgentServlet.java``.
+* ``CTRL-P/Command-P`` is a great way to find quickly Java classes in the Microclimate code editor.
 * *Note*: You *might* need to click inside the code editor for this shortcut key to work.
 
 2) Edit the following fields to create a new user and password.
@@ -96,17 +83,16 @@ public static final String PASSWORD = "(specify a password here!)";
 ```
 * The username and password you specify are automatically registered when your code first begins controlling a character on the game map.
 
-3) Hit ``CTRL-SHIFT-F`` and type ``SimpleAI`` and select ``SimpleAI.java``. (On Mac, use ``Command-Shift-F``).
+3) Hit ``CTRL-P`` (on Mac, use ``Command-P``) and type ``SimpleAI.java`` and select ``SimpleAI.java``.
 
 4) This class is the main AI class. Changes made to this class are reflected in your AI running on the Liberty Server.
 
-
 ### E) Next steps: watch your agent go, and start coding
 
-To watch your agent as it interacts with the game world, switch to the application view. You see a URL at the top of the page:
+To watch your agent as it interacts with the game world, switch to the ``Open app`` tab. You see a URL at the top of the page:
 
-Add ``/StartAgent`` to the end of the URL, such that it looks like:
-``http://localhost:(port)/gameclient/StartAgent``
+Add ``/gameclient/StartAgent`` to the end of the URL, such that it looks like:
+* ``http://localhost:(port)/gameclient/StartAgent``
 * where (port) is the randomly generated local port for the server.
 
 
@@ -118,61 +104,8 @@ Next, [visit the next steps page to learn more about coding an agent for Rogue C
 
 ## To uninstall Microclimate and Rogue Cloud
 
-#### Linux/Mac OS - Run the following commands:
-
-1) Stop the Microclimate docker containers:
-```
-mcdev stop
-```
-
-2) Remove the .microclimate and microclimate-workspace directories:
-```
-cd ~
-cd .microclimate
-rm *.yaml
-rm mcdev
-rm -r .env
-cd ..
-rmdir .microclimate
-rm -r microclimate-workspace
-cd ..
-```
-
-3) Remove the Microclimate images
-  * Either remove dangling Docker images:
-    ```
-    docker system prune
-    ```
-  * Or, remove all Docker images:
-    * *Warning*: this will [delete all Docker images](https://docs.docker.com/engine/reference/commandline/system_prune/), not just Microclimate Docker images.
-    ```
-    docker system prune --all
-    ```
-
-
-#### Windows - Run the following commands:
-
-1) Stop the Microclimate docker containers:
-```
-mcdev stop
-```
-
-2) Remove the .microclimate and microclimate-workspace directories, from the Command Prompt:
-```
-cd c:\Users\(your login name)
-cd .microclimate
-del *.yaml
-del mcdev
-del .env
-cd ..
-rmdir .microclimate
-rmdir /s /q microclimate-workspace
-```
-
-3) Remove the Microclimate images:
-```
-docker system prune
-```
+To uninstall, see the instructions on the Microclimate installation page:
+* https://microclimate-dev2ops.github.io/gettingstarted
 
 ## Troubleshooting Microclimate and Rogue Cloud
 
@@ -204,7 +137,7 @@ docker ps | grep "microclimate-dev"
 ```
 
 Look for the line that looks like this: 0.0.0.0:**32771**->9080/tcp, 0.0.0.0:32770->9443/tcp"
-In this case, **32771** is the new port we Use the port (not 9080 or 9443).
+In this case, **32771** is the new port (not 9080 or 9443).
 
 In Microclimate, click on the **Open application** icon and replace the old port with the new one, by entering the following URL:
 * ``http://localhost:(port from above)/gameclient/StartAgent``
