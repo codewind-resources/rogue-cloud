@@ -59,7 +59,7 @@ If your browser did not automatically open, you may access the browser UI by run
 
 Next, we import the Rogue Cloud game client into our Microclimate workspace:
 1) In the Microclimate browser UI, select ``Import Project``.
-2) Select 'GitHub', then copy paste the following repository location:
+2) Select ``GitHub``, then copy paste the following repository location:
 * https://github.com/microclimate-dev2ops/rogue-cloud-client
 3) Click ``Next``, then click the ``Import`` button.
 4) Once the code is generated, click the ``Edit Code`` button. You are now redirected to the code editor.
