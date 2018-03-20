@@ -58,16 +58,13 @@ If your browser did not automatically open, you may access the browser UI by run
 ### C) Add Rogue Cloud to Microclimate
 
 Next, we import the Rogue Cloud game client into our Microclimate workspace:
-1) Download and unzip the standalone game client source code:
-  * Download the source ZIP from here: http://www-rogue-cloud.mybluemix.net/gameclient.zip
-2) In the Microclimate browser UI, click the ``Import Project`` button.
-3) Click the ``Project archive`` radio button, then click the ``Select archive file`` button.
-4) Specify the location of the ``gameclient.zip`` file that you downloaded in step 1, then click ``Open``.
-  * In the Microclimate UI, you should now see a message indicating the size of the archive file.
-5) Click ``Next``, then click the ``Import`` button.
-6) Once the code is generated, click ``Edit Code``. You are now redirected to the code editor.
-7) Before you start building the code, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This takes a while -- up to 8 minutes depending on CPU and network connection (this is an early beta of Microclimate: we're working on speeding up this step dramatically! Thanks for your patience! :)   ). You can use ``docker logs -f microclimate-file-watcher`` to watch its progress.
-8) Once the build has initialized and downloaded the required dependencies, the build icon displays a green circle notification, like so: ![Rogue Cloud project is built](resources/gameclient-microclimate-ready.png "Rogue Cloud project is built")
+1) In the Microclimate browser UI, select ``Import Project``.
+2) Select ``GitHub``, then copy paste the following repository location:
+* https://github.com/microclimate-dev2ops/rogue-cloud-client
+3) Click ``Next``, then click the ``Import`` button.
+4) Once the code is generated, click the ``Edit Code`` button. You are now redirected to the code editor.
+5) Before you start building the code, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This takes a while -- up to 5 minutes depending on CPU and network connection (this is an early beta of Microclimate: we're working on speeding up this step dramatically! Thanks for your patience! :)   ). You can use ``docker logs -f microclimate-file-watcher`` to watch its progress.
+6) Once the build has initialized and downloaded the required dependencies, the build icon displays a green circle notification, like so: ![Rogue Cloud project is built](resources/gameclient-microclimate-ready.png "Rogue Cloud project is built")
 * In the ``Build logs`` window, you should the Maven build log with 'BUILD SUCCESS' at the bottom.
  
 ### D) Register a user and then make changes to the SimpleAI class
@@ -94,7 +91,6 @@ To watch your agent as it interacts with the game world, switch to the ``Open ap
 Add ``/gameclient/StartAgent`` to the end of the URL, such that it looks like:
 * ``http://localhost:(port)/gameclient/StartAgent``
 * where (port) is the randomly generated local port for the server.
-
 
 Congratulations, your character is now exploring and interacting with the game world, and earning you points on the leaderboard!
 
@@ -127,13 +123,13 @@ The port that microclimate listens on can change between restarts of Microclimat
 **On Windows, run**:
 ```
 C:\>docker ps | find "microclimate-dev"
-51b994aef26e        microclimate-dev-liberty-gameclient-idc-39aa835df45ef522d21eb77b2c0f8cfc1fc20627   "/root/artifacts/newÔÇª"   7 minutes ago       Up 7 minutes        0.0.0.0:32771->9080/tcp, 0.0.0.0:32770->9443/tcp   microclimate-dev-liberty-gameclient-idc-39aa835df45ef522d21eb77b2c0f8cfc1fc20627
+51b994aef26e        microclimate-dev-liberty-roguecloudclient-idc-39aa835df45ef522d21eb77b2c0f8cfc1fc20627   "/root/artifacts/newÔÇª"   7 minutes ago       Up 7 minutes        0.0.0.0:32771->9080/tcp, 0.0.0.0:32770->9443/tcp   microclimate-dev-liberty-gameclient-idc-39aa835df45ef522d21eb77b2c0f8cfc1fc20627
 ```
 
 **On Linux/Mac, run**:
 ```
 docker ps | grep "microclimate-dev"
-51b994aef26e        microclimate-dev-liberty-gameclient-idc-39aa835df45ef522d21eb77b2c0f8cfc1fc20627   "/root/artifacts/newÔÇª"   7 minutes ago       Up 7 minutes        0.0.0.0:32771->9080/tcp, 0.0.0.0:32770->9443/tcp   microclimate-dev-liberty-gameclient-idc-39aa835df45ef522d21eb77b2c0f8cfc1fc20627
+51b994aef26e        microclimate-dev-liberty-roguecloudclient-idc-39aa835df45ef522d21eb77b2c0f8cfc1fc20627   "/root/artifacts/newÔÇª"   7 minutes ago       Up 7 minutes        0.0.0.0:32771->9080/tcp, 0.0.0.0:32770->9443/tcp   microclimate-dev-liberty-gameclient-idc-39aa835df45ef522d21eb77b2c0f8cfc1fc20627
 ```
 
 Look for the line that looks like this: 0.0.0.0:**32771**->9080/tcp, 0.0.0.0:32770->9443/tcp"
