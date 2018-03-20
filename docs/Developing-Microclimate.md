@@ -88,10 +88,9 @@ public static final String PASSWORD = "(specify a password here!)";
 
 To watch your agent as it interacts with the game world, switch to the ``Open app`` tab. You see a URL at the top of the page:
 
-Add ``/roguecloudclient/StartAgent`` to the end of the URL, such that it looks like:
-* ``http://localhost:(port)/roguecloudclient/StartAgent``
+Add ``/gameclient/StartAgent`` to the end of the URL, such that it looks like:
+* ``http://localhost:(port)/gameclient/StartAgent``
 * where (port) is the randomly generated local port for the server.
-
 
 Congratulations, your character is now exploring and interacting with the game world, and earning you points on the leaderboard!
 
@@ -137,8 +136,8 @@ Look for the line that looks like this: 0.0.0.0:**32771**->9080/tcp, 0.0.0.0:327
 In this case, **32771** is the new port (not 9080 or 9443).
 
 In Microclimate, click on the **Open application** icon and replace the old port with the new one, by entering the following URL:
-* ``http://localhost:(port from above)/roguecloudclient/StartAgent``
-* For example: ``http://localhost:32771/roguecloudclient/StartAgent``
+* ``http://localhost:(port from above)/gameclient/StartAgent``
+* For example: ``http://localhost:32771/gameclient/StartAgent``
 
 ### After restarting microclimate using 'mcdev stop' and 'mcdev start', you're not able to see the Rogue Cloud browser UI
 
