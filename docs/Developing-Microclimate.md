@@ -11,7 +11,7 @@
   * Docker for Windows
   * On Windows 10, we strongly recommend that you do not run using Experimental Features which is enabled by default in Docker. To turn it off, go to Docker->Settings->Daemon and de-select **Experimental Features**.
 * **MacOS and Linux**
-  - Install Docker Compose (if not already installed)
+  - Install [Docker Compose](https://docs.docker.com/compose/install/) (if not already installed)
   - Supported architecture: x86-64 only
   - **Linux**: Follow [post-installation steps to run docker as a non-root user](https://docs.docker.com/engine/installation/linux/linux-postinstall/).
 4) You can either follow the instructions on the Microclimate Getting Started page under the 'Local microclimate deployment', or follow these setup instructions:
