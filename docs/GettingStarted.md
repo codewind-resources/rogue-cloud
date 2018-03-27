@@ -1,22 +1,11 @@
 
-### A) Clone the Rogue Cloud repository and run a Maven build
-* Pre-requisite: Ensure that git is installed. Git is available for download from https://git-scm.com/.
-* Pre-requisite: Ensure that the Java 8 JDK is installed. [Learn more on installing Java](Installing-Java.md).
-1) Create a directory to contain your Rogue Cloud git repository. Make a note of this directory as it will be used later on. On the Terminal (Linux/Mac) or Command Prompt (Windows):
-```
-mkdir (new repo directory)
-cd (your new repo directory)
-git clone https://github.com/microclimate-dev2ops/rogue-cloud.git
-cd rogue-cloud
-```
-2) Verify the install by building using Maven
-* **Linux/Mac**: ``./mvnw clean package ``
-* **Windows**: ``mvnw clean package``
+First, select the development environment that you will be playing the game in. We highly recommend you play with *Microclimate*, which is our new container-based microservice-oriented development environment. 
 
+You may also play using a programmer's text editor (such as VS Code or Atom), or using Eclipse and the IBM Liberty Development Tools.
 
-### B) Install the development environment of your choice.
-- [Developing Rogue Cloud using the Microclimate Beta](Developing-Microclimate.md)
+### A) Install the development environment of your choice.
+- **Recommended**: [Developing Rogue Cloud using the Microclimate Beta](Developing-Microclimate.md)
 - [Developing Rogue Cloud using a Text Editor (Sublime, VSCode) and Maven](Developing-Text-Editor.md)
 - [Developing Rogue Cloud using Eclipse and IBM Liberty Developer Tools](Developing-LibertyDevTools.md)
 
-### C) [Edit the agent code and watch it explore the game world from your browser.](Developing-CodingNextSteps.md)
+### B) [Edit the agent code and watch it explore the game world from your browser.](Developing-CodingNextSteps.md)
