@@ -1,0 +1,16 @@
+
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: rogue-cloud-server
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rogue-cloud-server
+    spec:
+      containers:
+      - name: rogue-cloud
+        image: registry.ng.bluemix.net/rogue-cloud-repo/rogue-cloud
+
