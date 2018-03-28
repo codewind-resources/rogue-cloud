@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rogue-cloud-server-load-balancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: rogue-cloud-server
+  ports:
+   - protocol: TCP
+     port: 29080
+  loadBalancerIP: 169.61.75.181
+
+

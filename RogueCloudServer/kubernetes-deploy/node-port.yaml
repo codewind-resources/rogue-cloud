@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rogue-cloud-nodeport-service
+  labels:
+    app: rogue-cloud-server
+spec:
+  selector:
+    run: rogue-cloud-server
+  type: NodePort
+  ports:
+   - protocol: TCP
+     port: 29080
