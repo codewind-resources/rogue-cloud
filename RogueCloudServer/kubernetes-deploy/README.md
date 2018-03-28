@@ -22,12 +22,13 @@ bx cr namespace-list
 
 ### Open Kubernetes Proxy
 
+Extract the token, then start the proxy:
 ```
 kubectl config view -o jsonpath='{.users[0].user.auth-provider.config.id-token}'
 kubectl proxy 
-
 ```
-Visit: http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
+
+Next, visit: http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
 
 
 ### Tag and push a build to IBM Containers Private Registry
