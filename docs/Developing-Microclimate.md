@@ -9,7 +9,7 @@
 * **Windows**
   * Windows 10 or Windows Server 2016
   * Docker for Windows
-  * On Windows 10, we strongly recommend that you do not run using Experimental Features which is enabled by default in Docker. To turn it off, go to Docker->Settings->Daemon and de-select **Experimental Features**.
+  * On Windows 10, we strongly recommend that you do not run using Experimental Features which is enabled by default in Docker. To turn it off, go to ``Docker``->``Settings``->``Daemon`` and de-select ``Experimental Features``.
 * **MacOS and Linux**
   - Install [Docker Compose](https://docs.docker.com/compose/install/) (if not already installed)
   - Supported architecture: x86-64 only
@@ -63,7 +63,7 @@ Next, we import the Rogue Cloud game client into our Microclimate workspace:
 * https://github.com/microclimate-dev2ops/rogue-cloud-client
 3) Click ``Next``, then click the ``Import`` button.
 4) Once the code is generated, click the ``Edit Code`` button. You are now redirected to the code editor.
-5) Before you start building the code, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This takes a while -- up to 5 minutes depending on CPU and network connection (this is an early beta of Microclimate: we're working on speeding up this step dramatically! Thanks for your patience! :)   ). You can use ``docker logs -f microclimate-file-watcher`` to watch its progress.
+5) Before you start building the code, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This can take up to 7 minutes depending on CPU and network connection (this initialization is only required the first time you using Microclimate). You can use ``docker logs -f microclimate-file-watcher`` to watch its progress.
 6) Once the build has initialized and downloaded the required dependencies, the build icon displays a green circle notification, like so: ![Rogue Cloud project is built](resources/gameclient-microclimate-ready.png "Rogue Cloud project is built")
 * In the ``Build logs`` window, you should the Maven build log with 'BUILD SUCCESS' at the bottom.
  
@@ -107,7 +107,7 @@ To uninstall, see the instructions on the Microclimate installation page:
 
 ### If a change to the code does not result in a rebuild, use 'mcdev stop' and 'mcdev start' to kick Microclimate back into gear.
 
-Any changes you make to the code in the Microclimate code editor should automatically kick off a build, which then automatically deploys to the server. If you are finding that your changes are not kicking off the automated builds, it is possible that the build is out-of-sync (this is an early beta of Microclimate, after all!).
+Any changes you make to the code in the Microclimate code editor should automatically kick off a build, which then automatically deploys to the server. If you are finding that your changes are not kicking off the automated builds, it is possible that the build is out-of-sync.
 
 To resolve this issue, run the following on your Terminal or Command Prompt, to restart Microclimate:
 ```
@@ -118,18 +118,18 @@ mcdev start
 
 ### Error message in the 'Open Application' page of Microclimate: "localhost refused to connect" (Chrome), 'Unable to connect' (Firefox), or blank screen (especially after restart of microclimate using mcdev stop then mcdev start)
 
-The port that microclimate listens on can change between restarts of Microclimate. We need to call Docker to find the newly assigned port.
+The port that Microclimate listens on can change between restarts of Microclimate. We need to call Docker to find the newly assigned port.
 
 **On Windows, run**:
 ```
 C:\>docker ps | find "microclimate-dev"
-51b994aef26e        microclimate-dev-liberty-roguecloudclient-idc-39aa835df45ef522d21eb77b2c0f8cfc1fc20627   "/root/artifacts/newÔÇª"   7 minutes ago       Up 7 minutes        0.0.0.0:32771->9080/tcp, 0.0.0.0:32770->9443/tcp   microclimate-dev-liberty-gameclient-idc-39aa835df45ef522d21eb77b2c0f8cfc1fc20627
+51b994aef26e        microclimate-dev-liberty-roguecloudclient-idc-39aa835df45ef522d21eb77b2c0f8cfc1fc20627   "/root/artifacts/new"   7 minutes ago       Up 7 minutes        0.0.0.0:32771->9080/tcp, 0.0.0.0:32770->9443/tcp   microclimate-dev-liberty-gameclient-idc-39aa835df45ef522d21eb77b2c0f8cfc1fc20627
 ```
 
 **On Linux/Mac, run**:
 ```
 docker ps | grep "microclimate-dev"
-51b994aef26e        microclimate-dev-liberty-roguecloudclient-idc-39aa835df45ef522d21eb77b2c0f8cfc1fc20627   "/root/artifacts/newÔÇª"   7 minutes ago       Up 7 minutes        0.0.0.0:32771->9080/tcp, 0.0.0.0:32770->9443/tcp   microclimate-dev-liberty-gameclient-idc-39aa835df45ef522d21eb77b2c0f8cfc1fc20627
+51b994aef26e        microclimate-dev-liberty-roguecloudclient-idc-39aa835df45ef522d21eb77b2c0f8cfc1fc20627   "/root/artifacts/new"   7 minutes ago       Up 7 minutes        0.0.0.0:32771->9080/tcp, 0.0.0.0:32770->9443/tcp   microclimate-dev-liberty-gameclient-idc-39aa835df45ef522d21eb77b2c0f8cfc1fc20627
 ```
 
 Look for the line that looks like this: 0.0.0.0:**32771**->9080/tcp, 0.0.0.0:32770->9443/tcp"

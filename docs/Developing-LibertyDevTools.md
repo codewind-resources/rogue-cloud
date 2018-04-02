@@ -1,4 +1,4 @@
-## Developing Rogue Cloud using Eclipse and IBM Liberty Developer Tools
+## Playing Rogue Cloud using Eclipse and IBM Liberty Developer Tools
 
 Pre-requisite: This requires Java 8 JDK be installed. The Java JDK is available from http://www.oracle.com/technetwork/java/javase/downloads/index.html.
 

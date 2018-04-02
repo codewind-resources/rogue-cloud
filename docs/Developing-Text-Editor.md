@@ -1,5 +1,5 @@
 
-## Developing Rogue Cloud using a Text Editor (Visual Studio Code, Atom, etc) and Maven
+## Playing Rogue Cloud using a Text Editor (Visual Studio Code, Atom, etc) and Maven
 
 This section assumes that you are familiar with an existing developer text editor such as Visual Studio Code, Atom, or Sublime Text. For Visual Studio code, we recommend the 'Java Extension Pack', which includes tighter integration with the Java platform.
 
