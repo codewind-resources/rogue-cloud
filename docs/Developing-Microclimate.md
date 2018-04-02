@@ -9,7 +9,7 @@
 * **Windows**
   * Windows 10 or Windows Server 2016
   * Docker for Windows
-  * On Windows 10, we strongly recommend that you do not run using Experimental Features which is enabled by default in Docker. To turn it off, go to Docker->Settings->Daemon and de-select **Experimental Features**.
+  * On Windows 10, we strongly recommend that you do not run using Experimental Features which is enabled by default in Docker. To turn it off, go to ``Docker``->``Settings``->``Daemon`` and de-select ``Experimental Features``.
 * **MacOS and Linux**
   - Install [Docker Compose](https://docs.docker.com/compose/install/) (if not already installed)
   - Supported architecture: x86-64 only
