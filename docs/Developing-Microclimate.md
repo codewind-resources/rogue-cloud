@@ -63,7 +63,7 @@ Next, we import the Rogue Cloud game client into our Microclimate workspace:
 * https://github.com/microclimate-dev2ops/rogue-cloud-client
 3) Click ``Next``, then click the ``Import`` button.
 4) Once the code is generated, click the ``Edit Code`` button. You are now redirected to the code editor.
-5) Before you start building the code, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This takes a while -- up to 5 minutes depending on CPU and network connection (this is an early beta of Microclimate: we're working on speeding up this step dramatically! Thanks for your patience! :)   ). You can use ``docker logs -f microclimate-file-watcher`` to watch its progress.
+5) Before you start building the code, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This can take up to 7 minutes depending on CPU and network connection (this initialization is only required the first time you using Microclimate). You can use ``docker logs -f microclimate-file-watcher`` to watch its progress.
 6) Once the build has initialized and downloaded the required dependencies, the build icon displays a green circle notification, like so: ![Rogue Cloud project is built](resources/gameclient-microclimate-ready.png "Rogue Cloud project is built")
 * In the ``Build logs`` window, you should the Maven build log with 'BUILD SUCCESS' at the bottom.
  
