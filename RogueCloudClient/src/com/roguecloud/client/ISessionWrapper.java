@@ -18,8 +18,8 @@ package com.roguecloud.client;
 
 import javax.websocket.Session;
 
-/** For internal use only */
 public interface ISessionWrapper  {
+	/** For internal use only */
 
 	void initialConnect(String url);
 

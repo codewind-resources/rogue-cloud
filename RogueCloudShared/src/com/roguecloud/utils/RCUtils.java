@@ -26,7 +26,11 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-/** For internal use only */
+/**
+ * Various miscellaneous utility methods.
+ * 
+ * This class is an internal class, for server use only.
+ */
 public class RCUtils {
 
 	@SuppressWarnings("unused")

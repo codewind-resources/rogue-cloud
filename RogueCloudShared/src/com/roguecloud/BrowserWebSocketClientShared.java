@@ -30,7 +30,12 @@ import com.roguecloud.map.Tile;
 import com.roguecloud.map.TileType;
 import com.roguecloud.utils.Logger;
 
-/** For internal use only */
+/**
+ * This class generates a JSON representation of all or part of the game world map, for consumption by HTML/JS-based browser UI. 
+ * The algorithm used by this class will, in certain cases, only send small sections of the world, rather than the full world, in order to save bandwidth/processing.
+ *
+ * This class is an internal class, for server use only.
+ */
 public class BrowserWebSocketClientShared {
 	
 	private static final Logger log = Logger.getInstance();

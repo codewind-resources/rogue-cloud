@@ -21,6 +21,15 @@ import java.util.List;
 import com.roguecloud.db.DbLeaderboardEntry;
 import com.roguecloud.db.DbUser;
 
+/** 
+ * MemoryDatabase is an in-memory frontend API for persistence, but MemoryDatabase requires a backend from which to retrieve
+ * and store data. Classes that implement this IDBBackend interface may be used as a database backend for the in-memory database.
+ * 
+ * The design of MemoryDatabase and IDBBackend are such that the full database contents is retrieved on first use, and from there
+ * individual or bulk writes may be performed.
+ * 
+ * Current backends are FileDbBackend (local storage) and CloudantDbBakcend (storage to Cloudant on IBM Cloud).
+ **/
 public interface IDBBackend {
 
 	List<DbUser> getAllUsers();

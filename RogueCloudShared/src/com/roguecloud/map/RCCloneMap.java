@@ -20,7 +20,11 @@ import java.util.HashMap;
 
 import com.roguecloud.Position;
 
-/** For internal use - see IMap for the public API of map. */
+/**
+ * A simple implementation of IMap that is backed by a HashMap. While it is not thread safe, it can be fully cloned 
+ * by calling cloneMap(...); the returned object will be a clone of the map (with a shallow clone of the tile contents) 
+ * 
+ *  For internal use only - see IMap for the public API of map. */
 public class RCCloneMap implements IMap {
 
 	private final int xSize, ySize;
@@ -40,7 +44,6 @@ public class RCCloneMap implements IMap {
 		this.map.entrySet().stream().forEach( e -> {
 			
 			Tile t = e.getValue().shallowCloneUnchecked();
-//			Tile t = e.getValue().fullClone();
 			
 			map.putTile(e.getKey().x, e.getKey().y, t);
 			
@@ -82,7 +85,8 @@ public class RCCloneMap implements IMap {
 	public void dispose() {
 		map.clear();
 	}
-	
+
+	/** Simple (x, y) coordinate class */
 	private final static class InnerMapCoord {
 		final int x;
 		final int y;

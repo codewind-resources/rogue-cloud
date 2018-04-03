@@ -20,10 +20,10 @@ import com.roguecloud.Position;
 import com.roguecloud.map.IMap;
 import com.roguecloud.map.Tile;
 
-/** 
- * See IMap interface for details on the available methods. 
- **/
 public class ClientMap implements IMap {
+	/** 
+	 * See IMap interface for details on the available methods. 
+	 **/
 
 	private final Object lock = new Object();
 

@@ -16,6 +16,12 @@
 
 package com.roguecloud.utils;
 
+/** 
+ * A simple class for tracking performance. This class uses an index into an array as the determinant of 
+ * what is being measured. The actual index to use here is up to calling class. 
+ * 
+ * This class is not thread safe (and this class is currently unused).
+ **/
 public final class PerfUtil {
 	
 	final long[] data;

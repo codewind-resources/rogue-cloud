@@ -23,8 +23,13 @@ import com.roguecloud.map.IMap;
 import com.roguecloud.map.Tile;
 import com.roguecloud.utils.Logger;
 
-/** For internal use only */
+/** 
+ * Utility methods and constants which are used to enable various DEBUG checks throughout the codebase.
+ * 
+ * This class is an internal class, for server use only. 
+ */
 public class RCRuntime {
+	/** For internal use only */
 
 	private static final Logger log = Logger.getInstance();
 

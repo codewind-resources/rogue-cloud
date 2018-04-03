@@ -58,6 +58,7 @@ import com.roguecloud.utils.SimpleMap;
 import com.roguecloud.utils.UniverseParserUtil;
 import com.roguecloud.utils.MonsterFactory.MonsterFactoryResult;
 
+/** Utility methods for various aspects of world generation. */
 public class WorldGeneration {
 	
 	public static enum WorldGenAIType { WANDERING, GUARD };
@@ -207,7 +208,8 @@ public class WorldGeneration {
 
 	
 	public static List<Monster> generatePairedItemsAndMonsters(ServerInstance parent, UniqueIdGenerator idGen, RCArrayMap map, 
-			List<GroundObject> goList, final int monstersToGenerate, final int itemsToGenerate, List<RoomSpawn> roomSpawnList, List<AIContext> aiContextList) {
+			List<GroundObject> goList, final int monstersToGenerate, final int itemsToGenerate, List<RoomSpawn> roomSpawnList,
+			List<AIContext> aiContextList) {
 		
 		if(roomSpawnList.size() == 0) {
 			throw new IllegalArgumentException("Room spawn list is empty.");
@@ -415,6 +417,7 @@ public class WorldGeneration {
 
 	}
 	
+	/** Return value of generateDefaultWorld(...); see private fields of this class for what is returned. */
 	public static class GenerateWorldResult {
 		
 		private final RCArrayMap newMap;
@@ -525,9 +528,18 @@ public class WorldGeneration {
 		
 	}
 	
+	
+	/** When calling the generateMonster methods, you can pass in an AIHint, which indicates to the method what type of 
+	 * AI to generate (if applicable). The specific AI implementation that corresponds to each 
+	 * of these AIHint values is up to the generateMonster method. 
+	 * 
+	 **/
 	public static class AIHint {
 		
+		/** Whether to wander the world, or guard a specific defined area */
 		private final WorldGenAIType type;
+		
+		/** Whether to attack other monster (if false, will only attack players) */
 		private final boolean attackMonsters;
 		
 		public AIHint(WorldGenAIType type, boolean attackMonsters) {

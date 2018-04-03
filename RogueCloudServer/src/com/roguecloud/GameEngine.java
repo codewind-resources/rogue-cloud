@@ -2252,6 +2252,8 @@ public final class GameEngine {
 		
 		private final HashMap<Long /* creature id*/, Boolean> previouslyWatched = new HashMap<>();
 		
+		/** This class is responsible for distributing new map information to monsters after each tick, for running the threads that execute AI logic, and 
+		 * for returning monster actions back to the game loop.*/
 		private MonsterMachine monsterMachine;
 		
 		private final GameLoopPerf glPerf = new GameLoopPerf();
@@ -2304,16 +2306,26 @@ public final class GameEngine {
 	}
 	
 	
+	/** 
+	 * An instance of this class exists for each creature (usually living, sometimes dead) in the current round of the game. This object stores various
+	 * additional state date about the create that is not otherwise available from the Monster or PlayerCreature classes.
+	 * 
+	 * Contained in the 'creatureEntryMap' object of GameContext 
+	 **/
 	private static class CreatureEntry {
 		
 		Weapon bestWeapon = null;
 		
+		/** For player creatures only, null otherwise */
 		private final ArmourSet playerBestArmourWorn = new ArmourSet();
 		
+		/** Player creature only, null otherwise */
 		public Long playerTickOfDeath;
 		
+		/** Monster creature only, null otherwise */ 
 		public Long monsterTickOfDeath;
 
+		/** List of the types of action has the creature performed in the last X turns, one entry in the list for each turn */
 		List<ActionType> lastXTurnsActionType = new ArrayList<>();
 		
 		/** The game engine frame at which the creature will revive. */
@@ -2375,7 +2387,8 @@ public final class GameEngine {
 		}
 		
 	}
-	
+
+	/** Player creature metrics: stored for each player creature and sent back to the player for display in the UI. */
 	private final static class ClientStatistics {
 		private long startTimeInNanos = 0;
 		private long actionsReceived = 0;
@@ -2416,7 +2429,10 @@ public final class GameEngine {
 		
 	}
 	
-	
+	/** The game loop has a number of "sections", each of which performs a specific task (see enum). This class allows us to track
+	 * the performance of each of those sections independently, so as to pinpoint performance issues. 
+	 * 
+	 * Each section corresponds to a block of code and/or child methods, in the game loop. */
 	private final static class GameLoopPerf {
 		private final boolean ENABLED = RCRuntime.PERF_ENABLED; 
 		
@@ -2481,12 +2497,13 @@ public final class GameEngine {
 		
 	}
 	
+	/** Return value of processPlayerAction(...) method */
 	private final static class ProcessActionReturn {
 		IActionResponse response;
-		IAction action;
-		
+		IAction action;	
 	}
 	
+	/** Container for all the events that occurred, per frame */
 	final static class PreviousEvents {
 		
 		private final HashMap<Long /* frame id*/, List<IEvent>> eventMap = new HashMap<Long, List<IEvent>>();
@@ -2522,7 +2539,8 @@ public final class GameEngine {
 		}		
 	}
 	
-	
+	/** Wraps the execution of the game in a new thread, to allow us to control the context 
+	 * in which all game logic runs, and to alert us when that thread is terminated (for example, by thrown exception). */
 	private class GameThread extends Thread  {
 		
 		private final GameContext gc;
@@ -2539,6 +2557,7 @@ public final class GameEngine {
 				System.out.println("Game thread started for round "+roundScope.getRoundId());
 				gameThreadRun(gc);
 			} catch (Throwable e) {
+				// TODO: EASY - log me as severe
 				e.printStackTrace();
 			} finally {
 				System.err.println("Game thread terminated for round "+roundScope.getRoundId());

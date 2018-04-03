@@ -19,7 +19,8 @@ package com.roguecloud.events;
 import com.roguecloud.Position;
 import com.roguecloud.creatures.ICreature;
 
-/** This object corresponds to an event that occurred in the world, such as an attack, a character move, the drinking of a potion, etc. 
+/** 
+ * This object corresponds to an event that occurred in the world, such as an attack, a character move, the drinking of a potion, etc. 
  * 
  * The following classes implement this interface:
  * 

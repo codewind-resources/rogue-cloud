@@ -18,7 +18,10 @@ package com.roguecloud;
 
 import java.util.concurrent.TimeUnit;
 
-/** For internal use only */
+/**
+ * Constants that are shared through the codebase. 
+ * 
+ * This class is an internal class, for server use only. */
 public class RCSharedConstants {
 
 	public static final long MAX_ROUND_LENGTH_IN_NANOS = TimeUnit.NANOSECONDS.convert(10, TimeUnit.MINUTES);

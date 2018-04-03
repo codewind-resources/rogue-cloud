@@ -16,6 +16,12 @@
 
 package com.roguecloud.db;
 
+/** 
+ * All database classes should implement this interface. All classes that implement this interface
+ * should be suitable for serializing/deserializing to/from JSON.  
+ **/
 public interface IDBObject {
+	
+	/* Intentionally left empty */
 
 }

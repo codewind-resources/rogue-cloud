@@ -36,6 +36,7 @@ import com.roguecloud.utils.RoomList.GridItem.Type;
 import com.roguecloud.utils.RoomList.Room;
 import com.roguecloud.utils.RoomList.TilePair;
 
+/** Various utility methods used for world generation. */
 public class WorldGenerationUtil {
 	
 	private final static Logger log = Logger.getInstance();
@@ -335,11 +336,16 @@ public class WorldGenerationUtil {
 	}
 
 	
+	/** Return value of drawRoom(...) method */
 	public static class DrawRoomResult {
 		
+		/** Coordinate of any monster spawn tiles that were written to the map */
 		private final List<Position> monsterSpawns = new ArrayList<>();
+		
+		/** Coordinate of any item spawn tiles that were written to the map */
 		private final List<Position> itemSpawns = new ArrayList<>();
 		
+		/** Whether or not the draw succeeded; depends on if validation is enable, and if there were any conflicts */
 		boolean isValid = false;
 		
 		public DrawRoomResult() {

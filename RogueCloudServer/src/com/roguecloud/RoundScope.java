@@ -18,6 +18,14 @@ package com.roguecloud;
 
 import com.roguecloud.server.ActiveWSClientList;
 
+/** 
+ * Values in this class are all scoped at the round level, meaning that their object lifecycle is consistent with the round itself.
+ * Once the round ends, all the objects in this class will be destroyed, and a new RoundScope will be created.
+ * 
+ * In addition to round-scoped objects, this class contains additional variables and constants related to the current round.
+ *
+ * Thread safe.
+ **/
 public class RoundScope {
 
 	private final Object lock = new Object();
@@ -28,7 +36,7 @@ public class RoundScope {
 	
 	private final long nextRoundId;
 	
-	/** This is only set if isRoundComplete  is FALSE*/
+	/** This is only set if isRoundComplete is FALSE */
 	private Long nextRoundStartInNanos_synch_lock = null;
 	
 	private Long currentRoundEndInNanos_synch_lock = null;
@@ -38,6 +46,7 @@ public class RoundScope {
 	private boolean isRoundComplete_synch_lock = false;
 	
 	private boolean isDisposed_synch_lock = false;
+	
 	
 	public RoundScope(long roundId, long roundLengthInNanos, long nextRoundId, ServerInstance parent) {
 		this.roundId = roundId;

@@ -22,7 +22,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/** For internal use only. */
+/** 
+ * A specialized logger for 'nitty gritty' details that are too verbose for a traditional logger. Writes log statements
+ * to the file on a separate thread. 
+ * 
+ * You should first call setWhoami(..) before calling the log(...) method.
+ *  
+ * This class is an internal class, for server use only.
+ */
 public class NG {
 
 	private static final NG instance = new NG();
@@ -83,6 +90,7 @@ public class NG {
 
 	}
 
+	/** Write to file on a separate thread, so that we don't block the callng thread on writing to the disk.  */
 	private class NittyGrittyLogThread extends Thread {
 
 		private FileWriter fw;

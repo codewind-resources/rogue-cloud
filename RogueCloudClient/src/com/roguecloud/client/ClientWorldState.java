@@ -81,8 +81,9 @@ import com.roguecloud.map.TileType;
 import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 
-/** For internal use only */
 public class ClientWorldState {
+	/** For internal use only */
+
 	/** World state for a single round. */
 	
 	private static final Logger log = Logger.getInstance();

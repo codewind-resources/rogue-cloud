@@ -26,9 +26,14 @@ import java.io.ObjectOutputStream;
 import com.roguecloud.client.IKeyValueStore;
 import com.roguecloud.utils.RCUtils;
 
-/** For internal use only */
+/** 
+ * See IKeyValueStore for details on how key-value stores are used in Rogue Cloud. 
+ * 
+ * This class is a simple Java object file store, which persists key-values to files which 
+ * are serialized/deserialized Java objects using the Object(Input/Output)Stream API.  
+ **/
 public class PersistentKeyValueStore implements IKeyValueStore {
-
+	
 	private final File dir;
 	
 	public PersistentKeyValueStore(File dir) {

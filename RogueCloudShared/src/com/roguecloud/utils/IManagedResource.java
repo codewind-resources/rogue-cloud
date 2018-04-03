@@ -16,7 +16,21 @@
 
 package com.roguecloud.utils;
 
-/** For internal server use only */
+/** 
+ * This class is used by ResourceLifecycleUtil. 
+ * 
+ * A managed resource is any abstract thing that:
+ * - can expire
+ * - can be disposed of
+ * - when it expires the it should be disposes of.
+ * - has a unique ID
+ * - if a resource with the same ID is added to ResourceLifeCycleUtil, whether it should replace this resource (if not, an error is thrown)  
+ *
+ * This is currently used to automatically close websockets that are open for too long.
+ * 
+ * This class is an internal class, for server use only. 
+ *  
+ **/
 public interface IManagedResource {
 
 	void dispose();

@@ -16,6 +16,7 @@
 
 package com.roguecloud.db;
 
+/** There is only ever a single instance of the database object, which is accessible through this class. */
 public class DatabaseInstance {
 
 	private static final DatabaseInstance instance = new DatabaseInstance();

@@ -249,6 +249,7 @@ public final class AStarSearchInterruptible {
 		return Math.abs(goal.getX() - start.getX()) + Math.abs(goal.getY() - start.getY());
 	}
 
+	/** A Node as defined by the a-star search algorithm. */
 	private static final class Node {
 
 		final Position p;
@@ -272,6 +273,7 @@ public final class AStarSearchInterruptible {
 
 	}
 
+	/** Sort Nodes by f-score, ascending. */
 	private static final class FScoreComparator implements Comparator<Node> {
 
 		@Override

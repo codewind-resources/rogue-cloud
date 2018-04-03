@@ -25,6 +25,7 @@ import com.roguecloud.map.RCArrayMap;
 import com.roguecloud.map.Tile;
 import com.roguecloud.utils.AStarSearch;
 
+/** Simple benchmark of pathfinding classes, like FastPathSearch or AStarSearch.*/
 public class PathFinderBenchmark {
 
 	private static IMap setup() {

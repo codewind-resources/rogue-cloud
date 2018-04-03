@@ -16,6 +16,7 @@
 
 package com.roguecloud.utils;
 
+/** Utility class which maintains a mutable reference to an object; useful for containing objects that may be null or primitives. */
 public class MutableObject<T> {
 
 	private T t = null;

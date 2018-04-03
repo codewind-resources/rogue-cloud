@@ -22,6 +22,7 @@ import java.util.List;
 import com.roguecloud.db.DbLeaderboardEntry;
 import com.roguecloud.db.DbUser;
 
+/** Simple standalone class for developing the Cloudant db outside of Rogue Cloud server. */
 public class CloudAntStandaloneMain {
 
 	public static void main(String[] args) {

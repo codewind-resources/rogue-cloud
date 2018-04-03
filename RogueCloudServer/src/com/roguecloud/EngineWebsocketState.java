@@ -24,15 +24,23 @@ import java.util.Map.Entry;
 
 import com.roguecloud.creatures.IMutableCreature;
 
+/**
+ * Used to support both the browser and agent api clients, including tracking the following data:
+ * 
+ * - width/height of the game world
+ * - the current position of the client view box in the world
+ * - the creature object of the player (if applicable)
+ * - which message ids we have received from the player
+ * - which message ids we have responsed to
+ * - which objects a player has seen
+ *
+ */
 public class EngineWebsocketState {
 
 	private int width = -1;
 	private int height = -1;
 	private int currClientWorldX = -1;
 	private int currClientWorldY = -1;
-
-//	private int newClientWorldX = 0;
-//	private int newClientWorldY = 0;
 
 	private int nextFrame = 1;
 
@@ -43,8 +51,6 @@ public class EngineWebsocketState {
 	private final HashMap<Long /* message id */, Boolean> mapReceivedMessageIds = new HashMap<>();
 
 	private final HashMap<Long, /* message id */ String> mapResponseToMessage = new HashMap<>();
-
-	// private boolean fullSent = false;
 
 	public EngineWebsocketState() {
 	}
@@ -95,14 +101,6 @@ public class EngineWebsocketState {
 		mapResponseToMessage.clear();
 	}
 
-	// public boolean isFullSent() {
-	// return fullSent;
-	// }
-	//
-	// public void setFullSent(boolean fullSent) {
-	// this.fullSent = fullSent;
-	// }
-
 	public int getNextFrame() {
 		return nextFrame;
 	}
@@ -110,9 +108,6 @@ public class EngineWebsocketState {
 	public void setNextFrame(int nextFrame) {
 		this.nextFrame = nextFrame;
 	}
-
-
-	
 	
 	public void putObjectSeenByPlayer(long id) {
 		objectSeenByPlayer.put(id, true);

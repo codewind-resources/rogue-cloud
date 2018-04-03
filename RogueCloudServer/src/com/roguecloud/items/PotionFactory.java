@@ -18,6 +18,7 @@ package com.roguecloud.items;
 import com.roguecloud.items.Effect;
 import com.roguecloud.items.Effect.EffectType;
 
+/** Generate random Effect objects, for use in potions. */
 public class PotionFactory {
 
 	private static enum Magnitude {

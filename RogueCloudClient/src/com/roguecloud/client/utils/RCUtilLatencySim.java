@@ -28,8 +28,8 @@ import com.roguecloud.RCRuntime;
 import com.roguecloud.client.ISessionWrapper;
 import com.roguecloud.utils.Logger;
 
-/** For internal use only */
 public class RCUtilLatencySim {
+	/** For internal use only */
 
 	private static final Logger log = Logger.getInstance();
 	

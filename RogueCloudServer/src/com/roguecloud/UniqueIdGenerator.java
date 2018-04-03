@@ -16,6 +16,17 @@
 
 package com.roguecloud;
 
+/** 
+ * Throughout the codebase, many entities must have short, unique ids in order to allow them to be tracked between the
+ * client and server. This class is used to generate those IDs.
+ * 
+ * A separate ID counter is maintained for different types of entities (see IdType enum).
+ * 
+ * The generator may be "frozen", which prevents any calls  to getNextUniqueId(...) after the freeze() call is issued. 
+ * Clones of a frozen generator are not frozen. The purpose of freeze is to create an immutable generator, which can
+ * then be cloned for use as an immutable generator by child methods. 
+ * 
+ **/
 public class UniqueIdGenerator {
 	
 	public static enum IdType { CREATURE, OBJECT, EVENT, MESSAGE}; 

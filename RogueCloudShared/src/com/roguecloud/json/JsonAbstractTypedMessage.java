@@ -18,6 +18,7 @@ package com.roguecloud.json;
 
 public abstract class JsonAbstractTypedMessage {
 
+	// TODO: EASY - Comment me.
 	private String type;
 	
 	public String getType() {

@@ -30,7 +30,6 @@ import com.roguecloud.map.IMap;
 import com.roguecloud.map.Tile;
 
 /** Helper utility methods that coders may use to implement their agents.  */
-
 public class AIUtils {
 	
 	/**

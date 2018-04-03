@@ -33,7 +33,11 @@ import com.roguecloud.utils.Logger;
 
 /**
  * Write key/value pairs to a store, which is represented in a single directory. The value is stored
- * in a file, with the name of the file represented by the key. 
+ * in a file, with the name of the file represented by the key.
+ * 
+ * The term 'Safe' used in the name of the class refers to the fact that it should limit the effect of data
+ * corruption due to unflushed disk IO writes, not that is thread safe.
+ *  
  * (Not thread safe) */
 public class SafeKeyValueStore {
 	

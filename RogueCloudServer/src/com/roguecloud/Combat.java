@@ -26,9 +26,10 @@ import com.roguecloud.items.Effect.EffectType;
 import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 
+/** This class encapsulates the melee combat logic of game engine. See the wiki for more information on
+ * the specific of combat.  */
 public class Combat {
 	
-	@SuppressWarnings("unused")
 	private static final Logger log = Logger.getInstance();
 
 	public static CombatResult doCombat(IMutableCreature attacker, IMutableCreature defender, LogContext lc) {
@@ -76,6 +77,7 @@ public class Combat {
 	}
 	
 	
+	/** Result of combat: whether the attack hit ('made contact') and if so, how much damage was dealt (if any) */
 	public static class CombatResult {
 		private final boolean hit;
 		private final int damageDealt;

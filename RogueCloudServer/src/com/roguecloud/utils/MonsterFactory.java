@@ -19,6 +19,7 @@ package com.roguecloud.utils;
 import com.roguecloud.items.ArmourSet;
 import com.roguecloud.items.Weapon;
 
+/** Utility class for randomly generating monsters within a given level range */
 public class MonsterFactory {
 
 	public MonsterFactoryResult generate(int lowLevel, int highLevel) {
@@ -33,13 +34,15 @@ public class MonsterFactory {
 	}
 
 	
+	/** Statistics to use for a new monster */
+	@SuppressWarnings("unused")
 	public static class MonsterFactoryResult {
-		int level;
-		int maxHp;
+		private int level;
+
+		private int maxHp;
 		
-		Weapon weapon;
-		ArmourSet armour = new ArmourSet();
-		
+		private Weapon weapon;
+		private ArmourSet armour = new ArmourSet();
 		
 		public int getLevel() {
 			return level;

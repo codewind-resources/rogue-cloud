@@ -29,7 +29,10 @@ import com.roguecloud.utils.RCUtils;
 import com.roguecloud.utils.IManagedResource;
 import com.roguecloud.utils.Logger;
 
-/** For internal use only */
+/** 
+ * Utilities for managing Websocket client resources 
+ * For internal use only
+ **/
 public class ClientUtil {
 	
 	public static final Logger log = Logger.getInstance();

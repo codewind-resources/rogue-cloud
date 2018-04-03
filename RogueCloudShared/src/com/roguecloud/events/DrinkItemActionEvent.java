@@ -22,7 +22,7 @@ import com.roguecloud.items.DrinkableItem;
 import com.roguecloud.json.JsonAbstractTypedMessage;
 import com.roguecloud.json.events.JsonDrinkItemActionEvent;
 
-/** when a character drinks a potion, this is recorded in this class as a world event. 
+/** When a character drinks a potion, this is recorded in this class as a world event. 
  * You can see who drank what, where they were, and what the effect was. */
 public class DrinkItemActionEvent extends AbstractEvent {
 

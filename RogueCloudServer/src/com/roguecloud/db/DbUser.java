@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.roguecloud.utils.UsernameUtil;
 
+/** A Rogue Cloud player with userid/username/password. This object is serialized to json. */
 public class DbUser implements IDBObject {
 
 	public static final int NEW_USER_ID = -1;

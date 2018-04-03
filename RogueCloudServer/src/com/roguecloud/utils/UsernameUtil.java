@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/** Disallow specific offensive words from usernames; rather than storing the specific banned words in this class, they are stored as a tuple: (number of letters, java hashcode() of string)  */
 public class UsernameUtil {
 
 	private final Map<Integer, List<Integer>> map = new HashMap<>();

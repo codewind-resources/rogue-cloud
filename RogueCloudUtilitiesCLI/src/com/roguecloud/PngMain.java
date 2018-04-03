@@ -25,6 +25,9 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+import com.roguecloud.utils.SimpleMap;
+
+/** Convert a .PNG file into a map.txt file, based on coloured pixels that appear in the PNG file. */
 public class PngMain {
 
 	public static void main(String[] args) {
@@ -107,7 +110,7 @@ public class PngMain {
 		}
 		System.out.println(str);
 		
-		FileWriter fw = new FileWriter("C:/Hackathon/Git/RogueCloudServer/WebContent/universe/map.txt");
+		FileWriter fw = new FileWriter("C:/Rogue-Cloud/Git/RogueCloudServer/WebContent/universe/map.txt");
 		fw.write(str.toString());
 		fw.close();
 		
@@ -119,51 +122,51 @@ public class PngMain {
 		
 	}
 
-	public static final class SimpleMap<T> {
+//	public static final class SimpleMap<T> {
+//
+//		private final int xSize, ySize;
+//
+//		private final T[] tileArray;
+//
+//		@SuppressWarnings("unchecked")
+//		public SimpleMap(int xSize, int ySize) {
+//			this.xSize = xSize;
+//			this.ySize = ySize;
+//			tileArray = (T[]) new Object[xSize * ySize];
+//		}
+//
+//		public final void putTile(int x, int y, T t) {
+//			tileArray[x * ySize + y] = t;
+//		}
+//
+//		public final T getTile(int x, int y) {
+//			int index = x * ySize + y;
+//
+//			if (tileArray.length <= index || index < 0) {
+//				return null;
+//			}
+//
+//			T tile = tileArray[index];
+//			return tile;
+//		}
+//
+//		public final int getXSize() {
+//			return xSize;
+//		}
+//
+//		public final int getYSize() {
+//			return ySize;
+//		}
+//
+//	}
 
-		private final int xSize, ySize;
-
-		private final T[] tileArray;
-
-		@SuppressWarnings("unchecked")
-		public SimpleMap(int xSize, int ySize) {
-			this.xSize = xSize;
-			this.ySize = ySize;
-			tileArray = (T[]) new Object[xSize * ySize];
-		}
-
-		public final void putTile(int x, int y, T t) {
-			tileArray[x * ySize + y] = t;
-		}
-
-		public final T getTile(int x, int y) {
-			int index = x * ySize + y;
-
-			if (tileArray.length <= index || index < 0) {
-				return null;
-			}
-
-			T tile = tileArray[index];
-			return tile;
-		}
-
-		public final int getXSize() {
-			return xSize;
-		}
-
-		public final int getYSize() {
-			return ySize;
-		}
-
+	/** What hexadecimal colour corresponds to what letter */
+	private static class PngState {
+		private final HashMap<String, String> colourToLetter = new HashMap<>();
 	}
 
-	public static class PngState {
-		HashMap<String, String> colourToLetter = new HashMap<>();
-				
-	}
-	
-	public static class Entry {
-
+	/** The letter at a specific coordinate on the map. */
+	private static class Entry {
 		String letter;
 	}
 }

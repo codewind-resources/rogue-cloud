@@ -176,6 +176,7 @@ public final class Tile {
 		return getTileTypeLayersForBrowserPresentation(0); // (int)(Math.random()*1024) );
 	}
 	
+	@SuppressWarnings("unused")
 	public List<ICreature> getCreaturesForModification() {
 		if(RCRuntime.CHECK && isTileForRead) {
 			throw new RuntimeException("Invalid thread write.");
@@ -183,6 +184,7 @@ public final class Tile {
 		return creatures;
 	}
 	
+	@SuppressWarnings("unused")
 	public List<IGroundObject> getGroundObjectForModification() {
 		if(RCRuntime.CHECK && isTileForRead) {
 			throw new RuntimeException("Invalid thread write.");
@@ -190,6 +192,7 @@ public final class Tile {
 		return groundObjects;
 	}
 	
+	@SuppressWarnings("unused")
 	public List<ITileProperty> getTilePropertiesForModification() {
 		if(RCRuntime.CHECK && isTileForRead) {
 			throw new RuntimeException("Invalid thread write.");

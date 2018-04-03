@@ -23,6 +23,8 @@ import com.roguecloud.creatures.ICreature;
 
 public class MonsterRuntimeStats {
 
+	// TODO: What's this for?
+	
 	public MonsterRuntimeStats() {
 		arrayOfMaps = new ArrayList<HashMap<Long, MonsterRuntimeEntry>>();
 		

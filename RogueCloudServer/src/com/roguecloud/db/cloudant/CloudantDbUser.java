@@ -18,6 +18,7 @@ package com.roguecloud.db.cloudant;
 
 import com.roguecloud.db.DbUser;
 
+/** The user db entry, plus cloudant extra fields, (de)serializable to json. */
 public class CloudantDbUser extends DbUser {
 	private String _id = null;
 	private String _rev = null;

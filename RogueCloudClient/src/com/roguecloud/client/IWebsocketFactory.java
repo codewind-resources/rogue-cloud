@@ -16,8 +16,8 @@
 
 package com.roguecloud.client;
 
-/** For internal use only */
 public interface IWebsocketFactory {
+	/** For internal use only */
 
 	ISessionWrapper createSessionWrapper(ClientState cs);
 }

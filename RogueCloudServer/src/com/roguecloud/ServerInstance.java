@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import com.roguecloud.NG;
 import com.roguecloud.GameEngine.GameContext;
 import com.roguecloud.creatures.MonsterTemplateList;
 import com.roguecloud.db.DatabaseInstance;
@@ -33,6 +32,15 @@ import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.RoomList;
 import com.roguecloud.utils.RoomList.TilePair;
 
+/** 
+ * Unless multiple server instances are being run (which is architecturally possible, but not current tested/supported), a single
+ * instance of this class will exist while the Rogue Cloud Server is running.
+ * 
+ * This class is responsible for preserving global state data (armour list, weapons list, id generator, etc), and for
+ * starting new rounds and destroying old rounds.
+ * 
+ * Objects in this class exist between rounds; unlike RoundScope, they are not (necessarily) destroyed between rounds.
+ * */
 public final class ServerInstance {
 	
 	private final Logger log = Logger.getInstance();
@@ -132,7 +140,9 @@ public final class ServerInstance {
 			return currentRound_synch_lock;
 		}
 	}
-	
+
+	/** The browser client needs a list of all the available .PNG images that the server may send. This method 
+	 * returns a list of all tiles, as a JSON string, for use by the browser. */
 	private String generateTileListJson() {
 		HashMap<Integer, String> map = new HashMap<>();
 

@@ -44,8 +44,8 @@ import com.roguecloud.json.client.JsonHealthCheckResponse;
 import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 
-/** For internal use only */
 public class ClientState {	
+	/** For internal use only */
 	
 	private static final Logger log = Logger.getInstance();
 	

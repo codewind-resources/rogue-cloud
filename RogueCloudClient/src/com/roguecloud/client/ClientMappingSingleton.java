@@ -19,8 +19,8 @@ package com.roguecloud.client;
 import java.util.HashMap;
 import java.util.Map;
 
-/** For internal use only */
 public class ClientMappingSingleton {
+	/** For internal use only */
 	
 	private static final ClientMappingSingleton instance = new ClientMappingSingleton(); 
 	

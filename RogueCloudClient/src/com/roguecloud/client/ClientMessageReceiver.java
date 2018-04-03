@@ -26,8 +26,8 @@ import com.roguecloud.json.browser.JsonUpdateBrowserUI;
 import com.roguecloud.json.client.JsonHealthCheck;
 import com.roguecloud.utils.Logger;
 
-/** For internal use only */
 public class ClientMessageReceiver {
+	/** For internal use only */
 	
 	private static final Logger log = Logger.getInstance();
 	

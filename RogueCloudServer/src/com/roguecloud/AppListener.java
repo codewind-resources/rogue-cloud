@@ -20,6 +20,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+/** Placeholder servlet context listener, for use at a later time. */
 @WebListener
 public class AppListener implements ServletContextListener {
 

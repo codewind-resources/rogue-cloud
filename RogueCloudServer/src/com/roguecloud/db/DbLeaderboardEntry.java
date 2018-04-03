@@ -16,6 +16,7 @@
 
 package com.roguecloud.db;
 
+/** A leaderboard entry for a player that played in a given round. This object is serialized to json. */
 public class DbLeaderboardEntry implements IDBObject {
 
 	public static final int NEW_LEADERBOARD_ID = -1;

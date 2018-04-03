@@ -30,6 +30,16 @@ import com.roguecloud.db.file.IDBBackend;
 import com.roguecloud.utils.Logger;
 
 public class MemoryDatabase implements IDatabase {
+	/** 
+	 * MemoryDatabase is an in-memory frontend API for persistence (but MemoryDatabase requires a backend from which to retrieve
+	 * and store data.) Database backends used by MemoryDatabase implement the IDBBackend interface.
+	 * 
+	 * This class maintains a full in-memory 
+	 * 
+	 * The design of MemoryDatabase and IDBBackend are such that the full database contents is retrieved on first use, and from there
+	 * individual or bulk writes may be performed.
+	 * 
+	 **/
 
 	private static final Logger log = Logger.getInstance();
 	
