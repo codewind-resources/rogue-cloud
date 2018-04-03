@@ -25,6 +25,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/** 
+ * Servlet which is used to set a cookie in the user's browser (using the given login/password), which
+ * can then be used to access the WorldViewServlet. 
+ * 
+ * This class does not validate that the login/password matches the admin value that is required by WorldViewServlet.
+ **/
 @WebServlet("/Credentials")
 public class CredentialsServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;

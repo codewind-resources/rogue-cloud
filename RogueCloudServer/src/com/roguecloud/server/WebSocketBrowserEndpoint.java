@@ -37,6 +37,9 @@ import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.ResourceLifecycleUtil;
 import com.roguecloud.utils.ServerUtil;
 
+/** 
+ * The server WebSocket endpoint for the Rogue Cloud browser API. 
+ * All web socket communication to the server, from the browser, is received here. */
 @ServerEndpoint("/api/browser")
 public class WebSocketBrowserEndpoint {
 

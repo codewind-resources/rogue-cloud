@@ -29,6 +29,9 @@ import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.UniverseParserUtil;
 
+/**
+ * Parses weapons from the weapons.txt file, and stores them in this class as an immutable list.
+ */
 public class WeaponList {
 
 	private final Logger log = Logger.getInstance(); 

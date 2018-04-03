@@ -82,6 +82,8 @@ public class PotionFactory {
 		return e;
 	}
 
+	/** The effect types that this potion factory will generate, whether they are positive/negative, and how
+	 * strong they are (magnitude). These are hardcoded in 'effectDistribution' above.  */
 	private static class Distribution {
 
 		private final EffectType type;

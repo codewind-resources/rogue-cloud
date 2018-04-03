@@ -201,7 +201,6 @@ public class ClientState {
 		synchronized(lock) {
 			return nextSynchronousMessageId_synch_lock;
 		}
-		
 	}
 	
 	public long getAndIncrementNextSynchronousMessageId() {

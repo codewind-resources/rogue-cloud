@@ -30,6 +30,18 @@ import com.roguecloud.json.JsonAbstractTypedMessage;
 import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 
+/*
+ * ActiveWSClient:
+ * - An active connection from a single user
+ * - Parent is ActiveWSClientList
+ * - Active websocket sessions for the client (organized in various maps)
+ * - the view type (see comment on view type field for details)
+ * 
+ * Maintains some client context, such as:
+ * - actions that the player has sent us, that the game loop has not yet processed
+ * - the most recent health check id that was sent to the client
+ * 
+ */
 public class ActiveWSClient {
 	
 	private static final Logger log = Logger.getInstance();
@@ -45,34 +57,48 @@ public class ActiveWSClient {
 	
 	private final long clientId;
 	
+	/** Where received messages be passed after they have been received. */
 	private final ServerMessageReceiver messageReceiver;
 	
 	private final LogContext lc;
 	
-	/** This should only be accessed from the game thread*/
+	/** This should only be accessed from the game thread -- currently this is only EngineWebsocketState */
 	private Object gameEngineInfo;
-	
+
+	/** Map: Id from Session.getId() -> ActiveWSClientSession that contains that object */
 	private final HashMap<String /* session id */, SessionsMapValue> sessionsMap_synch_sessions = new HashMap<>();
 
-	private final ActiveWSClientSession[/* Type id */ ] mostRecentSessionOfType_synch_sessions = new ActiveWSClientSession[ActiveWSClientSession.Type.values().length];
-	
+	/**  An ActiveWSClient may have up to two active sessions, which are stored here: one for the browser, and one for the client */
+	private final ActiveWSClientSession[/* ActiveWSClientSession.Type id */ ] mostRecentSessionOfType_synch_sessions 
+		= new ActiveWSClientSession[ActiveWSClientSession.Type.values().length];
+
+	/** List of active sessions added to this class; sessions are added by addSession(...), and removed by addSession(...) and dispose() */
 	private final ArrayList<ActiveWSClientSession> sessions_synch = new ArrayList<>();
 	
+	/** JSON-based action messages received from the agent client API, which are waiting to be processed. These are added 
+	 * based on messages received from the Websocket endpoint,  and removed by the 
+	 * game loop using getAndRemoveWaitingAction(...)  */
 	private final ArrayList<ReceivedAction> waitingActions_synch = new ArrayList<>();
-	
+
+	/** The message id of the last action we received; this is used to allow us to ignore action messages we have already seen. */
 	private Long lastActionMessageIdReceived_synch_lock = null;
 	
+	/** Is this for the client or browser API, and if for browser is it world or follow? */
 	private final ViewType viewType;
 	
+	/** The server sends JsonFrameUpdates to the client (which contain the self/world state). These frames contain an ID which starts at 1, and 
+	 * this variable contains the id of the next frame to send. */
 	private long nextClientFrameNumber_synch_lock = 1;
 	
 	private boolean disposed = false;
-	
+
+	/** The id of the most recent health check that we sent the client */
 	private Long activeHealthCheckId_synch_lock;
+	
+	/** The time of the most recent health check that we sent the client */
 	private Long activeHealthCheckSinceInNanos_synch_lock;
 	
 	private static final int MAX_ACTIONS_TO_KEEP_PER_CLIENT = 500;
-	
 	
 	public ActiveWSClient(String uuid, String username, long userId, long clientId, ActiveWSClientList parent, ViewType viewType) {
 		if(uuid == null || username == null || viewType == null) { throw new IllegalArgumentException(); }
@@ -337,16 +363,17 @@ public class ActiveWSClient {
 	}
 
 	
-	public static class SessionsMapValue {
+	/** Simple container for an ActiveWSClientSession */
+	private static class SessionsMapValue {
 		ActiveWSClientSession awsClientSession;
 		
 		public SessionsMapValue(ActiveWSClientSession awsClientSession) {
 			this.awsClientSession = awsClientSession;
 		}
-		
-		
 	}
-	
+
+	/** Json action messaged received from the client. These are added based on messages received from the Websocket endpoint, 
+	 * and removed by the game loop in getAndRemoveWaitingAction(...)  */
 	public static class ReceivedAction {
 		
 		private final long messageId;
@@ -367,8 +394,15 @@ public class ActiveWSClient {
 		
 	}
 
-	
-	public static enum ViewType { CLIENT_VIEW(false), SERVER_VIEW_WORLD(true), SERVER_VIEW_FOLLOW(true); 
+	/** Specifies what the websocket will be used for. See the types below for specifics.  */
+	public static enum ViewType { 
+		
+		/** Websocket will be used for agent client API */
+		CLIENT_VIEW(false), 
+		/** Websocket will be used by the browser client API, in order to display the full world panel */
+		SERVER_VIEW_WORLD(true),
+		/** Websocket will be used by the browser client API, in order to display the agent follow panel */
+		SERVER_VIEW_FOLLOW(true); 
 		
 		private final boolean adminRequired;
 		

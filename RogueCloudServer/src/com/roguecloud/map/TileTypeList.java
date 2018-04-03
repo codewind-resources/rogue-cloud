@@ -18,6 +18,7 @@ package com.roguecloud.map;
 
 import com.roguecloud.map.TileType;
 
+/** Constants which correspond to existing tile images in the tile list. */
 public class TileTypeList {
 
 	public static final TileType GRASS = new TileType(667, 0);
