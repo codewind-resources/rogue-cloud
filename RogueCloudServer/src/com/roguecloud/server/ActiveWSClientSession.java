@@ -32,8 +32,14 @@ import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.ServerUtil;
 
+/** 
+ * Container object for the WebSocket API's Session object. This class has the same lifecycle as the Session it contains. 
+ * The parent class of this class is ActiveWSClient. 
+ * 
+ * To write asynchronously write an outbound message to the session contained in this object, call the writeToClientAsynch(...) method.
+ * The message will be added to the outbound message queue, and written by the AWSClientSessionSender thread. 
+ **/
 public class ActiveWSClientSession {
-	/** Container object for the Websocket API's Session object. This class has the same lifecycle as the Session it contains. */
 	
 	private final static Logger log = Logger.getInstance();
 	
@@ -177,7 +183,9 @@ public class ActiveWSClientSession {
 //			return this.session_synch.equals(  ((AWSClientSession)obj).getSession()  );
 //		}
 	}
-		
+
+	/** This class is responsible for writing messages from the stringsToSend message queue to the 
+	 * WebSocket endpoint. The thread ends if an exception occurs, or if the session is closed. */
 	private class AWSClientSessionSender extends Thread{
 		
 		public AWSClientSessionSender() {
@@ -249,7 +257,6 @@ public class ActiveWSClientSession {
 						}
 						
 					}
-					
 					
 				}
 			} catch(InterruptedException ie) {

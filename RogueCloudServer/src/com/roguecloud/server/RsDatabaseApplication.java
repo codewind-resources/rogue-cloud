@@ -22,6 +22,7 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+/** JAX-RS application containing the Database JAX-RS resource. */
 @ApplicationPath("/database")
 public class RsDatabaseApplication extends Application {
 
@@ -32,6 +33,4 @@ public class RsDatabaseApplication extends Application {
 		hs.add(RsDatabase.class);
 		return hs;
 	}
-	
-	
 }

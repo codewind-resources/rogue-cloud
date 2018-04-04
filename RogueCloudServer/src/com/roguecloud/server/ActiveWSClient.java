@@ -31,13 +31,13 @@ import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 
 /*
- * ActiveWSClient:
- * - An active connection from a single user
+ * ActiveWSClient properties:
+ * - Maintains an active connection from a single user
  * - Parent is ActiveWSClientList
- * - Active websocket sessions for the client (organized in various maps)
- * - the view type (see comment on view type field for details)
+ * - Contains the active WebSocket sessions for the client (organized into various maps)
+ * - The view type of the client (see comment on view type field for details)
  * 
- * Maintains some client context, such as:
+ * Also maintains some client context, such as:
  * - actions that the player has sent us, that the game loop has not yet processed
  * - the most recent health check id that was sent to the client
  * 

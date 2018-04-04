@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.roguecloud.ServerInstance;
 import com.roguecloud.ServerInstanceList;
 
+/** The browser client needs a list of all the available .PNG images that the server may send. This servlet
+ * returns a list of all tiles, as a JSON string, for use by the browser. */
 @WebServlet("/TileList")
 public class TileListServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;

@@ -33,6 +33,12 @@ import com.roguecloud.json.client.JsonHealthCheckResponse;
 import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 
+/** This class receives JSON messages directly from the WebSocket agent API endpoint (or indirectly through the latency simulator,
+ * if latency simulation is enabled.)
+ *
+ * This class is responsible for determining the type of JSON object received (based on the 'type' field) and then 
+ * passing it to the appropriate receive method.
+ **/
 public final class ServerMessageReceiver {
 	
 	private static final Logger log = Logger.getInstance();

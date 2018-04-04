@@ -30,12 +30,13 @@ import com.roguecloud.server.ActiveWSClientSession.Type;
 import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 
+/**
+ * Maintains a list of all the clients (both browser and agent api) that have established connections during the round.
+ * You may create a new ActiveWSClient using addSession(...).
+ * 
+ * A single instance of this class will exist per round.
+ */
 public final class ActiveWSClientList {
-	/**
-	 * Create new ActiveWSClient using addSession(...)
-	 * 
-	 *
-	 */
 	
 	private static final Logger log = Logger.getInstance();
 	
@@ -200,11 +201,9 @@ public final class ActiveWSClientList {
 	/** Simple container for the ActiveWSClient object */
 	private static class SessionToClientValue {
 		ActiveWSClient client;
-//		Session session;
 		
 		public SessionToClientValue(ActiveWSClient client/*, Session session*/) {
 			this.client = client;
-//			this.session = session;
 		}
 		
 	}

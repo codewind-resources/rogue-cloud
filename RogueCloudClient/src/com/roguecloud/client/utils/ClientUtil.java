@@ -30,8 +30,10 @@ import com.roguecloud.utils.IManagedResource;
 import com.roguecloud.utils.Logger;
 
 /** 
- * Utilities for managing Websocket client resources 
- * For internal use only
+ * Utilities for managing Websocket client resources. The managed resource methods 
+ * are used by ResourceLifecycleUtil.
+ *   
+ * For internal use only.
  **/
 public class ClientUtil {
 	

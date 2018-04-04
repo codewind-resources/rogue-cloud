@@ -45,6 +45,14 @@ import com.roguecloud.json.client.JsonUserRequest;
 import com.roguecloud.json.client.JsonUserRequestResponse;
 import com.roguecloud.utils.Logger;
 
+/**
+ * This is a JAX-RS class which serves both HTML pages (for display in the browser) and serves HTTP requests
+ * from the Rogue Cloud agent client API. 
+ * 
+ * HTTP @GET methods annotated with @Produces("text/html") are returned to the browser, while the rest handle
+ * agent client requests.  
+ * 
+ */
 @Path("/")
 public class RsDatabase {
 
@@ -318,9 +326,14 @@ public class RsDatabase {
 	}
 	
 	
+	/** This class is used to generate the high score tables which are served to the browser AS HTML. A DatabasePage
+	 * object is converted into HTML by Table.jsp.*/
 	public static class DatabasePage {
+		
+		/** Each entry in the list is a row of a table, the contents of each entry are the columns of the able.*/
 		private final List<List<String>> entries = new ArrayList<List<String>>();
 		
+		/** The page title */
 		private final String title;
 		
 		private final int width;

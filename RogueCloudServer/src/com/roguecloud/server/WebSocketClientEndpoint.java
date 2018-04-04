@@ -44,6 +44,10 @@ import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.ResourceLifecycleUtil;
 
+/** 
+ * Messages received on this WebSocket endpoint are received as byte[]. This byte array is a deflate-compressed text string,
+ * which is first inflated, then further processed by handleMessageInner(...).
+ **/
 @ServerEndpoint("/api/client")
 public class WebSocketClientEndpoint {
 
@@ -64,12 +68,15 @@ public class WebSocketClientEndpoint {
 	public void open(Session session) {
 		System.out.println("open.");
 		
+		// Convert the session to a 'managed resource', so that it will automatically be disposed of once it expires.
 		ResourceLifecycleUtil.getInstance().addNewSession(ServerWsClientUtil.convertSessionToManagedResource(session));
 	}
 
 	@OnClose
 	public void close(Session session) {
 		System.out.println("close.");
+		
+		// If the websocket was added as a managed resource, it can now be removed. 
 		ResourceLifecycleUtil.getInstance().removeSession(ServerWsClientUtil.convertSessionToManagedResource(session));
 	}
 
@@ -172,7 +179,8 @@ public class WebSocketClientEndpoint {
 				// User has not specified a round to enter, so they may enter the current round.
 			}
 			
-			ActiveWSClientSession acs = new ActiveWSClientSession(Type.CLIENT, ViewType.CLIENT_VIEW, jcc.getUuid(), session, si.getCurrentRound(), System.nanoTime(), jcc.isInitialConnect(), LogContext.serverInstance(si.getId()));
+			ActiveWSClientSession acs = new ActiveWSClientSession(Type.CLIENT, ViewType.CLIENT_VIEW, jcc.getUuid(), session, 
+					si.getCurrentRound(), System.nanoTime(), jcc.isInitialConnect(), LogContext.serverInstance(si.getId()));
 			
 			client = clients.addSession(username, userId, acs);
 			
