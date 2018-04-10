@@ -25,8 +25,12 @@ import java.util.stream.Collectors;
 import com.roguecloud.client.ClientWorldState.ClientWorldStateListener;
 
 public class WorldStateListeners {
-	/** Singleton 
-	 * For internal use only */
+	/** 
+	 * See ClientWorldStateListener for a description of what world state listeners are and how they are used.
+	 * 
+	 * This class is a singleton that contains a list of all the active WorldStateListeners.   
+	 *  
+	 * For internal server use only */
 
 	private WorldStateListeners() {
 	}

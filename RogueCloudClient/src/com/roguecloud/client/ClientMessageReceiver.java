@@ -31,9 +31,10 @@ import com.roguecloud.utils.Logger;
  *
  * This class is responsible for determining the type of JSON object received (based on the 'type' field) and then 
  * passing it to the appropriate receive method.
+ * 
+ * For internal server use only.
  **/
 public class ClientMessageReceiver {
-	/** For internal use only */
 	
 	private static final Logger log = Logger.getInstance();
 	
