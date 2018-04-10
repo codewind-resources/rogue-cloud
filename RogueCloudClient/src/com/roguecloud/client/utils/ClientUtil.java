@@ -100,6 +100,7 @@ public class ClientUtil {
 		return new SessionManagedResource(s, expireDurationInNanos);
 	}
 	
+	/** Implements a IManagedResource for a WebSocket Session object. */
 	private static class SessionManagedResource implements IManagedResource {
 		
 		private final Session s;

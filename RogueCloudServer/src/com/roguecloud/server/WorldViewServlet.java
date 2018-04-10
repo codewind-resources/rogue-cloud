@@ -31,6 +31,16 @@ import com.roguecloud.resources.Resources;
 import com.roguecloud.resources.Resources.Page;
 import com.roguecloud.utils.ServerUtil;
 
+/** 
+ * The world view servlet serves the two-panel index-server.html page. 
+ * 
+ * This view may only be viewed by the user that is listed as an administrator, and thus we check that the username
+ * and password for the admin are correctly set in the browser cookie. Admin is required because this view allows
+ * the viewer to see the full world state, which includes information that players should not be able to see. If a player
+ * could access this view, they could easily cheat.
+ * 
+ * The username/password cookie are set in CredentialsServlet.
+ **/
 @WebServlet("/WorldView")
 public class WorldViewServlet extends HttpServlet { 
 	private static final long serialVersionUID = 1L;
@@ -41,13 +51,22 @@ public class WorldViewServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+
+		String username = null;
+		String password = null;
 		
-		String username = ServerUtil.getCookie(request, "username");
-		String password = ServerUtil.getCookie(request, "password");
-		
+		// First, get from the servlet query paray
 		if(username == null && password == null) {
 			username = request.getParameter("username");
 			password = request.getParameter("password");
+			if(username != null && username.trim().isEmpty())  { username = null; }
+			if(password != null && password.trim().isEmpty())  { password = null; }
+		}
+
+		// Next, get from the cookie
+		if(username == null && password == null) { 
+			username = ServerUtil.getCookie(request, "username");
+			password = ServerUtil.getCookie(request, "password");
 			if(username != null && username.trim().isEmpty())  { username = null; }
 			if(password != null && password.trim().isEmpty())  { password = null; }
 		}

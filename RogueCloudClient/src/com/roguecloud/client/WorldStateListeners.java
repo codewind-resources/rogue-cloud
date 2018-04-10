@@ -25,7 +25,8 @@ import java.util.stream.Collectors;
 import com.roguecloud.client.ClientWorldState.ClientWorldStateListener;
 
 public class WorldStateListeners {
-	/** For internal use only */
+	/** Singleton 
+	 * For internal use only */
 
 	private WorldStateListeners() {
 	}

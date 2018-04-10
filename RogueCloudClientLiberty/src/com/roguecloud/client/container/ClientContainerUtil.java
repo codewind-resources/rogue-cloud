@@ -25,11 +25,13 @@ import javax.ws.rs.core.Response;
 import com.roguecloud.utils.HttpClientUtils;
 import com.roguecloud.utils.Logger;
 
+/** Utility methods */
 public class ClientContainerUtil {
 
 	private static Logger log = Logger.getInstance();
 	
 	
+	/** Get the list of tiles (in json format) from the user, see TileList servlet for details. */
 	public static String getTileListJson(String resourceUrl) {
 		
 		Client client = HttpClientUtils.generateJaxRsHttpClient();

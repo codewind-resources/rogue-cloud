@@ -137,10 +137,11 @@ public class LibertyWsBrowserEndpoint {
 		public void worldStateUpdated(int currClientWorldX, int currClientWorldY, int newWorldPosX, int newWorldPosY,
 				int newWidth, int newHeight, IMap map, long ticks) {
 
-			
+			// Every time ClientWorldState informs us that the world state has been updated, then convert the world state to JSON and send it to the client browser connection.
 			if(session.isOpen()) {
 
-				String str = BrowserWebSocketClientShared.generateBrowserJson(currClientWorldX, currClientWorldY, newWorldPosX, newWorldPosY, newWidth, newHeight, map, Collections.emptyList(), null, ticks, Json.createBuilderFactory(Collections.emptyMap()));
+				String str = BrowserWebSocketClientShared.generateBrowserJson(currClientWorldX, currClientWorldY, newWorldPosX, newWorldPosY, 
+						newWidth, newHeight, map, Collections.emptyList(), null, ticks, Json.createBuilderFactory(Collections.emptyMap()));
 				wrapper.sendMessage(str);
 			}
 			

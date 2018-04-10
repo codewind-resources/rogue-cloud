@@ -36,6 +36,11 @@ import com.roguecloud.utils.FastPathSearch;
 import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.ServerUtil;
 
+/** 
+ * This AI will sit at a single spot, waiting for a creature to get within X tiles of it. 
+ * When a creature gets within range, the AI will chase and attack it, until the creature is dead or out-of-range.
+ * When the creature is dead or out-of-range, this AI will return to its original guard position.
+ **/
 public class StationaryGuardAndChaseAI extends MonsterClient {
 
 	public static final Logger log = Logger.getInstance();
@@ -214,10 +219,12 @@ public class StationaryGuardAndChaseAI extends MonsterClient {
 		}
 	}
 	
+	/** Once we are finished chasing a creature, this is contains the step-by-step guide to get back to the creature. */
 	private static class MovingBackData {
 		List<Position> nextSteps = null;
 	}
 	
+	/** The creature we are chasing/trying to attack, and step-by-step route to get to the creature. */
 	private static class ChasingData {
 		List<Position> nextSteps = null;
 		ICreature creatureToAttack; 		

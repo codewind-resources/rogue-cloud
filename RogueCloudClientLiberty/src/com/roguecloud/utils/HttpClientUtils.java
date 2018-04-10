@@ -29,7 +29,7 @@ import javax.net.ssl.X509TrustManager;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 
-
+/** Utility to generate an untrusted JAX-RS client */
 public class HttpClientUtils {
 	
 	public static Client generateJaxRsHttpClient() {

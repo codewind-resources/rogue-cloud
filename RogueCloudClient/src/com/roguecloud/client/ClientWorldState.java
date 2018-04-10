@@ -661,14 +661,20 @@ public class ClientWorldState {
 //	}
 	
 	
+	
 	public static interface ClientWorldStateListener {
+		/** Currently only implemented by LibertyWSClientWorldStateListener */
 		
+		/** Inform the implementing class that the world state has been updated. */
 		public void worldStateUpdated(int currClientWorldX, int currClientWorldY, int newWorldPosX, int newWorldPosY, int newWidth, int newHeight, IMap map, long ticks);
 		
+		/** Inform the implementing class that the browser UI has been updated with score/leaderboard stats/etc */
 		public void receiveBrowserUIUpdate(JsonUpdateBrowserUI u);
-		
+
+		/** Inform the implementing class that the round has ended, and when the next round is happening */
 		public void roundComplete(int nextRoundInXSeconds);
 		
+		/**  Ask the implementin class if the session they are using is still open */
 		public boolean isClientOpen();
 	}
 

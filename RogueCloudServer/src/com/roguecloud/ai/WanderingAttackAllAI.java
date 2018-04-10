@@ -39,6 +39,10 @@ import com.roguecloud.utils.FastPathSearch;
 import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.ServerUtil;
 
+/**
+ * This monster AI will wander the world (or inside a fixed rectangle on the map), searching for other creatures to attack.
+ * This AI may be configured to either attack all creatures, or to only attack player creatures. 
+ */
 public class WanderingAttackAllAI extends MonsterClient {
 	
 	public static final Logger log = Logger.getInstance();
@@ -313,12 +317,13 @@ public class WanderingAttackAllAI extends MonsterClient {
 		
 	}
 	
-	
+	/** When we are in the attacking state, this is where we are going and who we are attacking */
 	private static class AttackingData {
 		List<Position> nextSteps = new ArrayList<>();
 		ICreature creatureToAttack;
 	}
 	
+	/** When we are in the wandering state, this is a step-by-step route of where we are going next */
 	private static class WanderingData {
 		List<Position> nextSteps = new ArrayList<>();
 	}

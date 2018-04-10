@@ -18,14 +18,18 @@ package com.roguecloud.client;
 
 import com.roguecloud.AIContext;
 import com.roguecloud.ActionResponseFuture;
-import com.roguecloud.RCRuntime;
-import com.roguecloud.NG;
 import com.roguecloud.actions.IAction;
-import com.roguecloud.client.EventLog;
-import com.roguecloud.client.IClient;
-import com.roguecloud.client.SelfState;
-import com.roguecloud.client.WorldState;
 
+/** 
+ * This class allows the monster AI code to receive the latest updates on what is happening in the world (the world state), 
+ * as well as the ability to respond to that.
+ * 
+ * Just like player AI code extends the RemoteClient class, monster AI code should extend this class and 
+ * implement the implement the 'stateUpdate' method from the parent interface.
+ *  
+ * To pass actions back the game loop (move, attack, pick up item), call the sendAction(...) method with the action to perform.
+ *  
+ **/
 public abstract class MonsterClient implements IClient {
 
 	protected SelfState selfState;

@@ -35,6 +35,7 @@ public class LibertyClientBrowserSessionWrapper {
 
 	private final Object lock = new Object();
 	
+	/** Synchronize on me when accessing, and when writing to */
 	private final Session session_synch;
 	
 	private final ClientSessionThread thread;
@@ -112,7 +113,7 @@ public class LibertyClientBrowserSessionWrapper {
 				log.err("Error from inner run", e, null);
 				e.printStackTrace();
 			} catch (InterruptedException e) {
-				/* ignore, this is expected on idpose. */
+				/* ignore, this is expected on dispose. */
 			} finally {
 				dispose();
 				synchronized (isRunning_synch) {

@@ -32,6 +32,13 @@ import com.roguecloud.utils.CompressionUtils;
 import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.ResourceLifecycleUtil;
 
+/** 
+ * When playing the game inside a WebSphere Liberty or OpenLiberty runtime, we use the WebSocket library provided by the
+ * Java EE runtime. 
+ * 
+ * This class establishes a connection to the server then receives messages from the server (passing them
+ * to the appropriate handler after decompression). 
+ **/
 public class LibertyClientEndpoint extends Endpoint {
 	
 	private final static Logger log = Logger.getInstance();
@@ -87,8 +94,10 @@ public class LibertyClientEndpoint extends Endpoint {
 			latencySim.dispose();
 		}
 	}
-	
 
+	/** Messages to/from the server are sent as Deflate-compressed whole binary messages; the use of compression
+	 * significantly reduces the overall side of the JSON payload. Once the message is decompressed, we pass
+	 * it to next step in the process. */
 	private static class BinaryMessageHandler implements MessageHandler.Whole<byte[]> {
 		final LibertyClientEndpoint parent;
 		final Session session;
@@ -113,7 +122,9 @@ public class LibertyClientEndpoint extends Endpoint {
 		}
 		
 	}
-	
+
+	/** This class is not currently used, but this class does allow us to support sending websocket JSON data 
+	 * as an uncompressed whole string, rather than as a compressed whole binary message.  */
 	@SuppressWarnings("unused")
 	private static class StringMessageHandler implements MessageHandler.Whole<String> {
 

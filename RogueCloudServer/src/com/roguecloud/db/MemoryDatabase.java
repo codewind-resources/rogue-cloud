@@ -29,18 +29,24 @@ import com.roguecloud.db.file.FileDbBackend;
 import com.roguecloud.db.file.IDBBackend;
 import com.roguecloud.utils.Logger;
 
+/** 
+ * MemoryDatabase is an in-memory frontend API for persistence (but note that MemoryDatabase requires a backend 
+ * from which to retrieve and store data.) Database backends used by MemoryDatabase implement the IDBBackend interface.
+ * 
+ * The design of MemoryDatabase and IDBBackend are such that the full database contents is retrieved (from the backend) on 
+ * first use, and from there individual or bulk writes may be performed.
+ * 
+ * All writes to the database occur on a separate thread, MemoryDatabaseWriteThread. Only a single instance of this 
+ * thread exists per database. Database objects added to the objectsToWrite list will be periodically extracted by the thread
+ * and written to the backend database.
+ * 
+ * Since (after initial load) the full contents of the database is contained in local memory, the get* methods of this class
+ * will return quickly and will not block on network IO. Likewise, since database writes are performing asynchronolously on
+ * a separate thread, they will not block the calling method.
+ * 
+ **/
 public class MemoryDatabase implements IDatabase {
-	/** 
-	 * MemoryDatabase is an in-memory frontend API for persistence (but MemoryDatabase requires a backend from which to retrieve
-	 * and store data.) Database backends used by MemoryDatabase implement the IDBBackend interface.
-	 * 
-	 * This class maintains a full in-memory 
-	 * 
-	 * The design of MemoryDatabase and IDBBackend are such that the full database contents is retrieved on first use, and from there
-	 * individual or bulk writes may be performed.
-	 * 
-	 **/
-
+	
 	private static final Logger log = Logger.getInstance();
 	
 	private final Object lock = new Object();
@@ -289,6 +295,11 @@ public class MemoryDatabase implements IDatabase {
 		
 	}
 	
+	/**
+	 * All writes to the database occur on a separate thread, MemoryDatabaseWriteThread. Only a single instance of this 
+	 * thread exists per database. Database objects added to the objectsToWrite list will be periodically extracted by the thread
+	 * and written to the backend database.
+	 */
 	public  class MemoryDatabaseWriteThread extends Thread {
 		
 		public MemoryDatabaseWriteThread() {
@@ -296,7 +307,8 @@ public class MemoryDatabase implements IDatabase {
 			setDaemon(true);
 		}
 		
-		
+		// TODO: LOW - Simulate slow writes to the backend database, to verify this works as expected.
+
 		public void run() {
 			List<IDBObject> localObjectsToWrite = new ArrayList<>();
 			List<DbUser> usersToWrite = new ArrayList<>();
@@ -334,9 +346,7 @@ public class MemoryDatabase implements IDatabase {
 						log.severe("Unknown DB object type in memory database: "+o, null);
 					}					
 				}
-				
-				// TODO: LOW - Simulate slow writes to the backend database, to verify this works as expected.
-				
+								
 				// Remove duplicate user writes, then write
 				try {
 					Map<Long, Boolean> userIdSeen = new HashMap<>();
@@ -407,6 +417,7 @@ public class MemoryDatabase implements IDatabase {
 	}
 
 	
+	/** The leaderboard uses two fields as a primary key, unlike User which has a single primary key. */
 	private static class LeaderboardPrimaryKey {
 		final private long userId;
 		final private long roundId;
@@ -444,7 +455,5 @@ public class MemoryDatabase implements IDatabase {
 	public long getAndIncrementNextRoundId() {
 		return backend.getAndIncrementNextRoundId();
 	}
-
-
 	
 }

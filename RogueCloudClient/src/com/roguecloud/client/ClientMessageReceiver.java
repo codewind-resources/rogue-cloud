@@ -26,6 +26,12 @@ import com.roguecloud.json.browser.JsonUpdateBrowserUI;
 import com.roguecloud.json.client.JsonHealthCheck;
 import com.roguecloud.utils.Logger;
 
+/** 
+ * This class receives JSON messages directly from the WebSocket endpoint.
+ *
+ * This class is responsible for determining the type of JSON object received (based on the 'type' field) and then 
+ * passing it to the appropriate receive method.
+ **/
 public class ClientMessageReceiver {
 	/** For internal use only */
 	
