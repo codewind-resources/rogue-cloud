@@ -44,6 +44,10 @@ import com.roguecloud.utils.RCUtils;
 import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.ResourceLifecycleUtil;
 
+/** 
+ * WebSocket endpoint for the client browser UI. The only message that this endpoint expects to receive from the client is JsonBrowserConnect, at which
+ * point LibertyWSClientWorldStateListener will write to the WebSocket whenever the world state changes.
+ **/
 @ServerEndpoint("/api/browser")
 public class LibertyWsBrowserEndpoint {
 
