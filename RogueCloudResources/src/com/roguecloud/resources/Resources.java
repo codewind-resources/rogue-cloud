@@ -33,6 +33,12 @@ import au.com.codeka.carrot.bindings.MapBindings;
 import au.com.codeka.carrot.resource.FileResourceLocater;
 import au.com.codeka.carrot.resource.ResourceLocater;
 
+/** 
+ * Singleton which is used to:
+ * - generate the HTML page using Carrot template engine, using the templates 'index.html' and 'index-server.html'
+ * - validate whether a specific numbered tile exists in the tiles directory
+ * - get a tile image from the tiles directory
+ **/
 public class Resources {
 
 	private static final Resources instance = new Resources();
@@ -182,6 +188,8 @@ public class Resources {
 
 	}
 
+	/** This object is used by the index.html and index-server.html Carrot templates to generate the HTML pages
+	 * which are served to the user as part of the Rogue Cloud browser UI. */
 	public static class Page {
 		String uuid;
 		String username;

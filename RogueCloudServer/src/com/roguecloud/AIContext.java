@@ -20,6 +20,14 @@ import com.roguecloud.ActionResponseFuture;
 import com.roguecloud.actions.IAction;
 import com.roguecloud.client.MonsterClient;
 
+/**
+ * 
+ * An instance of this class is created for each monster that is running on the server.
+ * 
+ * Creatures whose AI logic runs on the server require a number of support objects (client object, action response future, etc), 
+ * similar to those that run in the game client. This class contains that supporting state that is required for each creature.
+ * 
+ **/
 public class AIContext {
 
 	private final MonsterClient client;

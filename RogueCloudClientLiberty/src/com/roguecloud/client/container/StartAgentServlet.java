@@ -42,6 +42,7 @@ import com.roguecloud.resources.Resources.Page;
 import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.RegisterUser;
 
+/** This class will both start the player AI code, and also serve the browser UI page to the player. */
 @WebServlet("/StartAgent")
 public class StartAgentServlet extends HttpServlet {
 
@@ -156,9 +157,8 @@ public class StartAgentServlet extends HttpServlet {
 		String username = USERNAME;
 		String password = PASSWORD;
 
-		long id;
 		try {
-			id = RegisterUser.registerAndGetUserId(username, password,  SERVER_URL );
+			RegisterUser.registerAndGetUserId(username, password,  SERVER_URL );
 		} catch(Exception e) {
 			lastError = e.getMessage();
 			ClientContainerUtil.loudlyInformUser(e.getMessage());
@@ -267,7 +267,8 @@ public class StartAgentServlet extends HttpServlet {
 		return error == null;
 
 	}
-	
+
+	/** Used by doInitialConnect(...), keeps track of the # of times we have been interrupted during the round. */
 	private static class ConnectData {
 		
 		@SuppressWarnings("unused")

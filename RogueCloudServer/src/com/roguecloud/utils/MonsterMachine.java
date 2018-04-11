@@ -31,6 +31,16 @@ import com.roguecloud.client.WorldState;
 import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 
+/** 
+ * This class is responsible for distributing new map information to monsters after each tick, for running the threads that execute AI logic, and 
+ * for returning monster actions back to the game loop.
+ * 
+ * This class is designed to prevent monster AIs that have intensive CPU requirements (ie they lots of pathfinding per tick) from 
+ * starving out monsters that use minimal CPU per game tick.
+ * 
+ * Only one instance of this class will exist per round; that instance is destroyed at 
+ * the end of every round (as well as all the child threads), and a new instance is created.
+ **/
 public final class MonsterMachine {
 	
 	private final Logger log = Logger.getInstance();
@@ -41,14 +51,20 @@ public final class MonsterMachine {
 	
 	private final Object lock = new Object();
 	
+	/*** The next world/self state update (as a unit of work) that is available for a creature */
 	private final Map<Long /*creature id*/, WorkEntry> mapWork_synch_lock = new HashMap<>();
 
+	/** Each time informMonster(...) is called, the creature ID is */
 	private final Queue<Long /* creature id*/> workListNew_synch_lock = new ArrayDeque<>();
-	
+
+	/** Whether or not the specific creature has work already running on another thread (a monster's AI logic must only ever 
+	 * be called by one thread at a time) */
 	private final Map<Long /* creature id*/, Boolean /*is thread active*/> hasActiveThread_synch_lock = new HashMap<>();
+	// TODO: The thread contention on the hasActiveThread_synch_lock map could be easily improved.
 	
 	private final LogContext lc;
 	
+	/** References to all the active threads created by this class */
 	private final List<MonsterMachineThread> threads_synch_lock = new ArrayList<>();
 	
 	private final MonsterRuntimeStats runtimeStats;
@@ -66,6 +82,7 @@ public final class MonsterMachine {
 		}
 	}
 	
+	/** This method is called for each living monster, per game tick. */
 	public final void informMonster(long ticks, SelfState selfState, WorldState worldState, AIContext aicontext, EventLog eventLog) {
 
 		if(selfState.getPlayer() == null || worldState.getMap() == null || aicontext == null || eventLog == null) {
@@ -99,6 +116,11 @@ public final class MonsterMachine {
 		}
 	}
 
+	/** 
+	 * Many instances of this class will run as threads, per round (see NUM_THREADS). The purpose of 
+	 * this thread is to extract a piece of work to perform (WorkEntry), and to call 
+	 * receiveStatusUpdate(...) on the monster specified by the work entry.  
+	 * */
 	private class MonsterMachineThread extends Thread {
 		
 		public MonsterMachineThread() {
@@ -120,10 +142,12 @@ public final class MonsterMachine {
 					
 					synchronized(lock) {
 						
+						// If no work, wait for work.
 						if(mapWork_synch_lock.size() == 0) {
 							lock.wait(1000);
 						}
 						
+						// If there IS WORK...
 						if(mapWork_synch_lock.size() > 0) {
 							
 							int eventsToPull = 1;
@@ -193,6 +217,10 @@ public final class MonsterMachine {
 		
 	}
 	
+	/** Work to be performed by the MonsterMachineThread. An instance of this class will exist for each monster, per game tick. This class corresponds
+	 * to a single call of the receiveStateUpdate(...) method of the MonsterClient. 
+	 * 
+	 * This class contains the current state of a monster, the world state, the AIContext for the monster, and the event log (all for use by the monster AI class) */
 	private static final class WorkEntry {
 		@SuppressWarnings("unused")
 		final long ticks;

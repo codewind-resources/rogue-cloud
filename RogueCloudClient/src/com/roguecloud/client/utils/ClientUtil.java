@@ -29,7 +29,12 @@ import com.roguecloud.utils.RCUtils;
 import com.roguecloud.utils.IManagedResource;
 import com.roguecloud.utils.Logger;
 
-/** For internal use only */
+/** 
+ * Utilities for managing Websocket client resources. The managed resource methods 
+ * are used by ResourceLifecycleUtil.
+ *   
+ * For internal use only.
+ **/
 public class ClientUtil {
 	
 	public static final Logger log = Logger.getInstance();
@@ -95,6 +100,7 @@ public class ClientUtil {
 		return new SessionManagedResource(s, expireDurationInNanos);
 	}
 	
+	/** Implements a IManagedResource for a WebSocket Session object. */
 	private static class SessionManagedResource implements IManagedResource {
 		
 		private final Session s;

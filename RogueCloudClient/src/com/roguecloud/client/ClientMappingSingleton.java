@@ -19,13 +19,19 @@ package com.roguecloud.client;
 import java.util.HashMap;
 import java.util.Map;
 
-/** For internal use only */
+/**
+ * This is a singleton that maps the player's UUID, to the currently active ClientState for that UUID.  
+ * 
+ * Currently: 
+ * - Written to by StartAgentServlet and ClientStandaloneMain
+ * - Read from by LibertyWsBrowserEndpoint
+ * 
+ * For internal server-side use only */
 public class ClientMappingSingleton {
 	
 	private static final ClientMappingSingleton instance = new ClientMappingSingleton(); 
 	
 	private ClientMappingSingleton() {
-		
 	}
 	
 	public static ClientMappingSingleton getInstance() {
@@ -35,7 +41,7 @@ public class ClientMappingSingleton {
 	
 	private final Object lock = new Object();
 	
-	private final Map<String /* lowercase uuid*/, ClientState> stateMap_synch_lock = new HashMap<>(); 
+	private final Map<String /* player uuid (lowercase) */, ClientState> stateMap_synch_lock = new HashMap<>(); 
 
 	public void putClientState(String uuid, ClientState state) {
 		synchronized(lock) {
@@ -54,7 +60,5 @@ public class ClientMappingSingleton {
 			return stateMap_synch_lock.get(uuid.toLowerCase());
 		}
 	}
-	
-	
 	
 }

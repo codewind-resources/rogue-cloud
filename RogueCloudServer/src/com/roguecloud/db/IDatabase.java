@@ -18,11 +18,19 @@ package com.roguecloud.db;
 
 import java.util.List;
 
+/** 
+ * This interface should be implemented by a database frontend to provide storage/retrieval of leaderboard data. The
+ * methods of this interface correspond to CRUD requests on entities in the database, but the methods not do specifically
+ * dictate the technology (NoSQL/SQL/File system) used to satisfy these database requests.   
+ * 
+ * Currently, only MemoryDatabase implements this interface, but MemoryDatabase supports 
+ * a number of backends, including Cloudant and the local file system storage.
+ *
+ */
 public interface IDatabase {
 	
 	public long getAndIncrementNextRoundId();
 	
-
 	// Users
 	
 	public boolean isValidPasswordForUser(String username, String password);

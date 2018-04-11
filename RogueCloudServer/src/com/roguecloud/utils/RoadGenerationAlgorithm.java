@@ -18,6 +18,10 @@ package com.roguecloud.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+/** 
+ * My first attempt at procedural generation of a road network on a map; this is not currently used for 
+ * map generation. 
+ **/
 public class RoadGenerationAlgorithm {
 
 	final int X_SIZE;
@@ -25,6 +29,7 @@ public class RoadGenerationAlgorithm {
 	
 	final int GRID_SIZE;
 
+	/** Generate a graph with this number of directed edges */
 	final int mainRoadLengthInEdges;
 	
 	private int[][] resultMap;
@@ -58,6 +63,8 @@ public class RoadGenerationAlgorithm {
 		do {
 			roadEdge = generate();
 			iterations++;
+			
+			// Keep adding edges until we hit the maximum 
 		} while(roadEdge.size() < mainRoadLengthInEdges );
 		
 
@@ -217,7 +224,7 @@ public class RoadGenerationAlgorithm {
 			lastX = currX;
 			lastY = currY;
 			
-			// pick a direction
+			// Pick a random direction (any direction but left, which is disallowed by the algorithm)
 			int dir = (int)(Math.random()*3d);
 			if(dir == 0) {
 				// up
@@ -239,6 +246,7 @@ public class RoadGenerationAlgorithm {
 				}
 			}
 			
+			// Stop 
 			if(currX == X_SIZE/GRID_SIZE+1) {
 				// hit a side, so done.
 				break;
@@ -289,6 +297,7 @@ public class RoadGenerationAlgorithm {
 		return resultMap;
 	}
 	
+	/** A directed edge in the graph theory sense; each edge is a road between two coordinates.  */
 	public static class DirectedEdge {
 		private final Coord src;
 		
@@ -307,7 +316,6 @@ public class RoadGenerationAlgorithm {
 			return src;
 		}
 		
-		
 		public boolean isHorizontal() {
 			if(src.getY() == dest.getY()) {
 				return true;
@@ -320,32 +328,6 @@ public class RoadGenerationAlgorithm {
 		public String toString() {
 			return src+" -> "+" "+dest;
 		}
-		
-		
 	}
 	
-	public static class Coord {
-		private final int x;
-		private final int y;
-		
-		
-		public Coord(int x, int y) {
-			this.x = x;
-			this.y = y;
-		}
-		
-		public int getX() {
-			return x;
-		}
-		public int getY() {
-			return y;
-		}
-		
-		@Override
-		public String toString() {
-			return "( "+x+", "+y+")";
-		}
-		
-		
-	}
 }

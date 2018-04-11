@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.roguecloud.NG;
 import com.roguecloud.RCRuntime;
 import com.roguecloud.actions.CombatActionResponse;
 import com.roguecloud.actions.DrinkItemActionResponse;
@@ -81,9 +80,22 @@ import com.roguecloud.map.TileType;
 import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 
-/** For internal use only */
+/** 
+ * Contains the current state of the world for the current round; the data in this class are used to provide up-to-date data on
+ * the current world state to the IClient/RemoteClient interface of the player's AI code.
+ *
+ * The data in this class are predominantly updated by JsonFrameUpdates received from the server, which contains everything
+ * the player can see in their current view, as well as any observed events during the frame. JsonFrameUpdates are processed in
+ * receiveFrameUpdate(...). 
+ * 
+ * This class also receives JsonActionMessageResponse responses from the server, which are passed to the relevant
+ * ActionResponseFuture.
+ * 
+ * This class also receives BrowserUIUpdates, which are passed to the world state listeners.
+ * 
+ * This class is for internal server use only.
+ **/
 public class ClientWorldState {
-	/** World state for a single round. */
 	
 	private static final Logger log = Logger.getInstance();
 
@@ -91,37 +103,48 @@ public class ClientWorldState {
 	
 	private final LogContext lc;
 	
+	/** Our parent class */
 	private final ClientState clientState;
-	
+
+	/** The most recently received SelfState from the server */
 	private SelfState selfState_synch_lock;
 	
-	private final HashMap<Long, JsonFrameUpdate> unprocessedFrames_synch_lock = new HashMap<>();
+	/** Frame updates received from the server that we have not yet processed. */
+	private final HashMap<Long /* frame id*/, JsonFrameUpdate> unprocessedFrames_synch_lock = new HashMap<>();
+
+	/** The id of the next frame that we _expect_ to received from the server. */
 	private long nextFrame_synch_lock = 1;
 	
 	private RCCloneMap map_synch_lock = null;
 	
+	/** Players that our character has seen */
 	private final HashMap<Long /* player id*/, PlayerCreature> playerDb_sync_lock = new HashMap<>();
 	
+	/** Monsters that our character has seen*/
 	private final HashMap<Long /* creature id*/, Monster> monsterDb_synch_lock = new HashMap<>();
 	
-	private final HashMap<Long, IObject> objectDb_synch_lock = new HashMap<>();
+	/** Objects that our character has seen*/
+	private final HashMap<Long /* armour/weapon/drinkable id*/, IObject> objectDb_synch_lock = new HashMap<>();
 	
+	/** The X most recent events that occurred within our character's field of view */
 	private final EventLog event_log_synch_lock = new EventLog(200);
 	
+	/** An object that we pass to the client API, to allow the user to get the most recent map data. See that class description
+	 * for details. */
 	private ClientMap clientMap;
-	private WorldState worldState;
 	
-//	private final List<ClientWorldStateListener> listeners_synch = new ArrayList<>();
+	/** The most recently received world state */
+	private WorldState worldState;
+	// TODO: CURR - Why is this WorldState reference not synchronized (and with the appropriate naming convention)? 
 	
 	private boolean disposed = false;
-	
-//	private WorldState worldState = new WorldState();
 	
 	public ClientWorldState(ClientState clientState, LogContext lc) {
 		this.clientState = clientState;
 		this.lc = lc;
 	}
 
+	/** The server has replied to one of our player's action, so process it and pass it to the future */
 	public void processActionResponse(JsonActionMessageResponse o) {
 		if(disposed) { return; }
 		
@@ -279,19 +302,6 @@ public class ClientWorldState {
 						}
 						Tile newTile = new Tile(passable, fgTerrain, bgTerrain);
 						newTile.setLastTickUpdated(update.getGameTicks());
-						
-//						{
-//							Tile oldTile = localMap.getTile(worldPosX, worldPosY);
-//						
-//							TileType[] newTtList = newTile.getTileTypeLayers();
-//							boolean newContains1009 = Arrays.asList(newTtList).stream().anyMatch( e -> e.getNumber() == 1009);
-//							
-//							boolean oldContains1009 = oldTile == null ? false : Arrays.asList(oldTile.getTileTypeLayers()).stream().anyMatch( e -> e.getNumber() == 1009);
-//							
-//							if(newContains1009 || oldContains1009) {
-//								System.err.println("found contains!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1  "+newContains1009+" "+oldContains1009);
-//							}
-//						}
 						
 						localMap.putTile(worldPosX,  worldPosY, newTile);
 						
@@ -652,22 +662,28 @@ public class ClientWorldState {
 		});
 		
 	}
-
-//	public void addListener(ClientWorldStateListener l) {
-//		synchronized(listeners_synch) {
-//			listeners_synch.add(l);
-//		}
-//	}
 	
-	
+	/** 
+	 * The containing class, ClientWorldState, is principally responsible for maintaining the world state required to implement 
+	 * the IClient/RemoteClient API that is used by player AI code. However, in addition, other parts of 
+	 * the code may also be want to be informed when the world state is updated. 
+	 * 
+	 * This class ClientWorldStateListener, allows other sections of the client code to register themselves as listeners,
+	 * and to be inform when the world state is updated, a browser UI update is received, or the round completed.
+	 *  
+	 * Currently this interface is only implemented by LibertyWSClientWorldStateListener */
 	public static interface ClientWorldStateListener {
 		
+		/** Inform the implementing class that the world state has been updated. */
 		public void worldStateUpdated(int currClientWorldX, int currClientWorldY, int newWorldPosX, int newWorldPosY, int newWidth, int newHeight, IMap map, long ticks);
 		
+		/** Inform the implementing class that the browser UI has been updated with score/leaderboard stats/etc */
 		public void receiveBrowserUIUpdate(JsonUpdateBrowserUI u);
-		
+
+		/** Inform the implementing class that the round has ended, and when the next round begins */
 		public void roundComplete(int nextRoundInXSeconds);
 		
+		/**  Ask the implementing class if the session they are using is still open. */
 		public boolean isClientOpen();
 	}
 
@@ -695,12 +711,5 @@ public class ClientWorldState {
 			event_log_synch_lock.dispose();
 		}
 		
-//		synchronized (listeners_synch) {
-//			listeners_synch.clear();
-//		}
-		
 	}
-
-
-	
 }

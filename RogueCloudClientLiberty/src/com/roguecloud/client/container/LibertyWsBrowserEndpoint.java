@@ -44,6 +44,10 @@ import com.roguecloud.utils.RCUtils;
 import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.ResourceLifecycleUtil;
 
+/** 
+ * WebSocket endpoint for the client browser UI. The only message that this endpoint expects to receive from the client is JsonBrowserConnect, at which
+ * point LibertyWSClientWorldStateListener will write to the WebSocket whenever the world state changes.
+ **/
 @ServerEndpoint("/api/browser")
 public class LibertyWsBrowserEndpoint {
 
@@ -117,7 +121,10 @@ public class LibertyWsBrowserEndpoint {
 		
 	}
 	
-	
+
+	/** This class is informed whenever the Rogue Cloud server sends the client API new world state data. This class 
+	 * does minimal processing, and passes it along to the LiberyClientBrowserSessionWrapper, who is responsible
+	 * for sending that to the client's web browser (to be displayed in the Rogue Client Web UI). */
 	public static class LibertyWSClientWorldStateListener implements ClientWorldStateListener {
 
 		private final LibertyClientBrowserSessionWrapper wrapper;
@@ -126,7 +133,6 @@ public class LibertyWsBrowserEndpoint {
 		private final Object lock = new Object();
 		
 		private boolean threadStarted_synch_lock = false;
-		
 		
 		public LibertyWSClientWorldStateListener(LibertyClientBrowserSessionWrapper wrapper, Session session) {
 			this.wrapper = wrapper;
@@ -137,10 +143,12 @@ public class LibertyWsBrowserEndpoint {
 		public void worldStateUpdated(int currClientWorldX, int currClientWorldY, int newWorldPosX, int newWorldPosY,
 				int newWidth, int newHeight, IMap map, long ticks) {
 
-			
+			// Every time ClientWorldState informs us that the world state has been updated, then convert the world state to JSON 
+			// and send it to the client browser connection.
 			if(session.isOpen()) {
 
-				String str = BrowserWebSocketClientShared.generateBrowserJson(currClientWorldX, currClientWorldY, newWorldPosX, newWorldPosY, newWidth, newHeight, map, Collections.emptyList(), null, ticks, Json.createBuilderFactory(Collections.emptyMap()));
+				String str = BrowserWebSocketClientShared.generateBrowserJson(currClientWorldX, currClientWorldY, newWorldPosX, newWorldPosY, 
+						newWidth, newHeight, map, Collections.emptyList(), null, ticks, Json.createBuilderFactory(Collections.emptyMap()));
 				wrapper.sendMessage(str);
 			}
 			

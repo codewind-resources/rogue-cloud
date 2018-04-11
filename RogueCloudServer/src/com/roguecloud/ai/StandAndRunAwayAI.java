@@ -35,6 +35,9 @@ import com.roguecloud.events.IEvent.EventType;
 import com.roguecloud.map.IMap;
 import com.roguecloud.map.Tile;
 
+/**
+ * This AI will never attack, it will only ever run away from creatures that attack it.
+ */
 public class StandAndRunAwayAI extends MonsterClient {
 
 	ICreature creatureWeAreRunningAwayFrom = null;
@@ -46,20 +49,11 @@ public class StandAndRunAwayAI extends MonsterClient {
 	@SuppressWarnings("unused")
 	private static final Object lock = new Object();
 	
-//	private static boolean us = true;
-	
 	private boolean LOG = false;
 	
 	@Override
 	public void stateUpdate(SelfState selfState, WorldState worldState, IEventLog eventLog) {
 		
-//		synchronized(lock) {
-//			if(us) {
-//				LOG = true;
-//				us = false;
-//			}
-//		}
-//		
 		if(actionResponse != null) {
 			try {
 				log("Waiting for action: "+ourLastAction);
@@ -168,9 +162,6 @@ public class StandAndRunAwayAI extends MonsterClient {
 			}
 			
 		}
-		
-//		for(Position curr : possibilities) {
-//		}
 		
 		return null;
 		

@@ -48,6 +48,13 @@ import com.roguecloud.json.JsonClientConnectResponse.ConnectResult;
 import com.roguecloud.utils.CompressionUtils;
 import com.roguecloud.utils.Logger;
 
+/** 
+ * See ISessionWrapper for details, but this class provides uninterrupted WebSocket 
+ * communication between the client and server by transparently handling disconnects.  
+ * 
+ * This class implements a simple interface over a WebSocket Session object, and is implemented using 
+ * WebSphere Liberty/OpenLiberty's WebSocket library.
+*/
 public class LibertySessionWrapper implements ISessionWrapper {
 
 	private final static Logger log = Logger.getInstance();
@@ -58,9 +65,23 @@ public class LibertySessionWrapper implements ISessionWrapper {
 	
 	private final ClientStateOutputThread thread = new ClientStateOutputThread();
 	
+	/** Contains a list of sessions that have failed (disconnected/terminated connection), and that we have
+	 * attempted to restart.*/
 	private final HashMap<String /* session uuid */, OldSessionInfo> sessionRestartedNew_synch = new HashMap<>();
 	
-	private enum WrapperState { INITIAL, WAITING_FOR_CONFIRMATION, WAITING_FOR_RESEND, ACTIVE, COMPLETE }; 
+	private enum WrapperState {
+		/* 1) The initial state of the wrapper before we start to connect: */
+		INITIAL,
+		/* 2) We have sent JsonClientConnect to the server, and are waiting for a response: */
+		WAITING_FOR_CONFIRMATION,
+		/* 3) We have received back a (successful) JsonClientConnectResponse from the server, and next we will 
+		 * resend the last 100 messages we sent to the server: */
+		WAITING_FOR_RESEND,
+		/* 4) We have resent the last 100 messages, and are now sending any data that is put in the 
+		 * messagesToSend list: */
+		ACTIVE,
+		/** 5) The websocket is no longer required and will be disposed of.*/
+		COMPLETE }; 
 	
 	private WrapperState state_synch_lock;
 	
@@ -392,12 +413,25 @@ public class LibertySessionWrapper implements ISessionWrapper {
 		thread.dispose();
 		
 		hce.dispose();
-		
 	}
 	
-	
+	/**
+	 * When a WebSocket connection fails, this class is not involved in re-establishing the connection; instead, this class waits
+	 * for the LSW parent to re-establish the connection. Once the parent state is 'WAITING_FOR_RESEND', this thread takes over.
+	 * 
+	 * Next, once the parent thread is in the WAITING_FOR_RESEND state, this class will resend the last X messages to ensure
+	 * that the server has received all messages that we previously sent. Once this is complete, the state is
+	 * switched to ACTIVE.
+	 * 
+	 * When the parent state is ACTIVE, this thread will write messages in messagesToSend to the WebSocket.
+	 * 
+	 * If the connection fails, this class will inform the parent and the reconnection cycle will begin anew.
+	 *   
+	 * 
+	 * Only a single instance of this thread is created per LibertySessionWrapper. 
+	 */	
 	private class ClientStateOutputThread extends Thread implements ILatencySimReceiver {
-
+		
 		private final Object threadLock = new Object();
 		
 		private final List<String> messagesToSend_synch_threadLock = new ArrayList<>();
@@ -433,7 +467,8 @@ public class LibertySessionWrapper implements ISessionWrapper {
 			while(!disposed && !parent.isRoundComplete()) {
 
 				boolean isActive = false;
-				// Wait for messages to send (or 100 msecs).
+				
+				// Wait for new messages to write (or 100 msecs, whichever comes first).
 				synchronized (threadLock) {
 					if(messagesToSend_synch_threadLock.size() == 0) {
 						threadLock.wait(100);
@@ -454,6 +489,7 @@ public class LibertySessionWrapper implements ISessionWrapper {
 				
 				if(!isActive && localCopy.size() == 0) {
 					boolean wait = false;
+					// TODO: EASY - Is this entire block a no-op?
 					synchronized(LibertySessionWrapper.this.lock) {
 						if(state_synch_lock == WrapperState.WAITING_FOR_RESEND) {
 							wait  = false;
@@ -464,6 +500,7 @@ public class LibertySessionWrapper implements ISessionWrapper {
 					}
 				}
 				
+				// Create a local thread copy of last 100 Messages (but only if waiting for resend) 
 				localLast100Messages.clear();				
 				if(state_synch_lock == WrapperState.WAITING_FOR_RESEND) {
 					synchronized(threadLock) {
@@ -476,6 +513,8 @@ public class LibertySessionWrapper implements ISessionWrapper {
 					if(state_synch_lock == WrapperState.WAITING_FOR_RESEND) {
 						
 						if(session_synch_lock.isOpen()) {
+							// Send the last 100 messages. This ensures that the server wil receive any text that we sent during the outage. 
+							// If the server receives a duplicate of a message that it has already received, it will ignore it. 
 							for(String previousMessage : localLast100Messages) {
 								if(Logger.CLIENT_SENT) { log.info("Sending previous text: "+previousMessage, parent.getLogContext()); }
 								if(NG.ENABLED) { NG.log(RCRuntime.GAME_TICKS.get(), "Sending previous text:" +previousMessage); }
@@ -490,21 +529,24 @@ public class LibertySessionWrapper implements ISessionWrapper {
 								}
 							}
 							
-							// We have successfully resent the previous message
+							// Success! We have successfully resent the previous message, and are now ready 
 							changeState(WrapperState.ACTIVE);
 							
+							// After a successful connect, reset the failure timer back to default 
 							timeToWaitBetweenConnectFailuresInMsecs = INITIAL_TIME_TO_WAIT_BETWEEN_CONN_FAILURES;
 							
-							
 						} else {
+							// This only happens when the underlying session has died, so terminate the connection and try again
 							errorOccurred(session_synch_lock);
 						}
 						
-					}
+					} // end if for state is 'waiting for resend' 
 					
 					outer: for(String str : localCopy) {
 						
 						if(RCRuntime.SIMULATE_BAD_CONNECTION) {
+							// We simulate a bad connection by simulating a 10% chance of any individual message causing the
+							// connection to die. This is simulating a VERY unreliable connection.
 							if(Math.random() < .1) {
 								try {
 									if(NG.ENABLED) { NG.log(RCRuntime.GAME_TICKS.get(), "Nuking connection!"); }
@@ -522,8 +564,7 @@ public class LibertySessionWrapper implements ISessionWrapper {
 							
 							 if(session_synch_lock.isOpen()) {
 								try {
-									if(Logger.CLIENT_SENT) { log.info("Sending current text: "+str, parent.getLogContext()); }										
-									
+									if(Logger.CLIENT_SENT) { log.info("Sending current text: "+str, parent.getLogContext()); }
 									if(NG.ENABLED) { NG.log(RCRuntime.GAME_TICKS.get(), "Sending current text:" +str); }
 									
 									basicRemote_synch_lock.sendBinary(CompressionUtils.compressToByteBuffer(str));
@@ -564,7 +605,7 @@ public class LibertySessionWrapper implements ISessionWrapper {
 		}
 
 		public void dispose() {
-			
+
 			synchronized(threadLock) {
 				messagesToSend_synch_threadLock.clear();
 				last100Messages_synch_threadLock.clear();
@@ -574,6 +615,8 @@ public class LibertySessionWrapper implements ISessionWrapper {
 	}
 
 	
+	/** Information on a session that prematurely terminated, and that we have
+	 * attempted to reestablish. */
 	static class OldSessionInfo {
 		final long infoCreationTimeInNanos;
 		
@@ -593,37 +636,4 @@ public class LibertySessionWrapper implements ISessionWrapper {
 		return disposed;
 	}
 
-	
-	
-//	@Override
-//	public boolean isExpired() {
-//		return System.nanoTime() >= expirationTimeInNanos;
-//	}
-//
-//	@Override
-//	public boolean allowReplace(IManagedResource resource) {
-//		return false;
-//	}
-//
-//	@Override
-//	public String getId() {
-//		synchronized(session_synch_lock) {
-//			return session_synch_lock.getId();
-//		}
-//	}
-
-//	@Override
-//	public boolean equals(Object obj) {
-//		if(!(obj instanceof LibertySessionWrapper)) {
-//			return false;
-//		}
-//		
-//		LibertySessionWrapper lsw = (LibertySessionWrapper)obj;
-//		
-//		synchronized (lock) {
-//			synchronized(lsw.lock) {
-//				return lsw.session_synch_lock.getId().equals(session_synch_lock.getId());				
-//			}
-//		}
-//	}
 }

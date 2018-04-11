@@ -21,6 +21,12 @@ import com.roguecloud.map.IMap;
 import com.roguecloud.map.Tile;
 
 /** 
+ * The purpose of this class is to allow ClientWorldState to transparently update the map that the player code is running on,
+ * while allowing the player code to maintain a single consistent reference to the map.
+ * 
+ * This allows the player to store a reference to the map from any WorldState update, and rely on the fact that it will
+ * always contain the most up-to-date map data.
+ * 
  * See IMap interface for details on the available methods. 
  **/
 public class ClientMap implements IMap {

@@ -18,6 +18,7 @@ package com.roguecloud.db;
 
 import java.util.List;
 
+/** Miscellaneous database utility methods. */
 public class DatabaseUtils {
 
 	public static void sortDescendingByScore(List<DbLeaderboardEntry> l) {

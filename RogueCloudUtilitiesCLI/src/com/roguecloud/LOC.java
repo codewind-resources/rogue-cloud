@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/** Simples LoC counter */
 public class LOC {
 
 	public static void main(String[] args) {

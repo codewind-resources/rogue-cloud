@@ -26,6 +26,7 @@ import javax.ws.rs.core.Response;
 import com.roguecloud.json.client.JsonUserRequest;
 import com.roguecloud.json.client.JsonUserRequestResponse;
 
+/** HTTP client utility method to register a new user in the server's user database if they are not already registered. */
 public class RegisterUser {
 
 	/** Register a user if they don't already exist, otherwise check the password and return the user id.*/

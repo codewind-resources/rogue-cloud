@@ -23,6 +23,7 @@ import java.util.List;
 
 import com.roguecloud.utils.RCUtils;
 
+/** A utility class for parsing the monsters.txt, armour.txt, and weapons.txt files, all of which share a simple file format. */
 public class UniverseParserUtil {
 	
 	public static void parseItemFile(ItemParserHandler handler, String resourceUrl) throws IOException {
@@ -73,6 +74,7 @@ public class UniverseParserUtil {
 		return result;
 	}
 	
+	/** Implemented by a lambda expression in ArmourList/MonsterTemplateList/WeaponList. Receives the parsed text for a particular entry. */
 	public static interface ItemParserHandler {
 		
 		public void line(String currType, List<String> commaSepArr, String line);

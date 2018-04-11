@@ -28,6 +28,13 @@ import java.util.concurrent.TimeUnit;
 import com.roguecloud.NG;
 import com.roguecloud.utils.Logger;
 
+/** 
+ * At present, there is only ever a single ServerInstance, but this ServerInstanceList class exists to provide 
+ * architectural support for a single instance of this application running multiple simultaneous server instances. 
+ * 
+ * In addition to containing a list of active server instances, this class also periodically dumps thread stack traces for
+ * debugging purposes.
+ **/
 public final class ServerInstanceList {
 
 	private static final ServerInstanceList instance = new ServerInstanceList();   
@@ -60,6 +67,7 @@ public final class ServerInstanceList {
 	}
 
 	
+	/** Periodically dumps thread stack traces for debugging purposes. */
 	private static class ThreadStackDumpThread extends Thread{
 		private final Logger log = Logger.getInstance();
 		

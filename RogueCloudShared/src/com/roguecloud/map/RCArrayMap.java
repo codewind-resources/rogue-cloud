@@ -23,7 +23,27 @@ import com.roguecloud.Position;
 import com.roguecloud.utils.Coord;
 import com.roguecloud.utils.Logger;
 
-/** For internal use - see IMap for the public API of map. */
+/**
+ *
+ * In addition to implementing the IMap and IMutableMap interface, this class maintains the following properties:
+ * - The contents of the map should only be mutated from the game thread.
+ * - To detect the above, getTile(...) methods should only be used for read, and getTileForWrite(...) should be used for write.
+ * - cloneForRead() will produce a read-only map, which will not mutate and is safe to share across multiple threads. 
+ *
+ * The map is backed by two layers:
+ * - Mutable 'top' layer: A hash map, representing tiles that have been written to (mutated) since the map was created.
+ * - Immutable 'bottom' layer: A 2d graph, representing an (x, y) grid of map titles.  
+ * 
+ * All writes to the map, using putTile(...), or getTileForWrite(...) will write to the top layer, leaving the bottom layer
+ * untouched. This is used to allow us to efficiently clone (using cloneForRead()) and that share that clone across mutiple
+ * threads, while still allowing us to write to the map after the cloned object has been shared.
+ * 
+ * However, the 'top' layer is significantly less efficient than the bottom layer, so it is necessary to periodically 
+ * copy ("collapse") the top layer into the bottom layer, and to clear the top layer contents. The method
+ * to collapse the map is collapseOverlayIntoNewMap(...)
+ * 
+ * For internal use - see IMap for the public API of map.
+ */
 public final class RCArrayMap implements IMap, IMutableMap {
 	
 	private static final Logger log = Logger.getInstance();
@@ -33,7 +53,6 @@ public final class RCArrayMap implements IMap, IMutableMap {
 	private final Tile[] tileArray;
 	
 	private HashMap<Coord, Tile> overlay;
-	
 	
 	private boolean clonedForRead = false;
 	
@@ -109,6 +128,7 @@ public final class RCArrayMap implements IMap, IMutableMap {
 		return getTileForWrite(x, y, false);
 	}
 	
+	@SuppressWarnings("unused")
 	private final Tile getTileForWrite(int x, int y, boolean ignoreAssert) {
 		if(!ignoreAssert) {
 			RCRuntime.assertGameThread();

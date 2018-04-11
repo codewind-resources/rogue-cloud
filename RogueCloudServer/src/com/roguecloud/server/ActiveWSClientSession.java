@@ -32,34 +32,63 @@ import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.ServerUtil;
 
+/** 
+ * Container object for the WebSocket API's Session object. This class has the same lifecycle as the Session it contains. 
+ * The parent class of this class is ActiveWSClient. 
+ * 
+ * To write asynchronously write an outbound message to the session contained in this object, call the writeToClientAsynch(...) method.
+ * The message will be added to the outbound message queue, and written by the AWSClientSessionSender thread. 
+ **/
 public class ActiveWSClientSession {
 	
 	private final static Logger log = Logger.getInstance();
 	
 	public static enum Type { BROWSER, CLIENT };
 
+	/** The contained WebSocket Session */
 	private final Session session_synch;
 	
+	/** When the connection was first established */
 	private final Long connectTimeInNanos;
 
 	private final LogContext logContext;
 	
+	/** Will this session be used for the browser API or the agent AI API */
 	private final Type type;
 
+	/** Specifies what the WebSoocket will be used for. See the javadoc comment on ViewType for specifics.  */
 	private final ViewType viewType;
 	
 	private final String uuid;
 	
+	/** A buffer of Strings (usually JSON) that the AWSClientSessionSender thread will write to the WebSocket at
+	 * the next opportunity. */
 	private final List<String> stringsToSend_synch = new ArrayList<>();
 	
+	/** The round that the session was created in */
 	private final RoundScope roundScope;
 	
+	/** This is the thread responsible for writing to the WebSocket session */
 	private final AWSClientSessionSender senderThread;
 	
 	private final Object lock = new Object();
-	
+
+	/**
+	 * A "full client reset" means that the connecting client (in this case, the agent API) does not have any information 
+	 * about the previous state of connection. This occurs either when the client first connects during a round, or
+	 * when the client's process is restarted (for example, the application server restarted).  
+	 * 
+	 * The client connection will inform us (the server) if a full client reset is required. The client will inform us
+	 * when it first connects, in JsonClientConnect.
+	 * 
+	 * On the server side, the previous state of the connection is stored in EngineWebSocketState. If the client 
+	 * informs us that a full client reset is required, then the following connection context fields will 
+	 * be cleared from EngineWebSocketState: objectSeenByPlayer, mapReceivedMessageIds, mapResponseToMessage.
+	 *  
+	 */
 	private boolean isFullClientReset_synch_lock = false;
 	
+	/** ID from Session.getId() */
 	private final String sessionId;
 	
 	/** Browser only field - whether or not the browser needs to have the full frame sent to it (as it is the first time connecting.) */
@@ -138,9 +167,6 @@ public class ActiveWSClientSession {
 	@Override
 	public int hashCode() {
 		return this.sessionId.hashCode();
-//		synchronized(session_synch) {
-//			return session_synch.hashCode();
-//		}
 	}
 	
 	@Override
@@ -157,7 +183,9 @@ public class ActiveWSClientSession {
 //			return this.session_synch.equals(  ((AWSClientSession)obj).getSession()  );
 //		}
 	}
-		
+
+	/** This class is responsible for writing messages from the stringsToSend message queue to the 
+	 * WebSocket endpoint. The thread ends if an exception occurs, or if the session is closed. */
 	private class AWSClientSessionSender extends Thread{
 		
 		public AWSClientSessionSender() {
@@ -200,7 +228,7 @@ public class ActiveWSClientSession {
 					
 					synchronized(stringsToSend_synch) {
 						
-						stringsToSend_synch.wait(10000);
+						stringsToSend_synch.wait(10000); // TODO: Uhh?
 						
 						localStringsToSend.addAll(stringsToSend_synch);
 						stringsToSend_synch.clear();
@@ -229,7 +257,6 @@ public class ActiveWSClientSession {
 						}
 						
 					}
-					
 					
 				}
 			} catch(InterruptedException ie) {

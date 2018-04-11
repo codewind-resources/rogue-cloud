@@ -28,7 +28,21 @@ import com.roguecloud.RCRuntime;
 import com.roguecloud.client.ISessionWrapper;
 import com.roguecloud.utils.Logger;
 
-/** For internal use only */
+/** 
+ * This class is used to simulate latency ("lag") between the Rogue Cloud client and Rogue Cloud server. When this class is enabled,
+ * messages received on client's WebSocket endpoint are delayed by an arbitrary amount of time. This simulates client-side receive latency.
+ * See also the RCServerUtilLatencySim for simulating receive latency on the server side.  
+ * 
+ * Latency is a major factor in how Rogue Cloud is designed: it is necessary that players must still be able to interact with
+ * the game world even if they are far enough away from the physical location of the server to ensure that the 
+ * information received by the client is slightly old.  
+ * 
+ * For example, if a player from Singapore connected to a server on the North American East Coast, that player would receive
+ * and send actions approximately 2-3 frames behind other players (and behind monsters in the game world). However, we still
+ * need to provide a good experience for such a player.
+ * 
+ * For internal server use only.
+ **/
 public class RCUtilLatencySim {
 
 	private static final Logger log = Logger.getInstance();
@@ -44,6 +58,7 @@ public class RCUtilLatencySim {
 		thread.start();
 	}
 
+	/** One way to add a message is to specify the destination of that message using ILatencySimReceiver. */
 	public void addMessage(ILatencySimReceiver lsr, String str) {
 		if(lsr == null) { throw new IllegalArgumentException(); }
 		if(disposed) { return; }
@@ -58,7 +73,8 @@ public class RCUtilLatencySim {
 		}
 		
 	}
-	
+
+	/** The second way to add a message is to specify the session wrapper and session. */
 	public void addMessage(ISessionWrapper wrapper, String str, Session session) {
 		if(session == null || wrapper == null) { throw new IllegalArgumentException(); }
 		if(disposed) { return; }
@@ -79,7 +95,11 @@ public class RCUtilLatencySim {
 		}
 		this.disposed = true;
 	}
-	
+
+	/** When latency simulation is enabled, this class will delay the sending of received messages by the
+	 * arbitrary amount specified in Entry.pushTimeInNanos. 
+	 * 
+	 * When latency simulation is enabled, All messages received on the endpoint will be sent by this thread. */
 	private class HLLThread extends Thread {
 
 		
@@ -101,6 +121,7 @@ public class RCUtilLatencySim {
 
 				synchronized (queue_synch) {
 				
+					// Find messages in the queue that are ready to send
 					while(queue_synch.size() > 0) {
 						Entry e = queue_synch.peek();
 						if(currTime > e.getPushTimeInNanos()) {
@@ -115,11 +136,14 @@ public class RCUtilLatencySim {
 				
 				long sleepStartTimeInNanos = System.nanoTime();
 				
+				// Send all the messages in the queue
 				for(Entry entry : toSend) {
 					try {
+						// If addMessage was called with an object that implements ILatencySimReceiver, then call that interface
 						if(entry.getLatencySimReceiver() != null) {
 							entry.getLatencySimReceiver().addMessageToSend(entry.getStr());
 						} else {
+							// ... otherwise, just call receiveJson on the session wrapper.
 							entry.getWrapper().receiveJson(entry.getStr(), entry.getSession());	
 						}
 						
@@ -131,7 +155,7 @@ public class RCUtilLatencySim {
 				
 				
 				try {
-					
+					// Wait a maximum of 10 msecs, depending on how long it took the 'send all messages' block above to complete
 					long sleepTimeInMsecs = 10 - (TimeUnit.MILLISECONDS.convert(System.nanoTime() - sleepStartTimeInNanos, TimeUnit.NANOSECONDS));
 					if(sleepTimeInMsecs > 0) {
 						synchronized(queue_synch) {
@@ -145,19 +169,31 @@ public class RCUtilLatencySim {
 			} // end while
 			
 		}
-		
 	}
 
+	/** If latency simulation is enabled, the client WebSocket endpoint will call RCUtilLatencySim.addMessage(...) with any messages
+	 * that the endpoint receives. addMessage(...) will convert that message into an Entry, where it will be delayed then sent by the HLLThread. 
+	 *
+	 * One (and only one) of the following must be true:
+	 * A) wrapper/session/str are not null
+	 * B) lsr/str are not null
+	 * 
+	 * These correspond to addMessage(...) signatures above.
+	 * 
+	 **/
 	private static class Entry {
 
-		private final ISessionWrapper wrapper;
+		/** JSON message received by the client endpoint, which the RCUtilLatencySim class will send after a delay */
 		private final String str;
-		private final Session session;
+
+		/** An absolute time in nanos; the 'str' message should be sent after System.nanoTime() > pushTimeInNanos. */
 		private final long pushTimeInNanos;
 
+		private final ISessionWrapper wrapper;
+		private final Session session;
+		
 		private final ILatencySimReceiver lsr;
 		
-
 		private Entry(String str, ILatencySimReceiver lsr, long addTimeInNanos) {
 			this.str = str;
 			this.lsr = lsr;
@@ -165,8 +201,6 @@ public class RCUtilLatencySim {
 			this.session = null;
 			this.pushTimeInNanos = addTimeInNanos;
 		}
-
-		
 		
 		private Entry(String str, ISessionWrapper wrapper, Session session, long addTimeInNanos) {
 			this.str = str;
@@ -198,6 +232,9 @@ public class RCUtilLatencySim {
 
 	}
 	
+	/** Once we have delayed a message by an arbitrary delay, we then need to pass it on to
+	 * the original intended receiver. The original intended receiver needs to implements interface, and 
+	 * then it can receive delayed messages from the RCUtilLatencySim class. */
 	public interface ILatencySimReceiver {
 		
 		public void addMessageToSend(String str);

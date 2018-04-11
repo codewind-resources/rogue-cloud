@@ -44,12 +44,26 @@ import com.roguecloud.json.client.JsonHealthCheckResponse;
 import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 
-/** For internal use only */
+/** 
+ * This class encompasses all state data that is used to provide support for the API 
+ * that the player uses to play the game (IClient/RemoteClient), and also handles the lifecycle of a player's individual AI character. 
+ * 
+ * A single instance of this class is used per round, and disposed of at the end of the round, unless 
+ * the player dies before the round is over (as is often the case).
+ * 
+ * Whenever a player dies, this class enters an 'interrupted' state, which in gameplay terms means that the character's microservice
+ * has restarted, which prevents them from using any previous unsaved state data. For more information on what happens on character
+ * death, and how to code around it, see the game wiki.
+ * 
+ * After being interrupted (due to player character death), the instance of this class will be dispose()d of, and a new instance of this
+ * class will be created and told to enter the same round. Thus even when your character dies, your player AI code still continues playing
+ * in the same round it died in, but it is now running in a new "context" without any previously saved data.
+ * 
+ * This class is for internal server-side use only. 
+ **/
 public class ClientState {	
 	
 	private static final Logger log = Logger.getInstance();
-	
-	public static enum ConnectionState { CONNECTED, REGISTERED, COMPLETE };
 	
 	private final String username;
 	
@@ -59,21 +73,19 @@ public class ClientState {
 	
 	private final Object lock = new Object();
 	
-	/** This may at times be either null, or point to a closed/invalid session. */
-//	private Session currentSession_synch_lock;
-	
 	private final ClientMessageReceiver messageReceiver;
 
-	private ConnectionState connectionState_synch_lock;
-	
 	private final LogContext logContext;
 	
 	private final ClientWorldState clientWorldState;
 	
 	private final RemoteClient remoteClient;
-	
+
+	/* Messages to the server have a unique message ID; this counter keeps track of the next one */
 	private long nextSynchronousMessageId_synch_lock = 0; 
 	
+	/** When we send actions to the server, we expect a response w/ the original message ID; this keeps track
+	 * of actions we are waiting for responses for. */
 	private final HashMap<Long /* synchronous message id*/, ActionResponseFuture> mapMessageIdToFuture_synch = new HashMap<>();
 	
 	private final ISessionWrapper sessionWrapper;
@@ -82,6 +94,7 @@ public class ClientState {
 	
 	private boolean roundComplete_synch_lock = false;
 	
+	/** If the player dies, their agent is restarted;*/
 	private boolean clientInterrupted_synch_lock = false;
 	
 	private final IWebsocketFactory factory;
@@ -96,7 +109,6 @@ public class ClientState {
 		this.factory = websocketFactory;
 		this.username = username;
 		this.password = password;
-		this.connectionState_synch_lock = ConnectionState.CONNECTED;
 		this.uuid = uuid;
 		this.messageReceiver = new ClientMessageReceiver();
 		this.logContext = LogContext.client(uuid);
@@ -173,18 +185,6 @@ public class ClientState {
 		return uuid;
 	}
 	
-	public ConnectionState getConnectionState() {
-		synchronized(lock) {
-			return connectionState_synch_lock;
-		}
-	}
-	
-	public void setConnectionState(ConnectionState state) {
-		synchronized(lock) {
-			this.connectionState_synch_lock = state;
-		}
-	}
-
 	public RemoteClient getRemoteClient() {
 		return remoteClient;
 	}
@@ -201,7 +201,6 @@ public class ClientState {
 		synchronized(lock) {
 			return nextSynchronousMessageId_synch_lock;
 		}
-		
 	}
 	
 	public long getAndIncrementNextSynchronousMessageId() {

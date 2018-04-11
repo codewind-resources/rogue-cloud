@@ -40,6 +40,11 @@ import com.roguecloud.utils.FastPathSearch;
 import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.ServerUtil;
 
+/** 
+ * This AI either wanders the world, or wanders around a given position (within a given range). 
+ * This AI will never initiate an attack, but will attempt to destroy anyone 
+ * that attacks it first (the "sleepy bear" strategy). 
+ **/
 public class WanderingDefendOnlyAI extends MonsterClient {
 	
 	public static final Logger log = Logger.getInstance();
@@ -268,11 +273,13 @@ public class WanderingDefendOnlyAI extends MonsterClient {
 	}
 	
 	
+	/** When we are in the attacking state, this is where we are going and who we are attacking */
 	private static class AttackingData {
 		List<Position> nextSteps = new ArrayList<>();
 		ICreature creatureToAttack;
 	}
 	
+	/** When we are in the wandering state, this is a step-by-step route of where we are going next */
 	private static class WanderingData {
 		List<Position> nextSteps = new ArrayList<>();
 	}

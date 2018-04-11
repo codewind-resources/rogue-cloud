@@ -19,7 +19,11 @@ package com.roguecloud.map;
 import com.roguecloud.Position;
 
 /** 
- * The mutable interface for a map implementation.
+ * The mutable interface for a map implementation. Server-side code uses this interface to update (mutate) map contents, 
+ * such as updating items/monsters on a tile. 
+ * 
+ * Some maps that implement this interface will do so in a way that maintains additional invariant properties,
+ * such as thread safety on certain operations, or detecting writes which occur on disallowed threads (for example, see RCArrayMap)
  * 
  * For internal use - see IMap for the public API of map.
  **/

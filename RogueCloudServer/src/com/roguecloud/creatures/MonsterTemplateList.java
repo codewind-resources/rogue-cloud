@@ -27,6 +27,9 @@ import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.UniverseParserUtil;
 
+/**
+ * Parses monsters from the monsters.txt file, and stores them in this class as an immutable list.
+ */
 public class MonsterTemplateList {
 
 	private final Logger log = Logger.getInstance(); 
@@ -80,7 +83,6 @@ public class MonsterTemplateList {
 		if(list == null) { return null; }
 		
 		return list.stream().filter(e -> e.getName() != null && e.getName().equalsIgnoreCase(str)).findFirst().orElse(null);
-		
 				
 	}
 }

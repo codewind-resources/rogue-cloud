@@ -30,6 +30,12 @@ import com.roguecloud.server.ActiveWSClientSession.Type;
 import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 
+/**
+ * Maintains a list of all the clients (both browser and agent api) that have established connections during the round.
+ * You may create a new ActiveWSClient using addSession(...).
+ * 
+ * A single instance of this class will exist per round.
+ */
 public final class ActiveWSClientList {
 	
 	private static final Logger log = Logger.getInstance();
@@ -40,14 +46,19 @@ public final class ActiveWSClientList {
 	
 	private final Object lock = new Object();
 	
+	/** When new ActiveWSClient are created, they are assigned a unique ID from this value, which is then incremented. */
 	private long nextClientId_synch_lock = 0;
 	
+	/** All the ActiveWSClients that have been added. */
 	private final List<ActiveWSClient> clientList_synch_lock = new ArrayList<>();
 
 	/** The map contains the user ids of any users that have connected this round; this is used to prevent users from connecting multiple times. */
 	private final HashMap<Long /* user id*/, Boolean> userClientConnected_synch_lock = new HashMap<>();
 	
+	/** map of session id (from websocket's session.getId() ) to the corresponding ActiveWSClient */
 	private final HashMap<String /* unique session id*/, SessionToClientValue> sessionToClientMap_sync_lock = new HashMap<>();
+	
+	/** map of client UUId to ActiveWSClient */
 	private final HashMap<String /* client uuid */, ActiveWSClient> uuidToClientMap_sync_lock = new HashMap<>();
 
 	private boolean isDisposed = false;
@@ -187,13 +198,12 @@ public final class ActiveWSClientList {
 				
 	}
 	
+	/** Simple container for the ActiveWSClient object */
 	private static class SessionToClientValue {
 		ActiveWSClient client;
-//		Session session;
 		
 		public SessionToClientValue(ActiveWSClient client/*, Session session*/) {
 			this.client = client;
-//			this.session = session;
 		}
 		
 	}

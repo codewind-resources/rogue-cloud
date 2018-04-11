@@ -18,6 +18,9 @@ package com.roguecloud.db.cloudant;
 
 import com.roguecloud.db.DbLeaderboardEntry;
 
+/** 
+ * The leaderboard db entry, plus cloudant extra fields, (de)serializable to json. 
+ **/
 public class CloudantDbLeaderboardEntry extends DbLeaderboardEntry {
 	private String _id = null;
 	private String _rev = null;

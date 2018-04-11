@@ -21,6 +21,10 @@ import javax.websocket.Session;
 import com.roguecloud.RCSharedConstants;
 import com.roguecloud.utils.IManagedResource;
 
+/**
+ * Utilities for managing Websocket client resources. The managed resource methods are used by ResourceLifecycleUtil, see that class
+ * for details.
+ */
 public class ServerWsClientUtil {
 	
 	public static IManagedResource convertSessionToManagedResource(Session s) {
@@ -31,6 +35,7 @@ public class ServerWsClientUtil {
 		return new SessionManagedResource(s, expireDurationInNanos);
 	}
 	
+	/** Implements a IManagedResource for a WebSocket Session object. */
 	private static class SessionManagedResource implements IManagedResource {
 		
 		private final Session s;

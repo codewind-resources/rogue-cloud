@@ -30,6 +30,7 @@ import com.roguecloud.db.DbUser;
 import com.roguecloud.utils.RCUtils;
 import com.roguecloud.utils.Logger;
 
+/** This database backend writes database entries to the local file system, as simple text files. */
 public class FileDbBackend implements IDBBackend {
 	
 	private static final Logger log = Logger.getInstance();
@@ -48,7 +49,6 @@ public class FileDbBackend implements IDBBackend {
 		this.dbRoot = dbRoot;
 		this.keyValueStore_synch_lock = new SafeKeyValueStore(new File(dbRoot, "key-store"));
 	}
-	
 	
 	public long getAndIncrementNextRoundId() {
 		
@@ -249,7 +249,8 @@ public class FileDbBackend implements IDBBackend {
 		}
 		
 	}	
-	
+
+	/** Simple list of DbLeaderboardEntry, (de)serializes to JSON. */
 	public static class JsonDbLeaderboardEntries {
 		List<DbLeaderboardEntry> entries = new ArrayList<>();
 

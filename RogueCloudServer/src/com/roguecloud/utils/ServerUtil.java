@@ -23,11 +23,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.roguecloud.map.IMap;
 
+/** Various standalone utility methods used only by server-side code. */
 public class ServerUtil {
 
 	public static final String RC_ADMIN_USER = "rc_admin_user";
 	public static final String RC_ADMIN_PASSWORD = "rc_admin_password";
 
+	/** Returns true if the given username/password match the admin's username and password, false otherwise. */
 	public static boolean isAdminAuthenticatedAndAuthorized(String usernameParam, String passwordParam) {
 		if(usernameParam == null || passwordParam == null) { return false; }
 		

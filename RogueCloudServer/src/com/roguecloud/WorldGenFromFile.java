@@ -35,6 +35,15 @@ import com.roguecloud.utils.RoomList;
 import com.roguecloud.utils.RoomList.Room;
 import com.roguecloud.utils.SimpleMap;
 
+/** 
+ * Generates a new map object (world) using the contents of a world text file. The world text file is generated
+ * from a .png file, using the PngMain utility. 
+ * 
+ * In the world text file, each character of each line correspond to a tile in the world; which character corresponds to which
+ * room is defined in the WorldGenFromFile.Entry class.
+ * 
+ * The top left coordinate of the world gen map is (0,0), the bottom right coordinate is (width, height).
+ **/
 public class WorldGenFromFile {
 	
 	private static final Logger log = Logger.getInstance();
@@ -43,6 +52,7 @@ public class WorldGenFromFile {
 
 		List<String> fileContents = RCUtils.readIntoStringListAndClose(mapContentsStream);
 		
+		// Parse the file contents into a simple 2d map
 		SimpleMap<String> charMap;
 		{
 			int width = 0, height = 0;
@@ -176,6 +186,10 @@ public class WorldGenFromFile {
 		return new WorldGenFromFileResult(aMap, spawns);
 	}
 	
+	/** 
+	 * Return value of generateMapFromInputStream(...): a newly generated map, and a list of
+	 * all the room spawns for all the rooms.
+	 */
 	public static class WorldGenFromFileResult {
 		final RCArrayMap map;
 
@@ -196,6 +210,8 @@ public class WorldGenFromFile {
 				
 	}
 	
+	/** A room can contains specific tiles that are designated as spots that monsters
+	 * or items can spawn. This class contains a list of those for a specific room. */
 	public static class RoomSpawn {
 		private final List<Position> itemSpawnsInRoom = new ArrayList<>();
 		private final List<Position> monsterSpawnsInRoom = new ArrayList<>();
@@ -213,10 +229,12 @@ public class WorldGenFromFile {
 		
 	}
 	
+	/** Each alphanumeric character in the world file corresponds to a specific type of room (or other structure). */
 	private static class Entry {
 		
 		private static final String SMALL_HOUSE = "Small House";
-		
+
+		/** Each alphanumeric character in the world file corresponds to a specific type of room (or other structure). */
 		public static enum Type { 
 			ROAD("r", null), 
 			SMALL_HOUSE_SOUTH_DOOR("a", SMALL_HOUSE, 90), 

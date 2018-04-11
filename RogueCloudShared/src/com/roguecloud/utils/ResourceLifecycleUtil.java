@@ -21,8 +21,25 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-/** For internal use only */
+/**
+ * 
+ * See IManagedResource for a description of managed resources.
+ * 
+ * This class will automatically dispose of managed resources once they expire, based on 
+ * the implementation of the IManageResource class. 
+ * 
+ * This class may handle multiple different types of IManageResource classes at a time, though
+ * the dispose() of an IManagedResource is called on the main ResourceLifeCycleThread thread, such that a long
+ * dispose() method implementation of a resource can block other dispose methods of other resources from being called. 
+ * 
+ * This class is currently used to expire websockets that are open for too long.
+ * 
+ * This class is an internal class, for server use only.
+ *
+ */
 public class ResourceLifecycleUtil {
+	/** For internal use only */
+
 	private static final Logger log = Logger.getInstance();
 
 	private static final ResourceLifecycleUtil instance = new ResourceLifecycleUtil(); 
@@ -74,7 +91,9 @@ public class ResourceLifecycleUtil {
 		}
 	
 	}
-	
+
+	/** Every X seconds, check if any of the resources are disposed (in which case remove them from the list) 
+	 * or are expired (in which case call dispose and remove them from the list) */
 	private class ResourceLifeCycleThread extends Thread {
 		
 		public ResourceLifeCycleThread() {
@@ -131,6 +150,7 @@ public class ResourceLifecycleUtil {
 	}
 	
 	
+	/** An actively managed resource inside the resource lifecycle map. */
 	private static class WrapperEntry {
 		
 		IManagedResource wrapper;

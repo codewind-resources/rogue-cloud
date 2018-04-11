@@ -16,8 +16,21 @@
 
 package com.roguecloud.client;
 
-/** For internal use only */
+/**
+ * This is the entry point for the client WebSocket API. This interface is a factory method for the creation of
+ * a connection to a remote Rogue Cloud server. 
+ * 
+ * This interface also allows Rogue Cloud to support multiple implementations of the Java-EE WebSocket API, including:
+ * 
+ * - WebSphere Liberty/OpenLiberty's WebSocket implementation (for use when running inside Liberty)
+ * - Tyrus Java-EE WebSocket reference implementation (for use when running outside Liberty)
+ *
+ *
+ * For internal use only.
+ */
 public interface IWebsocketFactory {
-
+	
+	/** Create a session wrapper, which will be used to connect to a remote Rogue Cloud server. See ISessionWrapper
+	 * for details.*/
 	ISessionWrapper createSessionWrapper(ClientState cs);
 }

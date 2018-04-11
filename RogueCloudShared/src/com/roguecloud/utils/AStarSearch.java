@@ -238,6 +238,7 @@ public final class AStarSearch {
 		return Math.abs(goal.getX() - start.getX()) + Math.abs(goal.getY() - start.getY());
 	}
 
+	/** Node as defined by A-Star algorithm */
 	private static final class Node {
 
 		final Position p;
@@ -261,6 +262,7 @@ public final class AStarSearch {
 
 	}
 
+	/** Sort a Node by f-score (ascending). */
 	private static class FScoreComparator implements Comparator<Node> {
 
 		@Override

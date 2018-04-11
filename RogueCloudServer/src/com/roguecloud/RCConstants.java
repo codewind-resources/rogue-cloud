@@ -18,6 +18,7 @@ package com.roguecloud;
 
 import java.util.concurrent.TimeUnit;
 
+/** In this class, game experience specific values can be tweaked to alter various aspects of gameplay. */
 public class RCConstants {
 
 	public static final long ROUND_LENGTH_IN_NANOS = TimeUnit.NANOSECONDS.convert(60 * 5, TimeUnit.SECONDS);
@@ -35,6 +36,9 @@ public class RCConstants {
 	public static final long LINGER_ON_DEAD_CREATURE_FOR_X_TICKS = 50;
 	
 	public static final double PLAYER_HP_REDUCTION_ON_DEATH = 0.8d; 
+
+	/* Values below this line must be carefully updated, as they could affect the ability of the Javascript to 
+	 * correct display the world, in the browser. */
 	
 	public static final int WORLD_WIDTH = 161;
 	public static final int WORLD_HEIGHT = 191;

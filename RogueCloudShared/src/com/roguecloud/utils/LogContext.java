@@ -16,7 +16,16 @@
 
 package com.roguecloud.utils;
 
-/* For internal use only */
+/**
+ * An immutable, ubiquitous object which indicates the context in which a log statement is written, for example:
+ * - Which instance of a server is writing the log statement
+ * - What the UUID and ID of the client are.
+ * 
+ * This kind of context can be helpful when examining logs containing multiple simultaneous entities working independently
+ * on different threads.
+ * 
+ * This class is an internal class, for server use only. 
+ */
 public class LogContext {
 	
 	private int serverInstance = -1;

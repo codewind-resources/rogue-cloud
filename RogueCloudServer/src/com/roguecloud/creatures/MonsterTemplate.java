@@ -18,6 +18,7 @@ package com.roguecloud.creatures;
 
 import com.roguecloud.map.TileType;
 
+/** Parsed monster entries from the monsters.txt file, see MonsterTemplateList. */
 public class MonsterTemplate {
 
 	private final String name;

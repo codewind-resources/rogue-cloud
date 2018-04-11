@@ -22,6 +22,7 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+/** This class is currently usused, but may be used as the JAX-RS application for JAX-RS classes related to server administration. */
 @ApplicationPath("/admin")
 public class RsAdminApplication extends Application {
 	

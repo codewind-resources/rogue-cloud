@@ -38,6 +38,12 @@ import com.roguecloud.db.file.IDBBackend;
 import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.ServerUtil;
 
+/** 
+ * This database backend writes database entries to Cloudant. In order to use this backend, Cloudant credentials must
+ * be specified as Environment variables, system properties, or server.xml jndi values.
+ *
+ * The required credential properties are listed in the CONFIG_* fields below.
+ **/
 public class CloudantDbBackend implements IDBBackend {
 
 	private final static Logger log = Logger.getInstance();

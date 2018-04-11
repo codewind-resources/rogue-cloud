@@ -26,7 +26,19 @@ import com.roguecloud.RCRuntime;
 import com.roguecloud.utils.Logger;
 
 /** 
- * For internal use only */
+ * This class is used to simulate latency ("lag") between the Rogue Cloud client and Rogue Cloud server. When this class is enabled,
+ * messages received on WebSocket client endpoint are delayed by an arbitrary amount of time. This simulates server-side receive latency.
+ * See also the RCUtilLatencySim for simulating receive latency on the client side.  
+ * 
+ * Latency is a major factor in how Rogue Cloud is designed: it is necessary that players must still be able to interact with
+ * the game world even if they are far enough away from the physical location of the server to ensure that the 
+ * information received by the client is slightly old.  
+ * 
+ * For example, if a player from Singapore connected to a server on the North American East Coast, that player would receive
+ * and send actions approximately 2-3 frames behind other players (and behind monsters in the game world). However, we still
+ * need to provide a good experience for such a player.
+ * 
+ **/
 public class RCServerUtilLatencySim {
 
 	private static final Logger log = Logger.getInstance();
@@ -42,11 +54,11 @@ public class RCServerUtilLatencySim {
 		thread.start();
 	}
 
+	/** When a message is received by the server websocket endpoint, the endpoint will call this method
+	 * with the message. */
 	public void addMessage(ActiveWSClientSession session, ActiveWSClient client, String str) {
 		if(session == null || client == null || str == null) { throw new IllegalArgumentException(); }
 		if(disposed) { return; }
-		
-//		System.out.println("adding interface msg: "+str);
 		
 		long pushTime = System.nanoTime()+(long)(Math.random()*(RCRuntime.MAX_LATENCY_SIM_IN_NANOS-RCRuntime.MIN_LATENCY_SIM_IN_NANOS))+RCRuntime.MIN_LATENCY_SIM_IN_NANOS;
 		
@@ -63,10 +75,13 @@ public class RCServerUtilLatencySim {
 		}
 		this.disposed = true;
 	}
-	
+
+	/** When latency simulation is enabled, this class will delay the sending of received messages by the
+	 * arbitrary amount specified in Entry.pushTimeInNanos. 
+	 * 
+	 * When latency simulation is enabled, All messages received on the endpoint will be sent by this thread. */
 	private class HLLThread extends Thread {
 
-		
 		public HLLThread() {
 			setDaemon(true);
 			setName(HLLThread.class.getName());
@@ -85,6 +100,7 @@ public class RCServerUtilLatencySim {
 
 				synchronized (queue_synch) {
 				
+					// Find messages in the queue that are ready to send
 					while(queue_synch.size() > 0) {
 						Entry e = queue_synch.peek();
 						if(currTime > e.getPushTimeInNanos()) {
@@ -101,7 +117,7 @@ public class RCServerUtilLatencySim {
 				
 				for(Entry entry : toSend) {
 					try {
-						
+						// Call the ServerMessageReceiver with the Entry message
 						entry.getClient().getMessageReceiver().receiveMessage(entry.getStr(), entry.getSession(), entry.getClient());
 						
 					} catch(Exception e) {
@@ -129,6 +145,10 @@ public class RCServerUtilLatencySim {
 		
 	}
 
+	/** If latency simulation is enabled, the client WebSocket endpoint will call RCServerUtilLatencySim.addMessage(...) with any messages
+	 * that the endpoint receives. addMessage(...) will convert that message into an Entry, where it will be delayed then sent by the HLLThread. 
+	 * 
+	 **/
 	private static class Entry {
 
 		private final String str;

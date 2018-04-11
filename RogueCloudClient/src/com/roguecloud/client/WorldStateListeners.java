@@ -24,9 +24,17 @@ import java.util.stream.Collectors;
 
 import com.roguecloud.client.ClientWorldState.ClientWorldStateListener;
 
-/** For internal use only */
+/** 
+ * See ClientWorldStateListener for a description of what world state listeners are and how they are used.
+ * 
+ * This class is a singleton that contains a list of all the active WorldStateListeners.
+ * 
+ * Listeners are added to this class when they are first created, and never removed.
+ *  
+ * For internal server use only 
+ **/
 public class WorldStateListeners {
-
+	
 	private WorldStateListeners() {
 	}
 	
@@ -35,6 +43,8 @@ public class WorldStateListeners {
 	public static WorldStateListeners getInstance() {
 		return instance;
 	}
+	
+	// TODO: We're not removing WorldStateListeners.
 	
 	// ------------------------------
 	
@@ -71,7 +81,8 @@ public class WorldStateListeners {
 		
 		return result;
 	}
-	
+
+	/** Internal struct-style class containing the listener, and when it expires as an absolute time */
 	private static class WSLEntry {
 		
 		public WSLEntry(ClientWorldStateListener listener) {

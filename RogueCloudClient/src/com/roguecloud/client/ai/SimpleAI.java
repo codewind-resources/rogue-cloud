@@ -724,17 +724,23 @@ public class SimpleAI extends RemoteClient {
 		
 	}
 	
+	/** When we are in the GETTING_ITEM state, this contains the object we are trying to pick up, and 
+	 * the step-by-step route to get there (if it has been calculated) */
 	private static class PickUpItemData {
 		IGroundObject objectToPickUp;
 		List<Position> ourCurrentRoute = new ArrayList<Position>();
 	}
 	
+	/** When we are in the KILLING_MONSTER state, this contains the create we want to attack, their last position,
+	 * and our step-by-step route to them (if it has been calculated)
+	 */
 	private static class AttackingStateData {
 		ICreature creatureToAttack = null;
 		Position creatureToAttackLastPosition = null;
 		List<Position> ourCurrentRoute = new ArrayList<Position>();
 	}
 
+	/** When we are in the WANDERING state, this contains the step-by-step route to our next position */
 	private static class WanderingStateData {
 		List<Position> ourCurrentRoute = new ArrayList<Position>();
 	}

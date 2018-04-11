@@ -21,6 +21,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/** 
+ * Copy files from the tiles directory into the appropriate path in the resources project. 
+ * - Only copy from 'in-use' directory of the input tiles directory
+ * - Don't replace files that already exist; if a file exists and has differing file contents between src and dest, then print a warning.  
+ **/
 public class TileMasher {
 
 	public static void main(String[] args) {
@@ -36,7 +41,7 @@ public class TileMasher {
 		
 		File inputDir = new File("C:\\Hackathon\\tiles");
 		
-		File outputDir = new File("C:\\Hackathon\\Git\\RogueCloudResources\\src\\com\\roguecloud\\resources\\tiles");
+		File outputDir = new File("C:/Rogue-Cloud/Git/RogueCloudResources/src/com/roguecloud/resources/tiles");
 		
 		
 		for(File tileSource : inputDir.listFiles()) {
