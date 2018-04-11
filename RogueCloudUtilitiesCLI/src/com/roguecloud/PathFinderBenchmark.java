@@ -21,6 +21,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import com.roguecloud.map.IMap;
+import com.roguecloud.map.ITerrain;
 import com.roguecloud.map.RCArrayMap;
 import com.roguecloud.map.Tile;
 import com.roguecloud.utils.AStarSearch;
@@ -33,7 +34,7 @@ public class PathFinderBenchmark {
 		
 		for(int x = 0; x < map.getXSize(); x++) {
 			for(int y = 0; y < map.getYSize(); y++) {
-				map.putTile(x,  y, new Tile(true, null, null));
+				map.putTile(x,  y, new Tile(true, (ITerrain)null));
 			}
 		}
 		

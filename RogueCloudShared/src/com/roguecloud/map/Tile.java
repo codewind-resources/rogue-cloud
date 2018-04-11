@@ -50,11 +50,13 @@ public final class Tile {
 	
 	private final List<ICreature> creatures = new ArrayList<>(0);
 
-	/** May be null*/
-	private final ITerrain terrain;
+//	/** May be null*/
+//	private final ITerrain terrain;
+//	
+//	/** May be null*/
+//	private final ITerrain bgTerrain;
 	
-	/** May be null*/
-	private final ITerrain bgTerrain;
+	private final List<ITerrain> terrain;
 
 	private boolean isTileForRead = false;
 	
@@ -64,13 +66,29 @@ public final class Tile {
 	
 	private boolean isPresentlyPassable = true;
 	
-	public Tile(boolean presentlyPassable, ITerrain terrain, ITerrain bgTerrain) {		
-		this.isPresentlyPassable = presentlyPassable;
+	public Tile(boolean presentlyPassable, List<ITerrain> terrain) { 
+		// TODO: Make sure no one else alters the terrain list after passing to us.
 		
+		if(terrain == null) { throw new IllegalArgumentException("Terrain list must not be null."); };
+		
+		this.isPresentlyPassable = presentlyPassable;
+
 		this.terrain = terrain;
-		this.bgTerrain = bgTerrain;
 	}
 	
+	public Tile(boolean presentlyPassable, ITerrain fgTerrain) {
+		List<ITerrain> list = new ArrayList<>();
+		
+		if(fgTerrain != null) {
+			list.add(fgTerrain);
+		}
+
+		this.isPresentlyPassable = presentlyPassable;
+
+		this.terrain = list;
+
+	}
+
 	/** This contains the most recent game engine frame that a tile was seen.
 	 * 
 	 * (The current game engine frame may be retrieved from the client API, by calling getWorldState().getCurrentGameTick() on the WorldState object.) 
@@ -121,7 +139,7 @@ public final class Tile {
 			result += creature+" ";
 		}
 		
-		result += (terrain != null ? terrain.getTileType().getNumber() : "");
+		result += (terrain != null ? terrain.get(0).getTileType().getNumber() : "");
 		
 		return result;
 	}
@@ -129,7 +147,10 @@ public final class Tile {
 	// Internal methods ------------------------------------------------------------------------------
 	
 	public TileType[] getTileTypeLayersForBrowserPresentation(int creatureArrayOffset) {
-		TileType fg = null;
+		
+		List<TileType> result = new ArrayList<>();
+		
+//		TileType fg = null;
 		
 		if(creatures.size() > 0) {
 			int index = (0+creatureArrayOffset) % creatures.size();
@@ -142,34 +163,43 @@ public final class Tile {
 					creatureFg = new TileType(creatureFg.getNumber(), (creatureFg.getRotation()+270 % 360));
 				}
 				
-				fg = creatureFg; 
+				result.add(creatureFg);
+//				fg = creatureFg; 
 			}
 
 		} else if(groundObjects.size() > 0) {
-			fg = groundObjects.get( (int) (Math.random() * groundObjects.size() )).getTileType();
-		} else {
-			
-			if(terrain != null) {
-				fg = terrain.getTileType();
-			}
-		}
+			TileType go = groundObjects.get( (int) (Math.random() * groundObjects.size() )).getTileType();
+			result.add(go);
+		} 
 		
-		if(bgTerrain != null) {
-			if(fg != null) {
-				// bg yes, fg yes
-				return new TileType[] { fg, bgTerrain.getTileType()};
-			} else {
-				// bg yes, fg no
-				return new TileType[] { bgTerrain.getTileType()};
-			}
-			
-		} else if(fg != null) {
-			// bg no, fg yes
-			return new TileType[] { fg};			
-		} else {
-			// bg no, fg no
-			return new TileType[] {};
-		}
+		terrain.stream().map(e -> e.getTileType()).forEach( e -> {  result.add(e);  });
+		
+		return result.toArray(new TileType[result.size()]);
+		
+//		else {
+//			
+//			if(terrain != null) {
+//				fg = terrain.get(0).getTileType();
+//			}
+//		}
+//		
+//		if(bgTerrain != null) {
+//			if(fg != null) {
+//				// bg yes, fg yes
+//				return new TileType[] { fg, bgTerrain.getTileType()};
+//			} else {
+//				// bg yes, fg no
+//				return new TileType[] { bgTerrain.getTileType()};
+//			}
+//			
+//		} else if(fg != null) {
+//			// bg no, fg yes
+//			return new TileType[] { fg};			
+//		} else {
+//			// bg no, fg no
+//			return new TileType[] {};
+//		}
+		
 	}
 	
 	public TileType[] getTileTypeLayers() { 
@@ -209,7 +239,7 @@ public final class Tile {
 
 	public Tile shallowCloneUnchecked() {
 		
-		Tile t = new Tile(this.isPresentlyPassable, this.terrain, this.bgTerrain);
+		Tile t = new Tile(this.isPresentlyPassable, this.terrain);
 		t.groundObjects.addAll(groundObjects);
 		t.creatures.addAll(creatures);
 		t.tileProperties.addAll(tileProperties);
@@ -244,7 +274,7 @@ public final class Tile {
 	private Tile fullClone() {
 		RCRuntime.assertGameThread();
 		
-		Tile t = new Tile(this.isPresentlyPassable, this.terrain, this.bgTerrain);
+		Tile t = new Tile(this.isPresentlyPassable, this.terrain);
 		
 		t.lastTickUpdated = lastTickUpdated;
 		

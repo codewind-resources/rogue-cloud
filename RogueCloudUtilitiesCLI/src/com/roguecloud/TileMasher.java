@@ -43,25 +43,43 @@ public class TileMasher {
 		
 		File outputDir = new File("C:/Rogue-Cloud/Git/RogueCloudResources/src/com/roguecloud/resources/tiles");
 		
-		
 		for(File tileSource : inputDir.listFiles()) {
 			
 			File inUse = new File(tileSource, "in-use");
 			
 			if(!inUse.exists()) { continue; }
 			
-			
 			for(File f : inUse.listFiles()) {
-			
-				File outputFile = new File(outputDir, f.getName()); 
+				
+
+				int number = -1;
+				{
+					String text = f.getName();
+					if(text.contains("-")) {
+						text = text.substring(0, text.indexOf("-"));
+					} else {
+						text = text.substring(0, text.indexOf(".png"));
+					}
+					
+					try {
+						number = Integer.parseInt(text);
+					} catch(NumberFormatException nfe) {
+						System.err.println("* Ignoring filename "+f.getName());
+						continue;
+					}
+				}
+								
+				File outputFile = new File(outputDir, number+".png"); 
 				
 				if(outputFile.exists()) {
 					 if(!isFileContentsEqual(f, outputFile)) {
-						 System.err.println("File already exists: "+f.getName());	 
+						 System.err.println("Overwriting file w/ new contents: "+f.getName());	 
 					 }
-				} else {
+				} 
+				
+//				else {
 					copyFile(f, outputFile);	
-				}
+//				}
 				
 			}
 			

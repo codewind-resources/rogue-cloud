@@ -134,7 +134,7 @@ public class WorldGenFromFile {
 
 			for(int y = 0; y < charMap.getYSize(); y++) {
 				for(int x = 0; x < charMap.getXSize(); x++) {
-					Tile t = new Tile(true, null, grass);
+					Tile t = new Tile(true, grass);
 					aMap.putTile(x, y, t);
 				}
 			}
@@ -149,10 +149,10 @@ public class WorldGenFromFile {
 					if(e == null) {
 						
 						if(aMap.getTile(x, y) == null) {
-							t = new Tile(true, null, grass);	
+							t = new Tile(true, grass);	
 						}						
 					} else if(e.type == Entry.Type.ROAD) {
-						t = new Tile(true, null, road);
+						t = new Tile(true, road);
 					} else {
 						Room r = roomList.getRoomByName(e.type.name);
 						drawRoomResult = WorldGenerationUtil.drawRoom(r, x, y, e.type.rotation, aMap, false);
@@ -171,15 +171,12 @@ public class WorldGenFromFile {
 				}
 			} // end for
 			
-			
-			
-//			for(int y = 0; y < charMap.getYSize()-40; y += 50) {
-//				for(int x = 0; x < charMap.getXSize()- 40; x+= 50) { 
-//					WorldGenerationUtil.drawRoom(roomList.getRoomByName("Gas Station"), x, y, 0, aMap, false);
-//
-//				}
-//			}
+			for(int y = 0; y < charMap.getYSize()-40; y += 50) {
+				for(int x = 0; x < charMap.getXSize()- 40; x+= 50) { 
+					WorldGenerationUtil.drawRoom(roomList.getRoomByName("New House"), x, y, 0, aMap, false);
 
+				}
+			}
 			
 		}
 

@@ -138,7 +138,11 @@ public class WorldGeneration {
 				
 				TileType newTileType = shrubTiles[(int)(Math.random()*shrubTiles.length)];
 				
-				Tile newTile = new Tile(true, new ImmutablePassableTerrain(newTileType), new ImmutablePassableTerrain(TileTypeList.GRASS));
+				List<ITerrain> terrainList = new ArrayList<>();
+				terrainList.add(new ImmutablePassableTerrain(newTileType));
+				terrainList.add(new ImmutablePassableTerrain(TileTypeList.GRASS));
+				
+				Tile newTile = new Tile(true, terrainList); 
 				
 				map.putTile(e, newTile);
 				
@@ -470,7 +474,7 @@ public class WorldGeneration {
 		for(int x = 0; x < X_SIZE; x++) {
 			
 			for(int y = 0; y < Y_SIZE; y++) {
-				Tile t = new Tile(true, null, grass);
+				Tile t = new Tile(true, grass);
 				m.putTile(x, y, t);
 				
 			}
@@ -487,7 +491,7 @@ public class WorldGeneration {
 				for(int y = 0; y < Y_SIZE; y++) {
 					if(result[x][y] != 0) {
 						
-						Tile t = new Tile(true, null, new ImmutablePassableTerrain(TileTypeList.DIRT_PATH));
+						Tile t = new Tile(true, new ImmutablePassableTerrain(TileTypeList.DIRT_PATH));
 						m.putTile(x,  y, t);
 						
 					}

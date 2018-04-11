@@ -255,3 +255,34 @@ N%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%N
 DWWWWWWWWWWWWWWWW%%%%%WWWWWWWWWWWWWWWWWC
 }
 
+
+New House:
+a = 104 
+b = 112 
+c = 113 
+d = 102
+e = 103
+. = 2058 	@Passable
+g = 114 
+h = 104 
+i = 104 
+j = 114 / 104
+k = 112 / 104 
+l = 113 / 104 
+m = 2058
+n = 116 
+o = 117 
+p = 107		Door 	@Door
+q = 108 	Door 	@Door
+r = 105
+* = 2058	@Passable
+{
+daaahaae
+b.!....c
+b...g..c
+kirijiil
+b..@g..o
+b...n..q
+b......c
+aaaapaaa
+}
