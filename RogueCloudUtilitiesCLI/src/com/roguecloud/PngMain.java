@@ -59,7 +59,7 @@ public class PngMain {
 	}
 	
 	private static void doInner(PngState state) throws IOException {
-		BufferedImage bi = ImageIO.read(new File("c:\\delme\\map.png"));
+		BufferedImage bi = ImageIO.read(new File("C:\\Rogue-Cloud\\Git\\RogueCloudServer\\WebContent\\universe\\map.png"));
 
 		SimpleMap<Entry> map = new SimpleMap<Entry>(bi.getWidth(), bi.getHeight());
 
@@ -121,44 +121,6 @@ public class PngMain {
 		
 		
 	}
-
-//	public static final class SimpleMap<T> {
-//
-//		private final int xSize, ySize;
-//
-//		private final T[] tileArray;
-//
-//		@SuppressWarnings("unchecked")
-//		public SimpleMap(int xSize, int ySize) {
-//			this.xSize = xSize;
-//			this.ySize = ySize;
-//			tileArray = (T[]) new Object[xSize * ySize];
-//		}
-//
-//		public final void putTile(int x, int y, T t) {
-//			tileArray[x * ySize + y] = t;
-//		}
-//
-//		public final T getTile(int x, int y) {
-//			int index = x * ySize + y;
-//
-//			if (tileArray.length <= index || index < 0) {
-//				return null;
-//			}
-//
-//			T tile = tileArray[index];
-//			return tile;
-//		}
-//
-//		public final int getXSize() {
-//			return xSize;
-//		}
-//
-//		public final int getYSize() {
-//			return ySize;
-//		}
-//
-//	}
 
 	/** What hexadecimal colour corresponds to what letter */
 	private static class PngState {

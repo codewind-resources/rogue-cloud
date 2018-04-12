@@ -700,13 +700,13 @@ function drawFrameNewer(param, skipdraw) {
 						
 						if(cachedTile != null) {
 							for(var layerIndex = cachedTile.length-1; layerIndex >= 0; layerIndex--) {
-								var img = globalState.imageMap.get(cachedTile[layerIndex].num);
+								var layer = cachedTile[layerIndex];
+								
+								var img = globalState.imageMap.get(layer.num);
 								if(img != null) {
-									drawRotatedImage(ctx, img, x*spriteSize, y*spriteSize, cachedTile[layerIndex].num,  cachedTile[layerIndex].rot);
+									drawRotatedImage(ctx, img, x*spriteSize, y*spriteSize, layer.num,  layer.rot);
 								}							
 							}
-						} else {
-//							console.log("This shouldn't happen!!!! ("+x+", "+y+") adjusted to ("+(startX+x)+", "+(startY+y)+")  actualWidth:"+actualWidth+" actualHeight:"+actualHeight+" param.currWorldPosX: "+param.currWorldPosX+" param.currWorldPosY: "+param.currWorldPosY+" param.currViewWidth: "+param.currViewWidth+" param.currViewHeight:"+param.currViewHeight);
 						}
 						
 					}

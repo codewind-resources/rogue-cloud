@@ -18,10 +18,12 @@ package com.roguecloud;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.roguecloud.UniqueIdGenerator.IdType;
 import com.roguecloud.WorldGenFromFile.RoomSpawn;
@@ -98,30 +100,35 @@ public class WorldGeneration {
 			}
 			
 			List<Position> posOfShrubsToAdd = new ArrayList<>();
+			List<Integer> grassTileNumbers = Arrays.asList(TileTypeList.GRASS_TILES).stream().map(e -> e.getNumber()).collect(Collectors.toList());
 		
-			int numberOfShrubs = (int)(map.getXSize()*map.getYSize()*0.002); 
-			while(posOfShrubsToAdd.size() < numberOfShrubs) {
+			// Randomly select positions on the map to place shrubs; only place shrubs on tiles containing grass.
+			{
 				
-				boolean goodPosition = false;
-				Position p = null;
-				while(!goodPosition) {
-					p = AIUtils.findRandomPositionOnMap(0, 0, map.getXSize(), map.getYSize(), true, map);
-					Tile t = map.getTile(p);
-					if(t != null && t.isPresentlyPassable() && t.getGroundObjects().size() == 0 && t.getCreatures().size() == 0 && t.getTileProperties().size() == 0) {
-						TileType[] tt = t.getTileTypeLayers();
-						if(tt != null && tt.length == 1 && tt[0].getNumber() == TileTypeList.GRASS.getNumber()) {
-							final Position fP = p;
-							
-							if(!posOfShrubsToAdd.stream().anyMatch(e -> e.distanceBetween(fP) < 10 )) {
-								goodPosition = true;	
+				int numberOfShrubs = (int)(map.getXSize()*map.getYSize()*0.002); 
+				while(posOfShrubsToAdd.size() < numberOfShrubs) {
+					
+					boolean goodPosition = false;
+					Position p = null;
+					while(!goodPosition) {
+						p = AIUtils.findRandomPositionOnMap(0, 0, map.getXSize(), map.getYSize(), true, map);
+						Tile t = map.getTile(p);
+						if(t != null && t.isPresentlyPassable() && t.getGroundObjects().size() == 0 && t.getCreatures().size() == 0 && t.getTileProperties().size() == 0) {
+							TileType[] tt = t.getTileTypeLayers();
+							if(tt != null && tt.length == 1 && grassTileNumbers.contains(tt[0].getNumber()) ) {
+								final Position fP = p;
+								
+								if(!posOfShrubsToAdd.stream().anyMatch(e -> e.distanceBetween(fP) < 10 )) {
+									goodPosition = true;
+								}
 							}
 						}
+						
 					}
 					
-				}
-				
-				if(p != null) {
-					posOfShrubsToAdd.add(p);
+					if(p != null) {
+						posOfShrubsToAdd.add(p);
+					}
 				}
 			}
 			
@@ -136,17 +143,23 @@ public class WorldGeneration {
 			
 			posOfShrubsToAdd.forEach( e -> {
 				
+				// Find the grass tile type that is already at that tyile
+				TileType grassTileType = Arrays.asList(map.getTile(e).getTileTypeLayers()).stream().filter(g -> grassTileNumbers.contains(g)).findFirst().orElse(TileTypeList.GRASS_75);
+				
 				TileType newTileType = shrubTiles[(int)(Math.random()*shrubTiles.length)];
 				
 				List<ITerrain> terrainList = new ArrayList<>();
 				terrainList.add(new ImmutablePassableTerrain(newTileType));
-				terrainList.add(new ImmutablePassableTerrain(TileTypeList.GRASS));
+				terrainList.add(new ImmutablePassableTerrain(grassTileType));
+//				terrainList.addAll(oldTile.)
 				
 				Tile newTile = new Tile(true, terrainList); 
 				
 				map.putTile(e, newTile);
 				
 			});
+			
+			// TODO: CURR - Verify that all map tiles have terrain in their terrain list
 			
 			System.out.println("* Verifying map integrity.");
 			{
@@ -470,7 +483,7 @@ public class WorldGeneration {
 		int Y_SIZE = m.getYSize();
 		
 		
-		ITerrain grass = new ImmutablePassableTerrain(TileTypeList.GRASS);
+		ITerrain grass = new ImmutablePassableTerrain(TileTypeList.GRASS_75);
 		for(int x = 0; x < X_SIZE; x++) {
 			
 			for(int y = 0; y < Y_SIZE; y++) {

@@ -63,6 +63,10 @@ public class WorldGenerationUtil {
 	public static DrawRoomResult drawRoom(Room r, int destX, int destY, int rotationInDegrees, IMutableMap map, boolean validate) {
 
 		DrawRoomResult result = new DrawRoomResult();
+		result.setX(destX);
+		result.setY(destY);
+		result.setHeight(r.getHeight());
+		result.setWidth(r.getWidth());
 		
 //		System.out.println("Drawing room: "+r.getName()+"  width: "+r.getWidth()+"  height: "+r.getHeight());
 		
@@ -118,10 +122,10 @@ public class WorldGenerationUtil {
 				Tile currTile = map.getTile(p);
 				
 				// If the tile is not null, then get the background terrain
-				ITerrain currTileBgTerrain = null; 
+				ITerrain terrainCurrentlyOnTile = null; 
 				if(currTile != null) {
 					TileType[] ttArr = currTile.getTileTypeLayers();
-					currTileBgTerrain = new ImmutablePassableTerrain(ttArr[ttArr.length-1]);
+					terrainCurrentlyOnTile = new ImmutablePassableTerrain(ttArr[ttArr.length-1]);
 				}
 				
 				int currX = x - destX;
@@ -165,7 +169,7 @@ public class WorldGenerationUtil {
 				Assignment a = gi.getAssignment();
 				if(a != null) {
 										
-					Tile newTile = doThingNew(a, gi, currTileBgTerrain);
+					Tile newTile = convertToTile(a, gi, terrainCurrentlyOnTile);
 					
 					map.putTile(p, newTile);
 					
@@ -180,8 +184,8 @@ public class WorldGenerationUtil {
 		
 	}
 
-	private static Tile doThingNew(Assignment a, GridItem gi, ITerrain currTileBgTerrain) {
-
+	private static Tile convertToTile(Assignment a, GridItem gi, ITerrain currTileBgTerrain) {
+		
 		boolean impassableTerrain = false;
 		
 		if(a.getAnnotations().contains("Passable") || a.getAnnotations().contains("Door")) {
@@ -193,7 +197,13 @@ public class WorldGenerationUtil {
 		List<ITerrain> terrainList = new ArrayList<>();
 		
 		for(TilePair tp : a.getTilePair()) {
-			ITerrain terrain = convertTilePair(tp, impassableTerrain);
+			ITerrain terrain;
+			if(tp.getTileNumber() == -1) {
+				terrain = currTileBgTerrain;
+			} else {
+				terrain = convertTilePair(tp, impassableTerrain);
+			}
+			
 			terrainList.add(terrain);
 		}
 		
@@ -412,6 +422,12 @@ public class WorldGenerationUtil {
 		/** Whether or not the draw succeeded; depends on if validation is enable, and if there were any conflicts */
 		boolean isValid = false;
 		
+		int x;
+		int y;
+		
+		int width;
+		int height;
+		
 		public DrawRoomResult() {
 		}
 
@@ -430,6 +446,39 @@ public class WorldGenerationUtil {
 		public List<Position> getItemSpawns() {
 			return itemSpawns;
 		}
+
+		public int getX() {
+			return x;
+		}
+
+		public void setX(int x) {
+			this.x = x;
+		}
+
+		public int getY() {
+			return y;
+		}
+
+		public void setY(int y) {
+			this.y = y;
+		}
+
+		public int getWidth() {
+			return width;
+		}
+
+		public void setWidth(int width) {
+			this.width = width;
+		}
+
+		public int getHeight() {
+			return height;
+		}
+
+		public void setHeight(int height) {
+			this.height = height;
+		}
+
 		
 	}
 }

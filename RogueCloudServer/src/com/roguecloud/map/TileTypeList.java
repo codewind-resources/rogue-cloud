@@ -21,8 +21,12 @@ import com.roguecloud.map.TileType;
 /** Constants which correspond to existing tile images in the tile list. */
 public class TileTypeList {
 
-	public static final TileType GRASS = new TileType(667, 0);
+	public static final TileType GRASS_100 = new TileType(200, 0);
+	public static final TileType GRASS_75 = new TileType(201, 0);
+	public static final TileType GRASS_50 = new TileType(202, 0);
 //	public static final TileType GRASS = new TileType(1853, 0);
+	
+	public static final TileType[] GRASS_TILES = { GRASS_100, GRASS_75, GRASS_50 }; 
 	
 	public static final TileType WOOD_WALL_CORNER_TOP_LEFT = new TileType(1136, 0);
 	public static final TileType WOOD_WALL_CORNER_TOP_RIGHT = new TileType(1136, 90);
@@ -33,7 +37,15 @@ public class TileTypeList {
 	public static final TileType WOOD_WALL_STRAIGHT_HORIZ = new TileType(1137, 90);
 	
 
-	public static final TileType ROAD = new TileType(660, 0);
+	public static final TileType DOOR_CLOSED_HORIZ = new TileType(107, 0);
+	public static final TileType DOOR_CLOSED_VERT_RIGHT = new TileType(108, 0);
+	public static final TileType DOOR_CLOSED_VERT_LEFT = new TileType(106, 0);
+	
+	public static final TileType[] DOOR_TILES = new TileType[] { DOOR_CLOSED_HORIZ, DOOR_CLOSED_VERT_LEFT, DOOR_CLOSED_VERT_RIGHT };
+	
+	
+//	public static final TileType ROAD = new TileType(660, 0);
+	public static final TileType ROAD = new TileType(220, 0);
 	
 	public static final TileType ROAD_WALL_CORNER_TOP_LEFT = new TileType(1039, 0);
 	public static final TileType ROAD_WALL_CORNER_TOP_RIGHT = new TileType(1039, 90);
@@ -79,6 +91,6 @@ public class TileTypeList {
 	
 	
 	public static void init() {
-		// no-op, but is requires, so don't remove.
+		// This method is a no-op, but is required (as it causes the static code to run), so don't remove it.
 	}
 }

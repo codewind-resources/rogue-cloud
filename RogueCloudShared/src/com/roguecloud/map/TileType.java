@@ -78,4 +78,14 @@ public final class TileType {
 	}
 	// TODO: LOW - Find a better way to handle this map.
 
+    @Override
+    public boolean equals(Object obj) {
+    	if(!(obj instanceof TileType)) {
+    		return false;
+    	}
+    	TileType other = (TileType)obj;
+    	
+    	// We intentionally do not compare name here.
+    	return this.number == other.number && this.rotation == other.rotation;
+    }
 }
