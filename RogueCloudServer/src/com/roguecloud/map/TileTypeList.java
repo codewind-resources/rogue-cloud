@@ -89,6 +89,26 @@ public class TileTypeList {
 	public static final TileType SHRUB_5 = new TileType(2197, 0, "Shrub");
 	public static final TileType SHRUB_6 = new TileType(2175, 0, "Shrub");
 	
+	public static final TileType WATER_1 = new TileType(230);
+	public static final TileType WATER_2 = new TileType(231);
+	public static final TileType WATER_3 = new TileType(232);
+	public static final TileType WATER_4 = new TileType(233);
+	public static final TileType WATER_5 = new TileType(234);
+	public static final TileType WATER_6 = new TileType(235);
+	public static final TileType WATER_7 = new TileType(236);
+	public static final TileType WATER_8 = new TileType(237);
+	public static final TileType WATER_9 = new TileType(238);
+	
+	public static final TileType ISLAND_1 = new TileType(240);
+	public static final TileType ISLAND_2 = new TileType(241);
+	public static final TileType ISLAND_3 = new TileType(242);
+	public static final TileType ISLAND_4 = new TileType(243);
+	public static final TileType ISLAND_5 = new TileType(244);
+	public static final TileType ISLAND_6 = new TileType(245);
+	public static final TileType ISLAND_7 = new TileType(246);
+	public static final TileType ISLAND_8 = new TileType(247);
+	public static final TileType ISLAND_9 = new TileType(248);
+	
 	
 	public static void init() {
 		// This method is a no-op, but is required (as it causes the static code to run), so don't remove it.

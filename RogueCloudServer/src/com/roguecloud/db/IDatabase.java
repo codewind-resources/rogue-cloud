@@ -35,6 +35,7 @@ public interface IDatabase {
 	
 	public boolean isValidPasswordForUser(String username, String password);
 	
+	/** The password field of DBUser must be in Base64 SHA-256 form. See implementors for details. */
 	public long createUser(DbUser u);
 	
 	public DbUser getUserByUsername(String name);
@@ -51,10 +52,11 @@ public interface IDatabase {
 	
 	public List<DbLeaderboardEntry> getBestOverallLeaderboardEntries();
 	
+	public List<DbLeaderboardEntry> getBestPreviousXRoundsOfLeaderboardEntries(long numPreviousRounds);
+	
 	public List<DbLeaderboardEntry> getAllLeaderboardEntriesForUser(long id);
 	
 	public List<DbLeaderboardEntry> getAllLeaderboardEntriesForUserAndRound(long id, long roundId);
 
-	
 
 }

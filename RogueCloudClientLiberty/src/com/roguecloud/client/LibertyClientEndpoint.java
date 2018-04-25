@@ -16,6 +16,8 @@
 
 package com.roguecloud.client;
 
+import java.io.IOException;
+
 import javax.websocket.CloseReason;
 import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
@@ -60,7 +62,17 @@ public class LibertyClientEndpoint extends Endpoint {
 	
 	@Override
 	public void onOpen(Session session, EndpointConfig ec) {
-		log.interesting("Websocket session opened", clientState.getLogContext());
+		
+		// If the client instance is disposed, then immediately close all opened Sessions 
+		if(LibertyClientInstance.getInstance().isDisposed()) {
+			log.interesting("Ignoring onOpen on an endpoint with a closed LibertyClientInstance", clientState.getLogContext());
+			try { session.close(); } catch (IOException e) {  /*ignore*/ }
+			return;
+		}
+		
+		log.interesting("Websocket session "+session.getId()+" opened with client instance "+LibertyClientInstance.getInstance().getUuid(),
+				clientState.getLogContext());
+		
 		session.setMaxBinaryMessageBufferSize(128 * 1024);
 		session.addMessageHandler(new BinaryMessageHandler(this, session, sessionWrapper));
 		
@@ -70,12 +82,14 @@ public class LibertyClientEndpoint extends Endpoint {
 		
 		ResourceLifecycleUtil.getInstance().addNewSession(ClientUtil.convertSessionToManagedResource(session));
 
+		LibertyClientInstance.getInstance().add(session);
 	}
 
 	@Override
 	public void onClose(Session session, CloseReason closeReason) {
 		System.out.println("close. "+closeReason);
-		log.interesting("Websocket session closed "+closeReason, clientState.getLogContext());
+		log.interesting("Websocket session "+session.getId()+" closed "+closeReason
+				+" with client instance "+LibertyClientInstance.getInstance().getUuid(), clientState.getLogContext());
 		
 		sessionWrapper.onDisconnect(session);
 

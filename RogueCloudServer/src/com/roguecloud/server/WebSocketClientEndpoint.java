@@ -17,6 +17,7 @@
 package com.roguecloud.server;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -29,6 +30,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roguecloud.RCRuntime;
+import com.roguecloud.RCSharedConstants;
 import com.roguecloud.RoundScope;
 import com.roguecloud.ServerInstance;
 import com.roguecloud.ServerInstanceList;
@@ -67,6 +69,8 @@ public class WebSocketClientEndpoint {
 	@OnOpen
 	public void open(Session session) {
 		System.out.println("open.");
+		
+		session.setMaxIdleTimeout(2 * TimeUnit.MILLISECONDS.convert(RCSharedConstants.MAX_ROUND_LENGTH_IN_NANOS, TimeUnit.NANOSECONDS));
 		
 		// Convert the session to a 'managed resource', so that it will automatically be disposed of once it expires.
 		ResourceLifecycleUtil.getInstance().addNewSession(ServerWsClientUtil.convertSessionToManagedResource(session));
@@ -122,6 +126,15 @@ public class WebSocketClientEndpoint {
 			Long userId;
 			
 			JsonClientConnect jcc = om.readValue(message, JsonClientConnect.class);
+		
+			// The client API version must match the server API version
+			if(jcc.getClientVersion() == null || !jcc.getClientVersion().trim().equals(RCSharedConstants.CLIENT_API_VERSION)) {
+				JsonClientConnectResponse response = new JsonClientConnectResponse(ConnectResult.FAIL_INVALID_CLIENT_API_VERSION.name(), null); 
+				session.getBasicRemote().sendBinary(CompressionUtils.compressToByteBuffer(om.writeValueAsString(response)));
+//				session.getBasicRemote().sendText(om.writeValueAsString(response));
+				session.close();
+				return;				
+			}
 			
 			if(jcc.getUuid() == null) {
 				JsonClientConnectResponse response = new JsonClientConnectResponse(ConnectResult.FAIL_OTHER.name(), null); 

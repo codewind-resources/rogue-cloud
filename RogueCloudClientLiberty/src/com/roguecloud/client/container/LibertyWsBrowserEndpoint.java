@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roguecloud.BrowserWebSocketClientShared;
 import com.roguecloud.client.ClientMappingSingleton;
 import com.roguecloud.client.ClientState;
+import com.roguecloud.client.LibertyClientInstance;
 import com.roguecloud.client.WorldStateListeners;
 import com.roguecloud.client.ClientWorldState.ClientWorldStateListener;
 import com.roguecloud.client.utils.ClientUtil;
@@ -55,14 +56,24 @@ public class LibertyWsBrowserEndpoint {
 	
 	@OnOpen
 	public void open(Session session) {
-		System.out.println("open.");
+		
+		// If the client instance is disposed, then immediately close all opened Sessions 
+		if(LibertyClientInstance.getInstance().isDisposed()) {
+			log.interesting("Ignoring onOpen on an endpoint with a closed LibertyClientInstance", null);
+			try { session.close(); } catch (IOException e) {  /*ignore*/ }
+			return;
+		}
+
+		System.out.println("WebSocket "+session.getId()+" opened for Web browser on client instance "+LibertyClientInstance.getInstance().getUuid());
 		ResourceLifecycleUtil.getInstance().addNewSession(
 				ClientUtil.convertSessionToManagedResource(session));
+		
+		LibertyClientInstance.getInstance().add(session);
 	}
 
 	@OnClose
 	public void close(Session session) {
-		System.out.println("close.");
+		System.out.println("WebSocket "+session.getId()+" closed for Web browser on client instance "+LibertyClientInstance.getInstance().getUuid());
 		ResourceLifecycleUtil.getInstance().removeSession(
 				ClientUtil.convertSessionToManagedResource(session));
 	}

@@ -46,7 +46,8 @@ public class PngMain {
 					{"ffb459", "e"},
 					{"c55bff", "f"},
 					{"a0a0a0", "g"},
-					{"00ff43", "h"}
+					{"00ff43", "h"},
+					{"2014ff", "w"}
 			};
 			
 			Arrays.asList(pairs).stream().forEach( e -> {  state.colourToLetter.put(e[0], e[1]); });
@@ -59,7 +60,7 @@ public class PngMain {
 	}
 	
 	private static void doInner(PngState state) throws IOException {
-		BufferedImage bi = ImageIO.read(new File("C:\\Rogue-Cloud\\Git\\RogueCloudServer\\WebContent\\universe\\map.png"));
+		BufferedImage bi = ImageIO.read(new File("C:\\Rogue-Cloud\\Git\\RogueCloudServer\\WebContent\\universe\\map-water.png"));
 
 		SimpleMap<Entry> map = new SimpleMap<Entry>(bi.getWidth(), bi.getHeight());
 
@@ -110,7 +111,7 @@ public class PngMain {
 		}
 		System.out.println(str);
 		
-		FileWriter fw = new FileWriter("C:/Rogue-Cloud/Git/RogueCloudServer/WebContent/universe/map.txt");
+		FileWriter fw = new FileWriter("C:/Rogue-Cloud/Git/RogueCloudServer/WebContent/universe/map-water.txt");
 		fw.write(str.toString());
 		fw.close();
 		

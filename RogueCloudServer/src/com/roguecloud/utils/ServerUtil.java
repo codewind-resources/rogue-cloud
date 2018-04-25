@@ -16,11 +16,17 @@
 
 package com.roguecloud.utils;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import com.roguecloud.db.DbUser;
 import com.roguecloud.map.IMap;
 
 /** Various standalone utility methods used only by server-side code. */
@@ -29,6 +35,49 @@ public class ServerUtil {
 	public static final String RC_ADMIN_USER = "rc_admin_user";
 	public static final String RC_ADMIN_PASSWORD = "rc_admin_password";
 
+	public static final String SHA_256_FIELD = "{sha256}";
+	
+	
+	public static boolean computeAndCompareEqualPasswordHashes(DbUser userFromDb, String providedUserPassword) {
+		
+		// Sanity check the user
+		if(DbUser.isValid(userFromDb, true) != null)  {
+			return false;
+		}
+	
+		// Convert the user password to a hash
+		String passwordHash = oneWayFunction(providedUserPassword);
+		
+		// Extract the sha256 base64 token
+		String dbPassword = userFromDb.getPassword();
+		dbPassword = dbPassword.replace(SHA_256_FIELD, "").trim();
+		
+		// Return true if they  match.
+		return dbPassword.equals(passwordHash);
+		
+	}
+	
+	/** Create a base-64 representation of the SHA-256 hash */
+	public static String oneWayFunction(String password) {
+		try {
+			// Password is case-insensitive and whitespace-insensitive
+			password = password.toLowerCase().trim();
+			
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			byte[] byteArr = digest.digest(password.getBytes(StandardCharsets.UTF_8));
+			
+			String hashedPassword = Base64.getEncoder().encodeToString(byteArr);
+			
+			return hashedPassword;
+			
+			
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+		
+	}
+	
+	
 	/** Returns true if the given username/password match the admin's username and password, false otherwise. */
 	public static boolean isAdminAuthenticatedAndAuthorized(String usernameParam, String passwordParam) {
 		if(usernameParam == null || passwordParam == null) { return false; }

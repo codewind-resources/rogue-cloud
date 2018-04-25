@@ -37,8 +37,6 @@ var secondaryCtxDrawn = false;
 var mostRecentCreaturesList = null;
 	
 
-var delmeRgUpdated = 0;
-
 var SPREAD = [
 	[0, -1], // N
 	[1, -1], // NE
@@ -206,7 +204,7 @@ var globalState;
 
 			}
 
-		}, 1000);
+		}, 5000);
 	} catch(err) {
 		console.log(err);
 		// reestablishConnection();
@@ -334,7 +332,8 @@ var globalState;
 			"leaderboard" : "",
 			"leaderboard_list" : "",
 			"overall" : "",
-			"stats" : ""
+			"stats" : "",
+			"leaderboard_curr_winner" : ""
 	}
 	
 //	globalState.consoleDomElement = consoleDomElement;
@@ -1060,104 +1059,72 @@ function convertSecondsToMinutes(totalSeconds) {
 }
 
 
-function updateLeaderboardUI(leaderboardDomElement, json, leaderboardData) {
+function updateLeaderboardUI(leaderboardDomElement,  json /* : JsonUpdateBrowserUI */,  leaderboardData /* : globalState.leaderboardData */) {
 
-//	console.log("------------------------------");
-	
-//	console.log(json.roundState);
-	
+	// Update using roundState
 	if(json.roundState != null) {
 		
 		if(json.roundState.roundId != null) {
 			leaderboardData.currRound = json.roundState.roundId; 
 		}
 		
+		var element = document.getElementById('roundPopover');
+
 		if(json.roundState.type == "ACTIVE") {
-			
 			
 			leaderboardData.timeleft = "Round #"+json.roundState.roundId+"<br/>";
 			leaderboardData.timeleft += "Round time: "+ convertSecondsToMinutes(json.roundState.timeLeftInSeconds)+"<br/>";
 			
-			document.getElementById("roundPopover_timeleft").innerHTML = leaderboardData.timeleft;
-			
-			document.getElementById('roundPopover').style.display="none";
-			
-		} else if(json.roundState.type == "INACTIVE") {
-			leaderboardData.timeleft = "Next round is #"+json.roundState.nextRoundId+"<br/>";
-			leaderboardData.timeleft += "Next round in: "+ convertSecondsToMinutes(json.roundState.nextRoundStartInSecs)+"<br/>";
-			leaderboardData.timeleft += "<br/>";
-			document.getElementById("roundPopover_timeleft").innerHTML = leaderboardData.timeleft;
-			
-			{
-				var element = document.getElementById('roundPopover');
-				if(element != null) {
-			/*
-					document.getElementById("roundPopover_timeleft").innerHTML = leaderboardData.timeleft;
-					document.getElementById("roundPopover_yourscore").innerHTML = leaderboardData.yourscore;
-					
-					document.getElementById("roundPopover_leaderboard").innerHTML = leaderboardData.leaderboard;
-					document.getElementById("roundPopover_overall").innerHTML = leaderboardData.overall;*/ 
-					
-					// element.innerHTML = leaderboardData.yourscore + leaderboardData.leaderboard+"<br/>"+leaderboardData.overall+ "<br/>"+leaderboardData.timeleft+"Good luck!" ; 
-					
-//					if(newHtml.trim().length == 0) {
-//						element.style.display="none";	
-//					} else {
-						element.style.display="block";
-//					}
-					
-					// $(document).getElementById("test").innerHTML = "new content"
-					
-//						{
-//							  position: fixed;
-//							  top: 50%;
-//							  left: 50%;
-//							  /* bring your own prefixes */
-//							  transform: translate(-50%, -50%);
-//							}						
-						
-					$('#roundPopover').css({ 'top' : '50%' });
-					$('#roundPopover').css({ 'left' : '50%' });
-					$('#roundPopover').css({ 'margin-top' : '-200px' });
-					$('#roundPopover').css({ 'margin-left' : '-200px' });
-//					$('#roundPopover').css({
-//						'left' : 200
-//					});
-				}
-
+			// document.getElementById("roundPopover_timeleft").innerHTML = leaderboardData.timeleft;
+			if(element != null) {
+				element.style.display="none";	
 			}
 			
+			
+		} else if(json.roundState.type == "INACTIVE") {
+			
+			leaderboardData.timeleft = "Next round is #"+json.roundState.nextRoundId+"<br/>";
+			leaderboardData.timeleft += "Next round in: "+ convertSecondsToMinutes(json.roundState.nextRoundStartInSecs)+"<br/>";
+			// leaderboardData.timeleft += "<br/>";
+			// document.getElementById("roundPopover_timeleft").innerHTML = leaderboardData.timeleft;
+			
+			if(element != null) {
+				element.style.display="block";
+				$('#roundPopover').css({ 'top' : '25%' });
+				$('#roundPopover').css({ 'left' : '25%' });
+			}
+
 		}
 	}
 	
+	// Update using currentPlayerScore
 	if(json.currentPlayerScore != null) {
-		leaderboardData.yourscore = "Your score: " + json.currentPlayerScore+"<br/>";
-		document.getElementById("roundPopover_yourscore").innerHTML = leaderboardData.yourscore;
+		leaderboardData.yourscore = "Your round score: " + json.currentPlayerScore+"<br/>";
+		// document.getElementById("roundPopover_yourscore").innerHTML = leaderboardData.yourscore;
 	}
 	
 	// Update lbd.leaderboard
 	if(json.currentPlayerRank != null || json.currentRoundScores != null) {
 				
 		if(json.currentPlayerRank != null) {
-			
-			delmeRgUpdated ++;
-			
-			leaderboardData.leaderboard = "";
-			// TODO: EASY - put me back.
-			leaderboardData.leaderboard += "Your round rank: <a href='"+SERVER_WEB_URL+"/database/round/' target='_blank'>#" + json.currentPlayerRank+"</a><br/>";
-//			leaderboardData.leaderboard += "Your round rank: <a href='"+SERVER_WEB_URL+"/database/round/"+leaderboardData.currRound+"' target='_blank'>#" + json.currentPlayerRank+"</a><br/>";
-			
-			document.getElementById("roundPopover_leaderboard").innerHTML = leaderboardData.leaderboard+"<br/>";
+			leaderboardData.leaderboard = "Your round rank: <a href='"+SERVER_WEB_URL+"/database/round/recent' target='_blank'>#" + json.currentPlayerRank+"</a><br/>";
 		}
-		
-		console.log(json.currentRoundScores);
-		
+				
 		if(json.currentRoundScores != null) {
 			leaderboardData.leaderboard_list = "<br/><br/>";
 			
 			for(var x = 0; x < json.currentRoundScores.length; x++) {
 				var entry = json.currentRoundScores[x];
 				leaderboardData.leaderboard_list += "#"+entry.rank+" - "+entry.username+" ("+entry.score+")<br/>";
+				
+				if(x == 0) {
+					// Keep track of the player that is currently on top of the leaderboard, for use later
+					leaderboardData.leaderboard_curr_winner = "The winner is <b>"+entry.username+"</b> with score <b>"+entry.score+"</b>!<br/>";
+				}
+			}
+			
+			if(json.currentRoundScores.length > 0) {
+				leaderboardData.leaderboard_list += "<br/>";				
 			}
 		}
 		
@@ -1167,20 +1134,18 @@ function updateLeaderboardUI(leaderboardDomElement, json, leaderboardData) {
 		
 		if(leaderboardData.overall == "") {
 		
-			// leaderboardData.overall = "";
-			
 			if(json.currentPlayerBestTotalScore != null) {
 				leaderboardData.overall  += "Your overall best score: "+json.currentPlayerBestTotalScore+"<br/>";
 			}
 			
 			if(json.currentPlayerBestTotalRank != null) {
-				leaderboardData.overall  += "Your overall best rank: <a href='"+SERVER_WEB_URL+"/database/round' target='_blank'>#"+json.currentPlayerBestTotalRank+"</a><br/>";
+				leaderboardData.overall  += "Your overall best rank: <a href='"+SERVER_WEB_URL+"/database/round/recent' target='_blank'>#"+json.currentPlayerBestTotalRank+"</a><br/>";
 			}
 			
-			document.getElementById("roundPopover_overall").innerHTML = leaderboardData.overall;
 		}
 	}
 	
+	// Update leaderboard.stats
 	if(json.stats != null && json.stats.length > 0) {
 		
 		leaderboardData.stats = "<b>Metrics</b>:<br/><br/><table id='metrics_table'>";
@@ -1211,14 +1176,26 @@ function updateLeaderboardUI(leaderboardDomElement, json, leaderboardData) {
 		leaderboardData.stats += "</table>";
 	}
 
-	var str = leaderboardData.timeleft 
-		+ leaderboardData.yourscore 
-		+ leaderboardData.leaderboard 
-		+ leaderboardData.leaderboard_list 
-		+ leaderboardData.overall;
+	// Update leaderboarDomElement
+	{
+		var str = leaderboardData.timeleft +"<br/>" 
+			+ leaderboardData.yourscore 
+			+ leaderboardData.leaderboard 
+			+ leaderboardData.leaderboard_list 
+			+ leaderboardData.overall;
+		
+		leaderboardDomElement.innerHTML = "<span id='leaderboard_span'>"+str+"</span>";
+	}
+
+	// Update roundPopover dom elements
+	{
+		document.getElementById("roundPopover_timeleft").innerHTML = leaderboardData.leaderboard_curr_winner+"<br/>"+leaderboardData.timeleft+"<br/>";
+		document.getElementById("roundPopover_yourscore").innerHTML = leaderboardData.yourscore;
+		document.getElementById("roundPopover_leaderboard").innerHTML = leaderboardData.leaderboard+"<br/>";		
+		document.getElementById("roundPopover_overall").innerHTML = leaderboardData.overall;		
+	}
 	
-	leaderboardDomElement.innerHTML = "<span id='leaderboard_span'>"+str+"</span>";
-	
+	// Update metrics
 	metricsDomElement.innerHTML = "<span id='metrics_span'>"+leaderboardData.stats+"</span>";  ;
 		
 }

@@ -28,6 +28,7 @@ import com.roguecloud.db.cloudant.CloudantDbBackend;
 import com.roguecloud.db.file.FileDbBackend;
 import com.roguecloud.db.file.IDBBackend;
 import com.roguecloud.utils.Logger;
+import com.roguecloud.utils.ServerUtil;
 
 /** 
  * MemoryDatabase is an in-memory frontend API for persistence (but note that MemoryDatabase requires a backend 
@@ -131,7 +132,8 @@ public class MemoryDatabase implements IDatabase {
 				}
 			}
 			
-			DbUser entry = new DbUser(nextId, u.getUsername().toLowerCase(), u.getPassword().toLowerCase());
+			// Here we assume that DBUser.getPassword() is already in Base64 SHA-256 form
+			DbUser entry = new DbUser(nextId, u.getUsername().toLowerCase(), u.getPassword());
 			
 			users_synch_lock.add(entry);
 			objectsToWrite_synch_lock.add(entry);
@@ -248,6 +250,43 @@ public class MemoryDatabase implements IDatabase {
 
 
 	@Override
+	public List<DbLeaderboardEntry> getBestPreviousXRoundsOfLeaderboardEntries(long numPreviousRounds) {
+		synchronized(lock) {
+			
+			long mostRecentRound = -1;
+			
+			for(DbLeaderboardEntry dle : leaderboard_synch_lock) {
+				mostRecentRound = Math.max(mostRecentRound, dle.getRoundId() );
+			}
+			
+			if(mostRecentRound == -1) {
+				return Collections.emptyList();
+			}
+			
+			long firstRoundToAcquire = Math.max(0, mostRecentRound-numPreviousRounds+1);
+			
+			
+			// Acquire range of [firstRoundToAcquire, mostRecentRound]
+			
+			final List<DbLeaderboardEntry> results = new ArrayList<>();
+			final long finalMostRecentRound = mostRecentRound;
+			leaderboard_synch_lock.stream()
+				.filter( e -> e.getRoundId() >= firstRoundToAcquire && e.getRoundId() <= finalMostRecentRound )
+				.sorted( (a,b) -> {
+					long val = b.getScore() - a.getScore();
+					if(val > 0) { return 1;}
+					else if(val == 0)  { return 0; }
+					else { return -1; }})
+				.forEach( e -> {
+					results.add(e.fullClone());
+				}
+			);
+			
+			return results;
+		}
+	}
+
+	@Override
 	public List<DbLeaderboardEntry> getBestOverallLeaderboardEntries() {
 		synchronized(lock) {
 			final List<DbLeaderboardEntry> results = new ArrayList<>();
@@ -291,8 +330,7 @@ public class MemoryDatabase implements IDatabase {
 			return false;
 		}
 		
-		return user.getPassword().equalsIgnoreCase(password);		
-		
+		return ServerUtil.computeAndCompareEqualPasswordHashes(user, password);
 	}
 	
 	/**

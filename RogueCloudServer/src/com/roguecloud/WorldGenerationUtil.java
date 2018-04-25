@@ -60,8 +60,8 @@ public class WorldGenerationUtil {
 		
 	}
 
-	public static DrawRoomResult drawRoom(Room r, int destX, int destY, int rotationInDegrees, IMutableMap map, boolean validate) {
 
+	public static DrawRoomResult drawRoom(Room r, int destX, int destY, int rotationInDegrees, IMutableMap map, boolean validate) {
 		DrawRoomResult result = new DrawRoomResult();
 		result.setX(destX);
 		result.setY(destY);

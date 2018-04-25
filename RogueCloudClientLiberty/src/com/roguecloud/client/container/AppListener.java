@@ -22,6 +22,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import com.roguecloud.client.LibertyClientInstance;
 import com.roguecloud.client.utils.ClientUtil;
 
 /** Servlet context listener which starts the agent as soon as Liberty loads the application. */
@@ -31,6 +32,8 @@ public class AppListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 
+		LibertyClientInstance.getInstance().informStarted();
+		
 		String uuid = ClientUtil.getOrCreateClientUuid();
 
 		try {
@@ -43,6 +46,7 @@ public class AppListener implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
+		LibertyClientInstance.getInstance().dispose();
 	}
 
 }

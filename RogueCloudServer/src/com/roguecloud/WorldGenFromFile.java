@@ -28,6 +28,7 @@ import java.util.Random;
 
 import com.roguecloud.WorldGenerationUtil.DrawRoomResult;
 import com.roguecloud.map.IMap;
+import com.roguecloud.map.ImmutableImpassableTerrain;
 import com.roguecloud.map.ImmutablePassableTerrain;
 import com.roguecloud.map.RCArrayMap;
 import com.roguecloud.map.Tile;
@@ -104,9 +105,10 @@ public class WorldGenFromFile {
 					String ch = charMap.getTile(x, y);
 					if(ch.equals("r")) {
 						e = new Entry(Entry.Type.ROAD);
-					}
+					} else if(ch.equals("w")) {
+						e = new Entry(Entry.Type.WATER);
 					
-					else if(mapping.keySet().contains(ch)) {
+					} else if(mapping.keySet().contains(ch)) {
 						Entry.Type t = mapping.get(ch);
 						
 						String east = charMap.getTile(x+1, y);
@@ -133,7 +135,6 @@ public class WorldGenFromFile {
 		List<RoomSpawn> spawns = new ArrayList<>();
 		List<DrawRoomResult> drawRoomResults = new ArrayList<>();
 		{
-			
 			ImmutablePassableTerrain road = new ImmutablePassableTerrain(TileTypeList.ROAD);
 			
 			ImmutablePassableTerrain grass_100 = new ImmutablePassableTerrain(TileTypeList.GRASS_100);
@@ -175,6 +176,8 @@ public class WorldGenFromFile {
 						}
 					} else if(e.type == Entry.Type.ROAD) {
 						t = new Tile(true, road);
+					} else if(e.type == Entry.Type.WATER) {
+						/* ignore */
 					} else {
 						Room r = roomList.getRoomByName(e.type.name);
 						drawRoomResult = WorldGenerationUtil.drawRoom(r, x, y, e.type.rotation, aMap, false);
@@ -202,6 +205,86 @@ public class WorldGenFromFile {
 //			}
 			
 		}
+		
+		
+
+		// Draw water tiles
+		{
+			for(int y = 0; y < charMap.getYSize(); y++) {
+				for(int x = 0; x < charMap.getXSize(); x++) {
+					Entry e = eMap.getTile(x, y);
+					
+					if(e != null && e.type == Entry.Type.WATER) {
+						
+						boolean north = isValidWaterTile(x, y-1, eMap);
+						boolean south= isValidWaterTile(x, y+1, eMap);
+						boolean west = isValidWaterTile(x-1, y, eMap);
+						boolean east = isValidWaterTile(x+1, y, eMap);
+
+						Integer tileNum = null;
+						
+						// NSWE
+						// 0000 = none -> not supported
+						// 0001 = east -> not supported
+						// 0010 = west -> not supported
+						// 0011 = east, west -> not supported
+						// 0100 = north -> not supported
+						// 0101 = south, east -> 1
+						if(!north && south && !west && east ) { tileNum = 230; }
+						// 0110 = south, west -> 3
+						if(!north && south && west && !east) { tileNum = 232; }
+						// 0111 = south, west, east -> 2
+						if(!north && south && west && east) { tileNum = 231; }
+						// 1000 = north -> not supported
+						// 1001 = north, east ->  7
+						if(north && !south && !west && east) { tileNum = 236; }
+						// 1010 = north, west ->  9
+						if(north && !south && west && !east) { tileNum  = 238; }
+						// 1011 = north, west, east -> 8
+						if(north && !south && west && east) { tileNum = 237; }
+						// 1100 = noth, south -> not supported
+						// 1101 = north, south, east -> 4
+						if(north && south && !west && east) { tileNum = 233; }
+						// 1110 = north, south, west -> 6
+						if(north && south && west && !east) { tileNum = 235; }
+						// 1111 = north, south, east, west -> 5
+						if(north && south && east && west) {
+							
+							boolean ne = isValidWaterTile(x+1, y-1, eMap);
+							boolean se = isValidWaterTile(x+1, y+1, eMap);
+							boolean nw = isValidWaterTile(x-1, y-1, eMap);
+							boolean sw = isValidWaterTile(x-1, y+1, eMap);
+							
+							int count = (ne ? 1 : 0) + (se ? 1 : 0) + (nw ? 1 : 0) + (sw ? 1 : 0);
+							
+							if(count == 3) {
+								if(!ne) {
+									tileNum = 246;
+								} else if(!se) {
+									tileNum = 240;
+								} else if(!nw) {
+									tileNum = 248;
+								} else  { // sw
+									tileNum = 242;
+								}								
+							} else {
+								tileNum = 234;	
+							}
+						}
+						
+						if(tileNum != null) {
+							// TODO: EASY - Add this to tile list
+							Tile t = new Tile(false, new ImmutableImpassableTerrain(new TileType(tileNum, 0)));
+							aMap.putTile(x, y, t);
+						}
+						
+					}
+					
+				}
+			}
+			
+		}
+		
 		
 		
 		// Draw road tiles from the door of a house, to the neares road, if possible.
@@ -252,6 +335,16 @@ public class WorldGenFromFile {
 		}
 
 		return new WorldGenFromFileResult(aMap, spawns);
+	}
+	
+	private static boolean isValidWaterTile(int x, int y, SimpleMap<Entry> eMap) {
+		if(x < 0 || y < 0) { return false; }
+		if(x >= eMap.getXSize() || y >= eMap.getYSize()) { return false; }
+		
+		Entry e = eMap.getTile(x, y);
+		if(e == null) { return false; }
+		return e.type == Entry.Type.WATER;
+		
 	}
 	
 	
@@ -384,7 +477,8 @@ public class WorldGenFromFile {
 			BASKETBALL_COURT("e", "Basketball Court"), 
 			LIBRARY("f", "Library"),
 			GRAVEYARD("g", "Graveyard"),
-			GAS_STATION("h", "Gas Station")
+			GAS_STATION("h", "Gas Station"),
+			WATER("w", null)
 			;
 			
 			final String letter;

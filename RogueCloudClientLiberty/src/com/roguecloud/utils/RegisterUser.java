@@ -16,6 +16,8 @@
 
 package com.roguecloud.utils;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
@@ -29,6 +31,47 @@ import com.roguecloud.json.client.JsonUserRequestResponse;
 /** HTTP client utility method to register a new user in the server's user database if they are not already registered. */
 public class RegisterUser {
 
+	public static boolean isClientApiVersionSupported(String apiVersion, String resourceUrl, long expireTimeInMsecs) {
+		
+		long expireTime = System.nanoTime() + TimeUnit.NANOSECONDS.convert(expireTimeInMsecs, TimeUnit.MILLISECONDS);
+		
+		boolean lastResult = false;
+		
+		boolean connectionSucceeded = false;
+		
+		while(System.nanoTime() < expireTime && !connectionSucceeded) {
+			
+			int httpResponseCode = issueClientApiVersionSupportedRequest(apiVersion, resourceUrl);
+			
+			if(httpResponseCode != 404 && httpResponseCode != 500) {
+				connectionSucceeded = true;
+			}
+			
+			lastResult = (httpResponseCode == 200);
+			
+		}
+		
+		return lastResult;
+	}
+	
+	private static int issueClientApiVersionSupportedRequest(String apiVersion, String resourceUrl) {
+		Client client = HttpClientUtils.generateJaxRsHttpClient();
+		
+		while(resourceUrl.endsWith("/")) {
+			resourceUrl = resourceUrl.substring(0, resourceUrl.length()-1);
+		}
+		
+		WebTarget target = client.target(resourceUrl + "/services/apiVersion").path(apiVersion).path("supported");
+		
+		Invocation.Builder builder = target.request("application/json");		
+		
+		Response response = builder.get();
+
+		return response.getStatus();		
+
+	}
+
+	
 	/** Register a user if they don't already exist, otherwise check the password and return the user id.*/
 	public static long registerAndGetUserId(String username, String password, String resourceUrl) {
 		
