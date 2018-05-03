@@ -34,7 +34,9 @@ public class RCRuntime {
 	private static final Logger log = Logger.getInstance();
 
 	public static final AtomicLong GAME_TICKS = new AtomicLong(0);
-	
+
+	/** Enable this to do runtime checking of various invariant properties throughout the code; this should
+	 * remaining disable in production as it necessarily imposes a performance penalty. */
 	public static final boolean CHECK = false;
 	
 	public static final boolean CHECK_GAME_THREAD = false;

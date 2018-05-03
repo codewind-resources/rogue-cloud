@@ -17,12 +17,26 @@
 package com.roguecloud.utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
+import com.roguecloud.RCRuntime;
 import com.roguecloud.creatures.ICreature;
 
+/** 
+ * This class is used to keep track of how much CPU/thread time is used by the AI logic for each Monster object. This value
+ * can vary widely, due to different Monsters using different AI classes, or because a Monster is in a more complex position for
+ * the path-finding algorithm.
+ * 
+ * Generally speaking, most of the time spent in AI logic will be in the path-finding code (AStarSearch and, 
+ * to a lesser extent, FastPathSearch).
+ * 
+ **/
 public class MonsterRuntimeStats {
 
+	private static final boolean ENABLED = RCRuntime.CHECK;
+	
 	// TODO: What's this for?
 	
 	public MonsterRuntimeStats() {
@@ -35,8 +49,9 @@ public class MonsterRuntimeStats {
 	
 	private final ArrayList<HashMap<Long /* creatue id*/, MonsterRuntimeEntry>> arrayOfMaps;
 			
-	
 	public void addThreadTimeUsed(ICreature c, long deltaInNanos) {
+		if(!ENABLED) { return; }
+		
 		long id = c.getId();
 		
 		HashMap<Long, MonsterRuntimeEntry> map = arrayOfMaps.get((int)(id%arrayOfMaps.size()));
@@ -51,6 +66,8 @@ public class MonsterRuntimeStats {
 	}
 	
 	public void removeEntry(ICreature c) {
+		if(!ENABLED) { return; }
+		
 		long id = c.getId();
 		
 		HashMap<Long, MonsterRuntimeEntry> map = arrayOfMaps.get((int)( id % arrayOfMaps.size()));
@@ -59,7 +76,9 @@ public class MonsterRuntimeStats {
 		}
 	}
 	
-	public HashMap<Long, MonsterRuntimeEntry> getAll() {
+	public Map<Long, MonsterRuntimeEntry> getAll() {
+		if(!ENABLED) { return Collections.emptyMap(); }
+		
 		HashMap<Long, MonsterRuntimeEntry> result = new HashMap<Long, MonsterRuntimeEntry>();
 		
 		for(int x = 0; x < arrayOfMaps.size(); x++) {
@@ -77,6 +96,8 @@ public class MonsterRuntimeStats {
 	}
 	
 	public MonsterRuntimeEntry getEntry(ICreature c) {
+		if(!ENABLED) { return null; }
+		
 		long id = c.getId();
 		
 		HashMap<Long, MonsterRuntimeEntry> map = arrayOfMaps.get((int)( id % arrayOfMaps.size()));
@@ -88,7 +109,8 @@ public class MonsterRuntimeStats {
 		}
 	}
 	
-	
+
+	/** The statistics for a specific creature, which are stored in the  ArrayList->HashMap above. */
 	public static class MonsterRuntimeEntry {
 		
 		public MonsterRuntimeEntry() {

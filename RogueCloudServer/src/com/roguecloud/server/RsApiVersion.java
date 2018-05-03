@@ -7,6 +7,13 @@ import javax.ws.rs.core.Response;
 
 import com.roguecloud.RCSharedConstants;
 
+/** 
+ * Game clients may use this class to query whether a specific client API version is supported by the server.
+ * 
+ * Currently the logic to check compatibility is a simple equals comparison, but this may be updated in the future
+ * if more loose backwards compatibility is required.
+ * 
+ **/
 @Path("/apiVersion")
 public class RsApiVersion {
 

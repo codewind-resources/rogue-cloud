@@ -520,15 +520,14 @@ function drawFrameNewer(param, skipdraw) {
 	}
 
 	
-	
-	if(secondaryCtxDrawn) {
+	if(!skipdraw && secondaryCtxDrawn) {
 		// ctx.fillStyle="#000000";
-		// ctx.fillRect(0, 0, 350, 350);
-
+		// ctx.fillRect(0, 0, 350, 350);		
 		ctx.drawImage(secondaryCanvas, 0, 0);
 		// ctx.drawImage(secondaryCanvas, 0, 820); // , 300, 266);
 	}
 
+	
 	if(skipdraw) {
 		console.log("skipping draw of "+param.frame);
 	}
@@ -542,11 +541,11 @@ function drawFrameNewer(param, skipdraw) {
 		// First frame
 		currRedrawManager = new RedrawManager(spriteSize*5, spriteSize*5);
 		
-		if(globalState.viewType != "SERVER_VIEW_WORLD") {
-			ctx.fillStyle="#6F9970";
-		} else {
-			ctx.fillStyle="#349D3D";	
-		}
+		// if(globalState.viewType != "SERVER_VIEW_WORLD") {
+			ctx.fillStyle="rgb(174, 223, 101)";
+		// } else {
+		//	ctx.fillStyle="#349D3D";	
+		// }
 		
 		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		
@@ -828,7 +827,7 @@ function drawFrameNewer(param, skipdraw) {
 
 	
 	// Draw floating damage text
-	if(globalState.entityList != null) {
+	if(!skipdraw && globalState.entityList != null) {
 		
 		var fontSize = 20;
 		
@@ -868,6 +867,15 @@ function drawFrameNewer(param, skipdraw) {
 				c--;
 			}
 		}
+	}
+	
+	if(!skipdraw && globalState.viewType == "SERVER_VIEW_WORLD") {
+	      ctx.beginPath();
+	      ctx.lineWidth=1;
+	      ctx.fillStyle="rgb(0, 0, 0)";
+	      ctx.moveTo(0, 0);
+	      ctx.lineTo(0, 2000);
+	      ctx.stroke();
 	}
 	
 	globalState.currWorldX = param.currWorldPosX;
@@ -1065,7 +1073,7 @@ function updateLeaderboardUI(leaderboardDomElement,  json /* : JsonUpdateBrowser
 	if(json.roundState != null) {
 		
 		if(json.roundState.roundId != null) {
-			leaderboardData.currRound = json.roundState.roundId; 
+			leaderboardData.currRound = json.roundState.roundId;
 		}
 		
 		var element = document.getElementById('roundPopover');
@@ -1099,7 +1107,7 @@ function updateLeaderboardUI(leaderboardDomElement,  json /* : JsonUpdateBrowser
 	
 	// Update using currentPlayerScore
 	if(json.currentPlayerScore != null) {
-		leaderboardData.yourscore = "Your round score: " + json.currentPlayerScore+"<br/>";
+		leaderboardData.yourscore = "Your round score: " + formatScore(json.currentPlayerScore)+"<br/>";
 		// document.getElementById("roundPopover_yourscore").innerHTML = leaderboardData.yourscore;
 	}
 	
@@ -1115,11 +1123,11 @@ function updateLeaderboardUI(leaderboardDomElement,  json /* : JsonUpdateBrowser
 			
 			for(var x = 0; x < json.currentRoundScores.length; x++) {
 				var entry = json.currentRoundScores[x];
-				leaderboardData.leaderboard_list += "#"+entry.rank+" - "+entry.username+" ("+entry.score+")<br/>";
+				leaderboardData.leaderboard_list += "#"+entry.rank+" - "+entry.username+" ("+formatScore(entry.score)+")<br/>";
 				
 				if(x == 0) {
 					// Keep track of the player that is currently on top of the leaderboard, for use later
-					leaderboardData.leaderboard_curr_winner = "The winner is <b>"+entry.username+"</b> with score <b>"+entry.score+"</b>!<br/>";
+					leaderboardData.leaderboard_curr_winner = "The winner is <b>"+entry.username+"</b> with score <b>"+formatScore(entry.score)+"</b>!<br/>";
 				}
 			}
 			
@@ -1135,7 +1143,7 @@ function updateLeaderboardUI(leaderboardDomElement,  json /* : JsonUpdateBrowser
 		if(leaderboardData.overall == "") {
 		
 			if(json.currentPlayerBestTotalScore != null) {
-				leaderboardData.overall  += "Your overall best score: "+json.currentPlayerBestTotalScore+"<br/>";
+				leaderboardData.overall  += "Your overall best score: "+formatScore(json.currentPlayerBestTotalScore)+"<br/>";
 			}
 			
 			if(json.currentPlayerBestTotalRank != null) {
@@ -1216,6 +1224,9 @@ function updateConsoleUI(console, consoleDomElement) {
 
 }
 
+function formatScore(score) {
+	return score.toLocaleString();
+}
 
 }
 

@@ -45,7 +45,7 @@ public class TileTypeList {
 	
 	
 //	public static final TileType ROAD = new TileType(660, 0);
-	public static final TileType ROAD = new TileType(220, 0);
+	public static final TileType ROAD = new TileType(301, 0);
 	
 	public static final TileType ROAD_WALL_CORNER_TOP_LEFT = new TileType(1039, 0);
 	public static final TileType ROAD_WALL_CORNER_TOP_RIGHT = new TileType(1039, 90);
@@ -108,6 +108,31 @@ public class TileTypeList {
 	public static final TileType ISLAND_7 = new TileType(246);
 	public static final TileType ISLAND_8 = new TileType(247);
 	public static final TileType ISLAND_9 = new TileType(248);
+	
+	public static final TileType COBBLESTONE_310 = new TileType(310);
+	public static final TileType COBBLESTONE_311 = new TileType(311);
+	public static final TileType COBBLESTONE_312 = new TileType(312);
+	public static final TileType COBBLESTONE_313 = new TileType(313);
+	public static final TileType COBBLESTONE_314 = new TileType(314);
+	public static final TileType COBBLESTONE_315 = new TileType(315);
+	public static final TileType COBBLESTONE_316 = new TileType(316);
+	public static final TileType COBBLESTONE_317 = new TileType(317);
+	public static final TileType COBBLESTONE_318 = new TileType(318);
+	public static final TileType COBBLESTONE_319 = new TileType(319);
+
+	// TODO: EASY - Decide what to do with this.
+	public static final TileType[] ALL_COBBLESTONE = new TileType[] {
+//			COBBLESTONE_310, 
+//			COBBLESTONE_311, 
+			COBBLESTONE_312, 
+//			COBBLESTONE_313, 
+//			COBBLESTONE_314,
+			COBBLESTONE_315, 
+//			COBBLESTONE_316, 
+//			COBBLESTONE_317, 
+//			COBBLESTONE_318, 
+//			COBBLESTONE_319
+	};
 	
 	
 	public static void init() {

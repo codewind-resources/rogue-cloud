@@ -28,6 +28,7 @@ import java.util.Random;
 
 import com.roguecloud.WorldGenerationUtil.DrawRoomResult;
 import com.roguecloud.map.IMap;
+import com.roguecloud.map.ITerrain;
 import com.roguecloud.map.ImmutableImpassableTerrain;
 import com.roguecloud.map.ImmutablePassableTerrain;
 import com.roguecloud.map.RCArrayMap;
@@ -286,8 +287,7 @@ public class WorldGenFromFile {
 		}
 		
 		
-		
-		// Draw road tiles from the door of a house, to the neares road, if possible.
+		// Draw road tiles from the door of a house, to the nearest road, if possible.
 		{
 			final int[][] DIRECTIONS = new int[/* index*/][/*x delta, y delta*/] {
 					{1, 0},
@@ -332,6 +332,47 @@ public class WorldGenFromFile {
 				
 			}
 						
+		}
+		
+		// Convert room floor tile to Cobblestone
+		{
+			Random r = new Random();
+			List<ImmutablePassableTerrain> cobblestoneTiles = new ArrayList<>();
+			{
+				for(TileType tt : TileTypeList.ALL_COBBLESTONE) {
+					cobblestoneTiles.add(new ImmutablePassableTerrain(tt));
+				}
+				
+			}
+			
+			for(DrawRoomResult drr : drawRoomResults) {
+				for(int x = drr.getX(); x < drr.getX()+drr.getWidth(); x++) {
+					
+					for(int y = drr.getY(); y < drr.getY()+drr.getHeight(); y++) {
+						
+						Tile existingTile = aMap.getTile(x, y);
+						List<ITerrain> terrainListCopy = existingTile.internalGetTerrainListCopy();
+						
+						boolean match = false;
+						for(int index = 0; index < terrainListCopy.size(); index++)  {
+							ITerrain curr = terrainListCopy.get(index);
+							if(curr.getTileType().getNumber() == 300) {
+								terrainListCopy.set(index, cobblestoneTiles.get(r.nextInt(cobblestoneTiles.size())));
+								match = true;
+							}
+							
+						}
+						
+						if(match) {
+							Tile newTile = existingTile.shallowCloneWithNewTerrainList(terrainListCopy);
+							aMap.putTile(x,  y, newTile);
+						}
+						
+					}
+					
+				}
+				
+			}
 		}
 
 		return new WorldGenFromFileResult(aMap, spawns);
@@ -465,7 +506,7 @@ public class WorldGenFromFile {
 	/** Each alphanumeric character in the world file corresponds to a specific type of room (or other structure). */
 	private static class Entry {
 		
-		private static final String SMALL_HOUSE = "New House";
+		private static final String SMALL_HOUSE = "New House2";
 
 		/** Each alphanumeric character in the world file corresponds to a specific type of room (or other structure). */
 		public static enum Type { 

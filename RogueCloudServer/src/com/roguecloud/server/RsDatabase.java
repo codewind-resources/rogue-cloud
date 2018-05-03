@@ -91,14 +91,14 @@ public class RsDatabase {
 			
 			DbUser user = DatabaseInstance.get().getUserById(dle.getUserId());
 			if(user == null) {
-				log.severe("Unable to find yser with ID "+dle.getUserId()+" from dle with round id "+dle.getRoundId(), null);
+				log.severe("Unable to find user with ID "+dle.getUserId()+" from dle with round id "+dle.getRoundId(), null);
 				continue;
 			}
 			
 			row.add((rank+1)+". ");
 			row.add("<a href='../../user/"+user.getUserId()+"/'>"+user.getUsername()+"</a>");
 			row.add("<a href='../"+dle.getRoundId()+"/'>"+dle.getRoundId()+"</a>");
-			row.add(""+dle.getScore());
+			row.add(""+formatNumber(dle.getScore()));
 			
 			dp.getEntries().add(row);
 		}
@@ -142,14 +142,14 @@ public class RsDatabase {
 			
 			DbUser user = DatabaseInstance.get().getUserById(dle.getUserId());
 			if(user == null) {
-				log.severe("Unable to find yser with ID "+dle.getUserId()+" from dle with round id "+dle.getRoundId(), null);
+				log.severe("Unable to find user with ID "+dle.getUserId()+" from dle with round id "+dle.getRoundId(), null);
 				continue;
 			}
 			
 			row.add((rank+1)+". ");
 			row.add("<a href='../../user/"+user.getUserId()+"/'>"+user.getUsername()+"</a>");
 			row.add("<a href='../"+dle.getRoundId()+"/'>"+dle.getRoundId()+"</a>");
-			row.add(""+dle.getScore());
+			row.add(""+formatNumber(dle.getScore()));
 			
 			dp.getEntries().add(row);
 		}
@@ -201,7 +201,7 @@ public class RsDatabase {
 			
 			row.add((rank+1)+". ");
 			row.add("<a href='../../user/"+user.getUserId()+"'>"+user.getUsername()+"</a>");
-			row.add(""+dle.getScore());
+			row.add(""+formatNumber(dle.getScore()) );
 			
 			dp.getEntries().add(row);
 		}
@@ -325,7 +325,7 @@ public class RsDatabase {
 			
 			row.add("<a href='../../round/"+dle.getRoundId()+"'>"+dle.getRoundId()+"</a>");
 			row.add(roundRank != null ? "#"+roundRank : "N/A");
-			row.add(""+dle.getScore());
+			row.add(""+formatNumber(dle.getScore()));
 			
 			dp.getEntries().add(row);			
 			
@@ -344,20 +344,6 @@ public class RsDatabase {
 		
 	}
 	
-//	@GET
-//	@Path("/user/{userId}/round/{roundId}")
-//	public Response getUserRoundData(@PathParam("userid") long userId, @PathParam("roundId") long roundId) {
-//		
-//		JsonDbLeaderboardList result = new JsonDbLeaderboardList();
-//		
-//		MemoryDatabase db = DatabaseInstance.get();
-//		List<DbLeaderboardEntry> dbl = db.getAllLeaderboardEntriesForUserAndRound(userId, roundId);
-//		
-//		System.out.println(userId+" "+roundId);
-//		
-//		return Response.ok().build();
-//	}
-
 	private boolean isRedirectToRootNeeded() {
 		if(!request.getRequestURI().endsWith("/")) {
 			
@@ -375,6 +361,10 @@ public class RsDatabase {
 		}
 		
 		return false;
+	}
+	
+	private static String formatNumber(long number) {
+		return String.format("%,d", number);		
 	}
 	
 	private static Response wrapException(Exception e) {

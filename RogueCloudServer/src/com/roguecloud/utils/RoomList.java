@@ -29,6 +29,8 @@ import java.util.regex.Pattern;
 import com.roguecloud.resources.Resources;
 import com.roguecloud.utils.RoomList.GridItem.Type;
 
+/** Reads and parses the contents of the bundled rooms.txt file, and creates Room objects for each of the entries. Each Room object
+ * may be used to draw a room onto the game map. */
 public class RoomList {
 
 	private static final boolean DEBUG = false;
@@ -89,6 +91,7 @@ public class RoomList {
 	
 					if(line.endsWith("}")) {
 						
+						// Find the max width and max height of the room
 						int maxX = 0;
 						int maxY = 0;
 						for(InnerMapCoord imc : grid.keySet()) {
@@ -100,6 +103,7 @@ public class RoomList {
 							}
 						}
 						
+						// Convert to 2d array 
 						final GridItem[][] gridResult = new GridItem[maxX+1][maxY+1];
 						grid.entrySet().stream().forEach( e -> {
 							gridResult[e.getKey().x][e.getKey().y] = e.getValue();
@@ -108,6 +112,7 @@ public class RoomList {
 						ArrayList<Assignment> assignmentList = new ArrayList<>();
 						assignmentList.addAll(currAssignments.values());
 						
+						// Add to new room
 						Room r = new Room(roomName, gridResult, assignmentList, maxX+1, maxY+1);
 						roomResult.add(r);
 
@@ -177,13 +182,6 @@ public class RoomList {
 		}		
 		
 	}
-	
-//	public static void main(String[] args) {
-//		String line = "A = 2335 / 1043, 10 / 11111, 0 / 1     Machine  @Passable  @Bg";
-//		HashMap<String, Assignment> currAssignments = new HashMap<>();
-//		
-//		parseLineNew2(line, currAssignments, null);
-//	}
 	
 	private static void parseLineNew(String line, HashMap<String, Assignment> currAssignments, LogContext lc) { 
 		String letter;
@@ -274,124 +272,124 @@ public class RoomList {
 		currAssignments.put(letter, a);
 	}
 	
-	@SuppressWarnings("unused")
-	private static void parseLineOld(String line, HashMap<String, Assignment> currAssignments, LogContext lc) {
-		String[] splitArr = line.split("\\s+");
-				
-		String letter = splitArr[0];
-		
-		int roomNum1 = -9;
-		int rotationNum1 = 0;
-		
-		int roomNum2 = -9;
-		int rotationNum2 = 0;
-		
-		int remainingTextTokenIndex = 0;
-
-		if(line.contains("/") ) {
-			
-//			int equalsPos = Arrays.asList(splitArr).indexOf("=");
-//			int slashIndex = Arrays.asList(splitArr).indexOf("/");
-			
-			int currTok = 2;
-			
-			String roomNumStr = splitArr[currTok++];
-			boolean containsRotation = false;
-			if(roomNumStr.endsWith(",")) {
-				containsRotation = true;
-				roomNumStr = roomNumStr.substring(0, roomNumStr.length()-1); // Remove the comma
-			}
-			roomNum1 = Integer.parseInt(roomNumStr);
-			
-			
-			rotationNum1 = 0;
-			if(containsRotation) {
-				rotationNum1 = Integer.parseInt(splitArr[currTok++]);
-//				remainingTextTokenIndex = 4;
-			} else {
-//				remainingTextTokenIndex = 3;
-			}
-
-			currTok++; // Skip the slash
-			
-			roomNumStr = splitArr[currTok++];
-			containsRotation = false;
-			if(roomNumStr.endsWith(",")) {
-				containsRotation = true;
-				roomNumStr = roomNumStr.substring(0, roomNumStr.length()-1); // Remove the comma
-			}
-			roomNum2 = Integer.parseInt(roomNumStr);
-			
-			
-			rotationNum2 = 0;
-			if(containsRotation) {
-				rotationNum2 = Integer.parseInt(splitArr[currTok++]);
-//				remainingTextTokenIndex = 4;
-			} else {
-//				remainingTextTokenIndex = 3;
-			}
-
-			remainingTextTokenIndex = currTok;
-			
-//			if(slashIndex == -1 || equalsPos == -1) {
-//				return;
+//	@SuppressWarnings("unused")
+//	private static void parseLineOld(String line, HashMap<String, Assignment> currAssignments, LogContext lc) {
+//		String[] splitArr = line.split("\\s+");
+//				
+//		String letter = splitArr[0];
+//		
+//		int roomNum1 = -9;
+//		int rotationNum1 = 0;
+//		
+//		int roomNum2 = -9;
+//		int rotationNum2 = 0;
+//		
+//		int remainingTextTokenIndex = 0;
+//
+//		if(line.contains("/") ) {
+//			
+////			int equalsPos = Arrays.asList(splitArr).indexOf("=");
+////			int slashIndex = Arrays.asList(splitArr).indexOf("/");
+//			
+//			int currTok = 2;
+//			
+//			String roomNumStr = splitArr[currTok++];
+//			boolean containsRotation = false;
+//			if(roomNumStr.endsWith(",")) {
+//				containsRotation = true;
+//				roomNumStr = roomNumStr.substring(0, roomNumStr.length()-1); // Remove the comma
 //			}
-			
-			
-		} else {
-			String roomNumStr = splitArr[2];
-			boolean containsRotation = false;
-			if(roomNumStr.endsWith(",")) {
-				containsRotation = true;
-				roomNumStr = roomNumStr.substring(0, roomNumStr.length()-1);
-			}
-			roomNum1 = Integer.parseInt(roomNumStr);
-			
-			rotationNum1 = 0;
-			if(containsRotation) {
-				rotationNum1 = Integer.parseInt(splitArr[3]);
-				remainingTextTokenIndex = 4;
-			} else {
-				remainingTextTokenIndex = 3;
-			}			
-		}
-		
-		// Q = 1093, 0 / 1962 	
-		
-		List<String> annotations = new ArrayList<>();
-		
-		String name = "";
-		for(int x = remainingTextTokenIndex; x < splitArr.length; x++) {
-			String currToken = splitArr[x];
-			if(currToken.startsWith("@")) {
-				annotations.add(currToken.substring(1));
-			
-			} else {
-				name += currToken+" ";	
-			}
-		}
-		
-		name = name.trim();
-		
-		TilePair[] tilePairs = null;
-		if(roomNum1 != -9 && roomNum2 != -9) {
-			tilePairs = new TilePair[] { new TilePair(roomNum1, rotationNum1), new TilePair(roomNum2, rotationNum2)  };
-		} else if(roomNum1 != -9) {
-			tilePairs = new TilePair[] { new TilePair(roomNum1, rotationNum1) };
-		}
-		
-		if(tilePairs == null) {
-			log.severe("tilePairs is null", null);
-			return;
-		}
-		
-		Assignment a = new Assignment(letter, tilePairs, name, annotations );
-		if(currAssignments.containsKey(letter)) {
-			log.err("WARNING: Assignment parsing error: A letter is repeated on line - "+line, lc);
-		}
-		currAssignments.put(letter, a);
-
-	}
+//			roomNum1 = Integer.parseInt(roomNumStr);
+//			
+//			
+//			rotationNum1 = 0;
+//			if(containsRotation) {
+//				rotationNum1 = Integer.parseInt(splitArr[currTok++]);
+////				remainingTextTokenIndex = 4;
+//			} else {
+////				remainingTextTokenIndex = 3;
+//			}
+//
+//			currTok++; // Skip the slash
+//			
+//			roomNumStr = splitArr[currTok++];
+//			containsRotation = false;
+//			if(roomNumStr.endsWith(",")) {
+//				containsRotation = true;
+//				roomNumStr = roomNumStr.substring(0, roomNumStr.length()-1); // Remove the comma
+//			}
+//			roomNum2 = Integer.parseInt(roomNumStr);
+//			
+//			
+//			rotationNum2 = 0;
+//			if(containsRotation) {
+//				rotationNum2 = Integer.parseInt(splitArr[currTok++]);
+////				remainingTextTokenIndex = 4;
+//			} else {
+////				remainingTextTokenIndex = 3;
+//			}
+//
+//			remainingTextTokenIndex = currTok;
+//			
+////			if(slashIndex == -1 || equalsPos == -1) {
+////				return;
+////			}
+//			
+//			
+//		} else {
+//			String roomNumStr = splitArr[2];
+//			boolean containsRotation = false;
+//			if(roomNumStr.endsWith(",")) {
+//				containsRotation = true;
+//				roomNumStr = roomNumStr.substring(0, roomNumStr.length()-1);
+//			}
+//			roomNum1 = Integer.parseInt(roomNumStr);
+//			
+//			rotationNum1 = 0;
+//			if(containsRotation) {
+//				rotationNum1 = Integer.parseInt(splitArr[3]);
+//				remainingTextTokenIndex = 4;
+//			} else {
+//				remainingTextTokenIndex = 3;
+//			}			
+//		}
+//		
+//		// Q = 1093, 0 / 1962 	
+//		
+//		List<String> annotations = new ArrayList<>();
+//		
+//		String name = "";
+//		for(int x = remainingTextTokenIndex; x < splitArr.length; x++) {
+//			String currToken = splitArr[x];
+//			if(currToken.startsWith("@")) {
+//				annotations.add(currToken.substring(1));
+//			
+//			} else {
+//				name += currToken+" ";	
+//			}
+//		}
+//		
+//		name = name.trim();
+//		
+//		TilePair[] tilePairs = null;
+//		if(roomNum1 != -9 && roomNum2 != -9) {
+//			tilePairs = new TilePair[] { new TilePair(roomNum1, rotationNum1), new TilePair(roomNum2, rotationNum2)  };
+//		} else if(roomNum1 != -9) {
+//			tilePairs = new TilePair[] { new TilePair(roomNum1, rotationNum1) };
+//		}
+//		
+//		if(tilePairs == null) {
+//			log.severe("tilePairs is null", null);
+//			return;
+//		}
+//		
+//		Assignment a = new Assignment(letter, tilePairs, name, annotations );
+//		if(currAssignments.containsKey(letter)) {
+//			log.err("WARNING: Assignment parsing error: A letter is repeated on line - "+line, lc);
+//		}
+//		currAssignments.put(letter, a);
+//
+//	}
 
 	public Room getRoomByName(String name) {
 		return rooms.stream().filter(e -> e.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
@@ -401,11 +399,13 @@ public class RoomList {
 		return rooms;
 	}
 	
+	/** Each instance of the Room class corresponds to an entry in the rooms.txt file. 
+	 * Each Room object may be used to draw a room onto the game map. */
 	public static class Room {
 		
 		private final String name;
 		
-		private final GridItem[ /*width*/ ][ /*height*/] grid;
+		private final GridItem[ /*width - x coordinate*/ ][ /*height - y coordinate*/] grid;
 		
 		private final List<Assignment> assignments;
 
@@ -468,6 +468,7 @@ public class RoomList {
 	}
 	
 	
+	/** A mapping from (x, y) coordinates to the applicable assignments at that position. */
 	public static class GridItem {
 		private final Assignment a;
 		
@@ -497,13 +498,13 @@ public class RoomList {
 	}
 	
 	
-	
+	/** A specific letter appearing in a room grid (from the room file) is a mapping from that specific
+	 * letter to properties that describe what tiles should be displayed, as well as additional 
+	 * optional properties like name and behaviour annotations.  
+	 * */
 	public static class Assignment {
 		final String letter;
 		
-//		final int tileNumber;
-//		final int rotation;
-
 		final String name;
 		
 		final List<String> annotations;
@@ -520,8 +521,6 @@ public class RoomList {
 			}
 			
 			this.letter = letter;
-//			this.tileNumber = tileNumber;
-//			this.rotation = rotation;
 			this.tilePair = tilePair;
 			
 			this.name = name;
@@ -536,14 +535,6 @@ public class RoomList {
 			return letter;
 		}
 
-//		public int getTileNumber() {
-//			return tileNumber;
-//		}
-//
-//		public int getRotation() {
-//			return rotation;
-//		}
-
 		public String getName() {
 			return name;
 		}
@@ -554,6 +545,8 @@ public class RoomList {
 		
 	}
 	
+	/** A single layer can be representing by a pair of values: the tile number (corresponding to (number).png) and 
+	 * the number of degrees (0, 90, 180, 270) to rotate it when it is displayed by the browser. */
 	public static class TilePair {
 		final int tileNumber;
 		final int rotation;
@@ -584,6 +577,7 @@ public class RoomList {
 		
 	}
 	
+	/** Simple (x, y) coordinate */
 	private static class InnerMapCoord {
 		final int x;
 		final int y;

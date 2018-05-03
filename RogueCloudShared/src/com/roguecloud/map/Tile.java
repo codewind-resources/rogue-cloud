@@ -50,12 +50,7 @@ public final class Tile {
 	
 	private final List<ICreature> creatures = new ArrayList<>(0);
 
-//	/** May be null*/
-//	private final ITerrain terrain;
-//	
-//	/** May be null*/
-//	private final ITerrain bgTerrain;
-	
+	/** Immutable list */
 	private final List<ITerrain> terrain;
 
 	private boolean isTileForRead = false;
@@ -73,7 +68,13 @@ public final class Tile {
 		
 		this.isPresentlyPassable = presentlyPassable;
 
-		this.terrain = terrain;
+		if(RCRuntime.CHECK) {
+			this.terrain = Collections.unmodifiableList(terrain);
+		} else {
+			this.terrain = terrain;	
+		}
+		
+		
 	}
 	
 	public Tile(boolean presentlyPassable, ITerrain fgTerrain) {
@@ -85,7 +86,12 @@ public final class Tile {
 
 		this.isPresentlyPassable = presentlyPassable;
 
-		this.terrain = list;
+		if(RCRuntime.CHECK) {
+			this.terrain = Collections.unmodifiableList(list);
+		} else {
+			this.terrain = list;			
+		}
+		
 
 	}
 
@@ -240,10 +246,14 @@ public final class Tile {
 	public Tile shallowCloneUnchecked() {
 		
 		Tile t = new Tile(this.isPresentlyPassable, this.terrain);
+		shallowCloneInternal(t);
+		return t;
+	}
+	
+	private void shallowCloneInternal(Tile t) {
 		t.groundObjects.addAll(groundObjects);
 		t.creatures.addAll(creatures);
 		t.tileProperties.addAll(tileProperties);
-		return t;
 	}
 
 	
@@ -253,6 +263,25 @@ public final class Tile {
 		return shallowCloneUnchecked();
 	}
 
+	public List<ITerrain> internalGetTerrainListCopy() {
+		List<ITerrain> result = new ArrayList<>();
+		result.addAll(this.terrain);
+		return result;
+	}
+	
+	
+	/** A shallow clone, but substitute the existing terrain list with the provided parameter */
+	public Tile shallowCloneWithNewTerrainList(List<ITerrain> terrainParam) {
+		List<ITerrain> newList = new ArrayList<>();
+		newList.addAll(terrainParam);
+		
+		Tile t = new Tile(this.isPresentlyPassable, newList);
+		shallowCloneInternal(t);
+		return t;
+		
+	}
+
+	
 	public final boolean isTileForRead() {
 		if(!RCRuntime.CHECK) { return false; }
 		
@@ -268,7 +297,10 @@ public final class Tile {
 	public void setLastTickUpdated(Long lastTickUpdated) {
 		this.lastTickUpdated = lastTickUpdated;
 	}
+	
+	
 
+	// TODO: Create a player-only interface for tile, BUT only use it in the client code
 	
 	@SuppressWarnings("unused")
 	private Tile fullClone() {
