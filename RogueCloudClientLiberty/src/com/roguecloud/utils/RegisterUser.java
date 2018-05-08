@@ -41,9 +41,16 @@ public class RegisterUser {
 		
 		while(System.nanoTime() < expireTime && !connectionSucceeded) {
 			
-			int httpResponseCode = issueClientApiVersionSupportedRequest(apiVersion, resourceUrl);
+			int httpResponseCode = -1;
 			
-			if(httpResponseCode != 404 && httpResponseCode != 500) {
+			try {
+				httpResponseCode = issueClientApiVersionSupportedRequest(apiVersion, resourceUrl);
+			} catch(Exception ce) {
+				/* unable to connect, try again after waiting. */
+				RCUtils.sleep(1000);
+			}
+			
+			if(httpResponseCode != 404 && httpResponseCode != 500 && httpResponseCode != -1) {
 				connectionSucceeded = true;
 			}
 			
