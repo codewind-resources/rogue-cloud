@@ -72,7 +72,7 @@ public class WorldGeneration {
 		WorldGenFromFileResult wgResult;
 		
 		try {
-			wgResult = WorldGenFromFile.generateMapFromInputStream(parent.getRoomList(), UniverseParserUtil.class.getClassLoader().getResourceAsStream("/universe/map-water.txt") );
+			wgResult = WorldGenFromFile.generateMapFromInputStream(parent.getRoomList(), UniverseParserUtil.class.getClassLoader().getResourceAsStream("/universe/map-new.txt") );
 		} catch (IOException e1) {
 			throw new RuntimeException(e1);
 		}

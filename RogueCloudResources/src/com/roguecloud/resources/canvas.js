@@ -547,7 +547,13 @@ function drawFrameNewer(param, skipdraw) {
 		//	ctx.fillStyle="#349D3D";	
 		// }
 		
-		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+		ctx.fillRect(0, 0, ctx.canvas.width-200, ctx.canvas.height);
+
+		ctx.fillStyle="#27782e";
+		
+		ctx.fillRect(ctx.canvas.width-200, 0, ctx.canvas.width, ctx.canvas.height);
+		
+		
 		
 	}
 	
@@ -612,7 +618,7 @@ function drawFrameNewer(param, skipdraw) {
 			var rowPixel = row * spriteSize;
 
 			
-			for(var layerIndex = arrayContents[x].length-1; layerIndex >= 0 ; layerIndex--) {
+			for(var layerIndex = arrayContents[x].length-1; layerIndex >= 0; layerIndex--) {
 				
 				var num = arrayContents[x][layerIndex][0];
 				

@@ -60,7 +60,7 @@ public class PngMain {
 	}
 	
 	private static void doInner(PngState state) throws IOException {
-		BufferedImage bi = ImageIO.read(new File("C:\\Rogue-Cloud\\Git\\RogueCloudServer\\WebContent\\universe\\map-water.png"));
+		BufferedImage bi = ImageIO.read(new File("C:\\Rogue-Cloud\\Git\\RogueCloudServer\\WebContent\\universe\\map-new.png"));
 
 		SimpleMap<Entry> map = new SimpleMap<Entry>(bi.getWidth(), bi.getHeight());
 
@@ -111,7 +111,7 @@ public class PngMain {
 		}
 		System.out.println(str);
 		
-		FileWriter fw = new FileWriter("C:/Rogue-Cloud/Git/RogueCloudServer/WebContent/universe/map-water.txt");
+		FileWriter fw = new FileWriter("C:/Rogue-Cloud/Git/RogueCloudServer/WebContent/universe/map-new.txt");
 		fw.write(str.toString());
 		fw.close();
 		
