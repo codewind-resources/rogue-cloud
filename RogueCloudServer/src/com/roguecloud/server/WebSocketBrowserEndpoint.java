@@ -17,6 +17,7 @@
 package com.roguecloud.server;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -26,6 +27,7 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.roguecloud.RCSharedConstants;
 import com.roguecloud.ServerInstance;
 import com.roguecloud.ServerInstanceList;
 import com.roguecloud.db.DatabaseInstance;
@@ -48,8 +50,8 @@ public class WebSocketBrowserEndpoint {
 	@OnOpen
 	public void open(Session session) {
 		System.out.println("open.");
+		session.setMaxIdleTimeout(2 * TimeUnit.MILLISECONDS.convert(RCSharedConstants.MAX_ROUND_LENGTH_IN_NANOS, TimeUnit.NANOSECONDS));
 		ResourceLifecycleUtil.getInstance().addNewSession(ServerWsClientUtil.convertSessionToManagedResource(session));
-		
 	}
 
 	@OnClose
@@ -60,7 +62,7 @@ public class WebSocketBrowserEndpoint {
 
 	@OnError
 	public void onError(Throwable error) {
-		System.err.println("Web Socket on error:");
+		System.err.println("Web Socket on error: ");
 		error.printStackTrace();
 	}
 

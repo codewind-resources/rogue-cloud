@@ -20,14 +20,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import com.roguecloud.WorldGenerationUtil.DrawRoomResult;
+import com.roguecloud.map.IMap;
+import com.roguecloud.map.ITerrain;
+import com.roguecloud.map.ImmutableImpassableTerrain;
 import com.roguecloud.map.ImmutablePassableTerrain;
 import com.roguecloud.map.RCArrayMap;
 import com.roguecloud.map.Tile;
+import com.roguecloud.map.TileType;
 import com.roguecloud.map.TileTypeList;
 import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.RCUtils;
@@ -100,9 +106,10 @@ public class WorldGenFromFile {
 					String ch = charMap.getTile(x, y);
 					if(ch.equals("r")) {
 						e = new Entry(Entry.Type.ROAD);
-					}
+					} else if(ch.equals("w")) {
+						e = new Entry(Entry.Type.WATER);
 					
-					else if(mapping.keySet().contains(ch)) {
+					} else if(mapping.keySet().contains(ch)) {
 						Entry.Type t = mapping.get(ch);
 						
 						String east = charMap.getTile(x+1, y);
@@ -127,14 +134,31 @@ public class WorldGenFromFile {
 		// Create the result map from the entries 
 		RCArrayMap aMap = new RCArrayMap(charMap.getXSize(), charMap.getYSize());
 		List<RoomSpawn> spawns = new ArrayList<>();
+		List<DrawRoomResult> drawRoomResults = new ArrayList<>();
 		{
-			
 			ImmutablePassableTerrain road = new ImmutablePassableTerrain(TileTypeList.ROAD);
-			ImmutablePassableTerrain grass = new ImmutablePassableTerrain(TileTypeList.GRASS);
+			
+			ImmutablePassableTerrain grass_100 = new ImmutablePassableTerrain(TileTypeList.GRASS_100);
+			ImmutablePassableTerrain grass_75 = new ImmutablePassableTerrain(TileTypeList.GRASS_75);
+			ImmutablePassableTerrain grass_50 = new ImmutablePassableTerrain(TileTypeList.GRASS_50);
 
+			Random rand = new Random();
+			
 			for(int y = 0; y < charMap.getYSize(); y++) {
 				for(int x = 0; x < charMap.getXSize(); x++) {
-					Tile t = new Tile(true, null, grass);
+					
+					ImmutablePassableTerrain terrain;
+					
+					int val = rand.nextInt(40);
+					if(val <= 0) {
+						terrain = grass_100;
+					} else if(val <= 8) {
+						terrain = grass_50;
+					} else {
+						terrain = grass_75;
+					}
+					
+					Tile t = new Tile(true, terrain);
 					aMap.putTile(x, y, t);
 				}
 			}
@@ -149,10 +173,12 @@ public class WorldGenFromFile {
 					if(e == null) {
 						
 						if(aMap.getTile(x, y) == null) {
-							t = new Tile(true, null, grass);	
-						}						
+							t = new Tile(true, grass_75);	
+						}
 					} else if(e.type == Entry.Type.ROAD) {
-						t = new Tile(true, null, road);
+						t = new Tile(true, road);
+					} else if(e.type == Entry.Type.WATER) {
+						/* ignore */
 					} else {
 						Room r = roomList.getRoomByName(e.type.name);
 						drawRoomResult = WorldGenerationUtil.drawRoom(r, x, y, e.type.rotation, aMap, false);
@@ -167,24 +193,272 @@ public class WorldGenFromFile {
 						rs.getItemSpawnsInRoom().addAll(drawRoomResult.getItemSpawns());
 						rs.getMonsterSpawnsInRoom().addAll(drawRoomResult.getMonsterSpawns());
 						spawns.add(rs);
+						drawRoomResults.add(drawRoomResult);
 					}
 				}
 			} // end for
 			
-			
-			
 //			for(int y = 0; y < charMap.getYSize()-40; y += 50) {
 //				for(int x = 0; x < charMap.getXSize()- 40; x+= 50) { 
-//					WorldGenerationUtil.drawRoom(roomList.getRoomByName("Gas Station"), x, y, 0, aMap, false);
+//					WorldGenerationUtil.drawRoom(roomList.getRoomByName("New House"), x, y, 0, aMap, false);
 //
 //				}
 //			}
-
 			
+		}
+		
+		
+
+		// Draw water tiles
+		{
+			for(int y = 0; y < charMap.getYSize(); y++) {
+				for(int x = 0; x < charMap.getXSize(); x++) {
+					Entry e = eMap.getTile(x, y);
+					
+					if(e != null && e.type == Entry.Type.WATER) {
+						
+						boolean north = isValidWaterTile(x, y-1, eMap);
+						boolean south= isValidWaterTile(x, y+1, eMap);
+						boolean west = isValidWaterTile(x-1, y, eMap);
+						boolean east = isValidWaterTile(x+1, y, eMap);
+
+						Integer tileNum = null;
+						
+						// NSWE
+						// 0000 = none -> not supported
+						// 0001 = east -> not supported
+						// 0010 = west -> not supported
+						// 0011 = east, west -> not supported
+						// 0100 = north -> not supported
+						// 0101 = south, east -> 1
+						if(!north && south && !west && east ) { tileNum = 230; }
+						// 0110 = south, west -> 3
+						if(!north && south && west && !east) { tileNum = 232; }
+						// 0111 = south, west, east -> 2
+						if(!north && south && west && east) { tileNum = 231; }
+						// 1000 = north -> not supported
+						// 1001 = north, east ->  7
+						if(north && !south && !west && east) { tileNum = 236; }
+						// 1010 = north, west ->  9
+						if(north && !south && west && !east) { tileNum  = 238; }
+						// 1011 = north, west, east -> 8
+						if(north && !south && west && east) { tileNum = 237; }
+						// 1100 = noth, south -> not supported
+						// 1101 = north, south, east -> 4
+						if(north && south && !west && east) { tileNum = 233; }
+						// 1110 = north, south, west -> 6
+						if(north && south && west && !east) { tileNum = 235; }
+						// 1111 = north, south, east, west -> 5
+						if(north && south && east && west) {
+							
+							boolean ne = isValidWaterTile(x+1, y-1, eMap);
+							boolean se = isValidWaterTile(x+1, y+1, eMap);
+							boolean nw = isValidWaterTile(x-1, y-1, eMap);
+							boolean sw = isValidWaterTile(x-1, y+1, eMap);
+							
+							int count = (ne ? 1 : 0) + (se ? 1 : 0) + (nw ? 1 : 0) + (sw ? 1 : 0);
+							
+							if(count == 3) {
+								if(!ne) {
+									tileNum = 246;
+								} else if(!se) {
+									tileNum = 240;
+								} else if(!nw) {
+									tileNum = 248;
+								} else  { // sw
+									tileNum = 242;
+								}								
+							} else {
+								tileNum = 234;	
+							}
+						}
+						
+						if(tileNum != null) {
+							// TODO: EASY - Add this to tile list
+							Tile t = new Tile(false, new ImmutableImpassableTerrain(new TileType(tileNum, 0)));
+							aMap.putTile(x, y, t);
+						}
+						
+					}
+					
+				}
+			}
+			
+		}
+		
+		
+		// Draw road tiles from the door of a house, to the nearest road, if possible.
+		{
+			final int[][] DIRECTIONS = new int[/* index*/][/*x delta, y delta*/] {
+					{1, 0},
+					{0, 1},
+					{-1, 0},
+					{0, -1}
+			};
+			
+			List<Position> doors = new ArrayList<>();
+			
+			for(DrawRoomResult drr : drawRoomResults) {
+				
+				for(int x = drr.getX(); x < drr.getX()+drr.getWidth(); x++) {
+					
+					for(int y = drr.getY(); y < drr.getY()+drr.getHeight(); y++) {
+						
+						Tile tile = aMap.getTile(x, y);
+						boolean isDoorTile = Arrays.asList(tile.getTileTypeLayers()).stream().anyMatch(  e -> Arrays.asList(TileTypeList.DOOR_TILES ).contains(e));
+						if(isDoorTile) {
+							doors.add(new Position(x, y));
+						}
+					}
+				}
+			}
+			
+			
+			ImmutablePassableTerrain newRoadTerrain = new ImmutablePassableTerrain(TileTypeList.ROAD);
+			
+			for(Position door : doors) {
+				
+				inner: for(int[] DIRECTION : DIRECTIONS) {
+					List<Position> path = canWeGetToARoad(door.getX(), door.getY(), DIRECTION[0], DIRECTION[1], aMap);
+					
+					if(path.size() > 0) {
+						path.forEach( e -> {
+							Tile t = new Tile(true, newRoadTerrain);
+							aMap.putTile(e, t);						
+						});
+						break inner;
+					} 
+				}
+				
+			}
+						
+		}
+		
+		// Convert room floor tile to Cobblestone
+		{
+			Random r = new Random();
+			List<ImmutablePassableTerrain> cobblestoneTiles = new ArrayList<>();
+			{
+				for(TileType tt : TileTypeList.ALL_COBBLESTONE) {
+					cobblestoneTiles.add(new ImmutablePassableTerrain(tt));
+				}
+				
+			}
+			
+			for(DrawRoomResult drr : drawRoomResults) {
+				for(int x = drr.getX(); x < drr.getX()+drr.getWidth(); x++) {
+					
+					for(int y = drr.getY(); y < drr.getY()+drr.getHeight(); y++) {
+						
+						Tile existingTile = aMap.getTile(x, y);
+						List<ITerrain> terrainListCopy = existingTile.internalGetTerrainListCopy();
+						
+						boolean match = false;
+						for(int index = 0; index < terrainListCopy.size(); index++)  {
+							ITerrain curr = terrainListCopy.get(index);
+							if(curr.getTileType().getNumber() == 300) {
+								terrainListCopy.set(index, cobblestoneTiles.get(r.nextInt(cobblestoneTiles.size())));
+								match = true;
+							}
+							
+						}
+						
+						if(match) {
+							Tile newTile = existingTile.shallowCloneWithNewTerrainList(terrainListCopy);
+							aMap.putTile(x,  y, newTile);
+						}
+						
+					}
+					
+				}
+				
+			}
 		}
 
 		return new WorldGenFromFileResult(aMap, spawns);
 	}
+	
+	private static boolean isValidWaterTile(int x, int y, SimpleMap<Entry> eMap) {
+		if(x < 0 || y < 0) { return false; }
+		if(x >= eMap.getXSize() || y >= eMap.getYSize()) { return false; }
+		
+		Entry e = eMap.getTile(x, y);
+		if(e == null) { return false; }
+		return e.type == Entry.Type.WATER;
+		
+	}
+	
+	
+	/** Whether or not we can get to a road from this position, by only grossing grass.  
+	 * Returns a non-empty list if a path is available, otherwise an empty list is returned.*/
+	private static List<Position> canWeGetToARoad(int initialX, int initialY, int xDelta, int yDelta, IMap aMap)  {
+		// TODO: EASY - add sanity check to delta
+		
+		List<Position> result = new ArrayList<>();
+		
+		int x = initialX, y = initialY;
+		
+		do {
+			x += xDelta;
+			y += yDelta;
+
+			Position currPos = new Position(x, y);
+			if(!currPos.isValid(aMap)) { return Collections.emptyList(); }
+			
+			Tile t = aMap.getTile(currPos);
+			result.add(currPos);
+			
+			if(!t.isPresentlyPassable()) {
+				// Invalid tile: Any tile that we replace must be already passable.
+				return Collections.emptyList();
+			}
+			
+			if(t.getCreatures().size() > 0 || t.getGroundObjects().size() > 0) {
+				// Invalid tile: There shouldn't be any creatures or objects on the tile at this stage in the generation process, but
+				// if there are then the tile is invalid.
+				return Collections.emptyList();
+			}
+			
+			if(t.getTileProperties().size() > 0) {
+				// Invalid tile: When we are creating new road tiles in the calling method, we are not cloning tile properties,
+				// therefore we can't allow any tile properties in any of the path tiles at this stage.
+				return Collections.emptyList();
+			}
+			
+			if(AcontainsAtLeastOneB(t.getTileTypeLayers(), TileTypeList.GRASS_TILES)) {
+				// Valid tile: grass
+			} else if(AcontainsAtLeastOneB(t.getTileTypeLayers(), TileTypeList.ROAD)) {
+				// Valid tile: we have made it to a road by crossing only grass... success!
+				break;
+			} else {
+				// Invalid tile: there is no valid path, so return fail
+				return Collections.emptyList();
+			}
+			
+			if(result.size() > 12) {
+				// Path is too long, so return fail
+				return Collections.emptyList();
+			}
+			
+		} while(true);
+		
+		return result;
+	}
+	
+	private static boolean AcontainsAtLeastOneB(TileType[] A_tileTypes, TileType... B_list) {
+		List<TileType> tileTypesList = Arrays.asList(A_tileTypes);
+		
+		for(TileType curr : B_list) {
+			
+			if(tileTypesList.contains(curr)) {
+				return true;
+			}
+			
+		}
+		
+		return false;
+	}
+	
 	
 	/** 
 	 * Return value of generateMapFromInputStream(...): a newly generated map, and a list of
@@ -232,19 +506,20 @@ public class WorldGenFromFile {
 	/** Each alphanumeric character in the world file corresponds to a specific type of room (or other structure). */
 	private static class Entry {
 		
-		private static final String SMALL_HOUSE = "Small House";
+		private static final String SMALL_HOUSE = "New House2";
 
 		/** Each alphanumeric character in the world file corresponds to a specific type of room (or other structure). */
 		public static enum Type { 
 			ROAD("r", null), 
-			SMALL_HOUSE_SOUTH_DOOR("a", SMALL_HOUSE, 90), 
-			SMALL_HOUSE_WEST_DOOR("b", SMALL_HOUSE, 180), 
+			SMALL_HOUSE_SOUTH_DOOR("a", SMALL_HOUSE, 0), 
+			SMALL_HOUSE_WEST_DOOR("b", SMALL_HOUSE, 0), 
 			SMALL_HOUSE_EAST_DOOR("c", SMALL_HOUSE), 
-			SMALL_HOUSE_NORTH_DOOR("d", SMALL_HOUSE, 270), 
+			SMALL_HOUSE_NORTH_DOOR("d", SMALL_HOUSE, 0), 
 			BASKETBALL_COURT("e", "Basketball Court"), 
 			LIBRARY("f", "Library"),
 			GRAVEYARD("g", "Graveyard"),
-			GAS_STATION("h", "Gas Station")
+			GAS_STATION("h", "Gas Station"),
+			WATER("w", null)
 			;
 			
 			final String letter;

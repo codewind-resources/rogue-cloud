@@ -86,7 +86,7 @@ body.presenter {
 }
 
 .presenter .player-actions {
-    background-color: #6F9970;
+    background-color: rgb(174, 223, 101);
     height: 80%;
     width: 80%;
 }
@@ -96,6 +96,7 @@ body.presenter {
     height: 80%;
     width: 20%;
     color: white;
+    position: relative;
 }
 
 .presenter .events-console {
@@ -193,6 +194,23 @@ body.presenter {
 	font-family: sans-serif;
 }
 
+#roundPopover_timeleft {
+	font-family: sans-serif;
+}
+
+#roundPopover_yourscore {
+	font-family: sans-serif;
+}
+
+#roundPopover_leaderboard {
+	font-family: sans-serif;
+}
+
+#roundPopover_overall {
+	font-family: sans-serif;
+}
+
+
 .has-box-shadow-bottom {
 	-webkit-box-shadow: 0px 5px 10px 0px rgba(0,0,0,0.75);
 	-moz-box-shadow: 0px 5px 10px 0px rgba(0,0,0,0.75);
@@ -222,14 +240,18 @@ body.presenter {
 			Your browser does not support the HTML5 canvas tag.
 		</canvas>
     </div>
-    <div class="leader-board" id="leader-board-div-id"><span id="leader-board-id"></span>
-    <span id="ldb_html">
-    <br/>
-    <a href='{{ page.serverWebUrl }}/database/round' target="_blank">Current Leaderboard Results</a>
-    </span>
-    	
-    
-    	<!--  <div id="logo"><img src="resources/logo.png" width="100%"></div>  -->
+    <div class="leader-board" id="leader-board-div-id">
+	    <span id="leader-board-id"></span>
+	    <span id="ldb_html">
+		    <br/>
+		    <a href='{{ page.serverWebUrl }}/database/round/recent' target="_blank">Current Leaderboard Results</a>
+	    </span>
+	    	
+	    <div id="logo" style="position:absolute; bottom:0; left: 20px; font-family: sans-serif; ">
+	    	Powered by<br/>
+	    	<a href="https://microclimate-dev2ops.github.io/"><img src="resources/logo.svg" width="70%" style="border-style: none"></a>
+	    	<br/><br/><br/>
+	    </div>
     </div>
     <div class="events-console" id="events-console-id">
         
@@ -243,10 +265,20 @@ body.presenter {
 <div id="creatureInfo" class="moveAble has-box-shadow-bottom" style="position: absolute; opacity: 0.88; background-color: #151515; padding: 10px; /* border-radius: 10px;*/ display:none; color: white; border: 1px solid #777777; "> </div>
 
 <div id="roundPopover" class="has-box-shadow-bottom" style="position: absolute; opacity: 0.92; background-color: #151515; padding: 20px; color: white; display:none; border: 1px solid #777777;">
+<table border="0">
+<tr>
+<td valign="middle" align="center" >
+	<img src="resources/chest.png"/>
+</td>
+<td width="40">&nbsp;</td>
+<td valign="middle" align="left" style="min-width: 285px;" >
 <span id="roundPopover_timeleft"></span>
 <span id="roundPopover_yourscore"></span>
 <span id="roundPopover_leaderboard"></span>
 <span id="roundPopover_overall"></span>
+</td>
+</tr>
+</table>
 </div> <!--  display:none;  -->
 
 <script>

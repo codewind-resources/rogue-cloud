@@ -21,8 +21,12 @@ import com.roguecloud.map.TileType;
 /** Constants which correspond to existing tile images in the tile list. */
 public class TileTypeList {
 
-	public static final TileType GRASS = new TileType(667, 0);
+	public static final TileType GRASS_100 = new TileType(200, 0);
+	public static final TileType GRASS_75 = new TileType(201, 0);
+	public static final TileType GRASS_50 = new TileType(202, 0);
 //	public static final TileType GRASS = new TileType(1853, 0);
+	
+	public static final TileType[] GRASS_TILES = { GRASS_100, GRASS_75, GRASS_50 }; 
 	
 	public static final TileType WOOD_WALL_CORNER_TOP_LEFT = new TileType(1136, 0);
 	public static final TileType WOOD_WALL_CORNER_TOP_RIGHT = new TileType(1136, 90);
@@ -33,7 +37,15 @@ public class TileTypeList {
 	public static final TileType WOOD_WALL_STRAIGHT_HORIZ = new TileType(1137, 90);
 	
 
-	public static final TileType ROAD = new TileType(660, 0);
+	public static final TileType DOOR_CLOSED_HORIZ = new TileType(107, 0);
+	public static final TileType DOOR_CLOSED_VERT_RIGHT = new TileType(108, 0);
+	public static final TileType DOOR_CLOSED_VERT_LEFT = new TileType(106, 0);
+	
+	public static final TileType[] DOOR_TILES = new TileType[] { DOOR_CLOSED_HORIZ, DOOR_CLOSED_VERT_LEFT, DOOR_CLOSED_VERT_RIGHT };
+	
+	
+//	public static final TileType ROAD = new TileType(660, 0);
+	public static final TileType ROAD = new TileType(301, 0);
 	
 	public static final TileType ROAD_WALL_CORNER_TOP_LEFT = new TileType(1039, 0);
 	public static final TileType ROAD_WALL_CORNER_TOP_RIGHT = new TileType(1039, 90);
@@ -77,8 +89,53 @@ public class TileTypeList {
 	public static final TileType SHRUB_5 = new TileType(2197, 0, "Shrub");
 	public static final TileType SHRUB_6 = new TileType(2175, 0, "Shrub");
 	
+	public static final TileType WATER_1 = new TileType(230);
+	public static final TileType WATER_2 = new TileType(231);
+	public static final TileType WATER_3 = new TileType(232);
+	public static final TileType WATER_4 = new TileType(233);
+	public static final TileType WATER_5 = new TileType(234);
+	public static final TileType WATER_6 = new TileType(235);
+	public static final TileType WATER_7 = new TileType(236);
+	public static final TileType WATER_8 = new TileType(237);
+	public static final TileType WATER_9 = new TileType(238);
+	
+	public static final TileType ISLAND_1 = new TileType(240);
+	public static final TileType ISLAND_2 = new TileType(241);
+	public static final TileType ISLAND_3 = new TileType(242);
+	public static final TileType ISLAND_4 = new TileType(243);
+	public static final TileType ISLAND_5 = new TileType(244);
+	public static final TileType ISLAND_6 = new TileType(245);
+	public static final TileType ISLAND_7 = new TileType(246);
+	public static final TileType ISLAND_8 = new TileType(247);
+	public static final TileType ISLAND_9 = new TileType(248);
+	
+	public static final TileType COBBLESTONE_310 = new TileType(310);
+	public static final TileType COBBLESTONE_311 = new TileType(311);
+	public static final TileType COBBLESTONE_312 = new TileType(312);
+	public static final TileType COBBLESTONE_313 = new TileType(313);
+	public static final TileType COBBLESTONE_314 = new TileType(314);
+	public static final TileType COBBLESTONE_315 = new TileType(315);
+	public static final TileType COBBLESTONE_316 = new TileType(316);
+	public static final TileType COBBLESTONE_317 = new TileType(317);
+	public static final TileType COBBLESTONE_318 = new TileType(318);
+	public static final TileType COBBLESTONE_319 = new TileType(319);
+
+	// TODO: EASY - Decide what to do with this.
+	public static final TileType[] ALL_COBBLESTONE = new TileType[] {
+//			COBBLESTONE_310, 
+//			COBBLESTONE_311, 
+			COBBLESTONE_312, 
+//			COBBLESTONE_313, 
+//			COBBLESTONE_314,
+			COBBLESTONE_315, 
+//			COBBLESTONE_316, 
+//			COBBLESTONE_317, 
+//			COBBLESTONE_318, 
+//			COBBLESTONE_319
+	};
+	
 	
 	public static void init() {
-		// no-op, but is requires, so don't remove.
+		// This method is a no-op, but is required (as it causes the static code to run), so don't remove it.
 	}
 }

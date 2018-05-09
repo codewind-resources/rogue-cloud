@@ -147,14 +147,14 @@ ANNNNNNNNNFNNNNNNNNNB
 W                   E
 W hh LMMR   LMMMMR  E
 W ab                E
-W gd  LMR   LMM hh  E
+W cd  LMR   LMM hh  E
 W ii            ab  E
-W    LMMR   LR  cg  F
+W    LMMR   LR  cd  F
 W               ii  E
 W LMMMMMR           E
-W           efgffff E
+W           effffff E
 W LMMMR     f i     E
-DSSSSSSSFFSSSSSSSSSSC
+DSSSSSSSSFSSSSSSSSSSC
 }
 
 Gas Station:
@@ -255,3 +255,81 @@ N%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%N
 DWWWWWWWWWWWWWWWW%%%%%WWWWWWWWWWWWWWWWWC
 }
 
+
+New House:
+a = 104 
+b = 112
+c = 113 
+d = 102
+e = 103
+. = 300 	@Passable
+g = 114 
+h = 104 
+i = 104 
+j = 114 / 104
+k = 112 / 104 
+l = 113 / 104 
+m = 2058
+n = 116 
+o = 117 
+p = 107		Door 	@Door
+q = 108 	Door 	@Door
+r = 105	/ 122	@Passable
+s = 120 / 112		
+t = 119		@Passable
+u = 119 / -1	@Passable
+v = 121 / 113
+w = 114 / 119
+* = 300		@Passable
+{
+daaahaae
+sttttttv
+b.!.g..c
+kirijiil
+stttwttv
+b.@.n..q
+b......c
+aaaapaaa
+uuuuuuuu
+}
+
+
+New House2:
+a = 104 
+b = 112 / 314 
+c = 113 / 316 
+d = 102
+e = 103
+. = 300 	@Passable
+g = 114 
+h = 104 
+i = 104 
+j = 114 / 104
+k = 112 / 104 
+l = 113 / 104 
+m = 2058
+n = 116 
+o = 117 
+p = 107		Door 	@Door
+q = 108 / 316 	Door 	@Door
+r = 105	/ 122	@Passable
+s = 120 / 314		
+t = 119 / 300		@Passable
+u = 119 / -1	@Passable
+v = 121 / 113 / 316
+w = 114 / 119
+* = 300		@Passable
+
+A = 318 	@Passable
+B = 314		@Passable
+{
+daaahaae
+sttttttv
+b.!.g..c
+kirijiil
+stttwttv
+b.@.n..q
+bAAAAAAc
+aaaapaaa
+uuuuuuuu
+}

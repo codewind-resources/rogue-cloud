@@ -18,10 +18,12 @@ package com.roguecloud;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.roguecloud.UniqueIdGenerator.IdType;
 import com.roguecloud.WorldGenFromFile.RoomSpawn;
@@ -70,35 +72,36 @@ public class WorldGeneration {
 		WorldGenFromFileResult wgResult;
 		
 		try {
-			wgResult = WorldGenFromFile.generateMapFromInputStream(parent.getRoomList(), UniverseParserUtil.class.getClassLoader().getResourceAsStream("/universe/map.txt") );
+			wgResult = WorldGenFromFile.generateMapFromInputStream(parent.getRoomList(), UniverseParserUtil.class.getClassLoader().getResourceAsStream("/universe/map-new.txt") );
 		} catch (IOException e1) {
 			throw new RuntimeException(e1);
 		}
 		RCArrayMap map = wgResult.getMap();
 		
-		{
-			
-			List<GroundObject> goList = new ArrayList<>();
-			List<AIContext> aiContextList = new ArrayList<>();
+		List<GroundObject> goList = new ArrayList<>();
+		List<AIContext> aiContextList = new ArrayList<>();
 
-			List<Monster> monsters = generatePairedItemsAndMonsters(parent, idGen, map, goList, 40, 40, wgResult.getSpawns(), aiContextList);
-			
-			
-			// Generate some wandering monsters too
-			{
-				for(int x = 0; x < 20; x++) {
-					Position p = AIUtils.findRandomPositionOnMap(0, 0, map.getXSize(), map.getYSize(), false, map);
-					if(p != null) {
-						Monster m = generateSingleMonsterAtPosition(map, p, parent, idGen, aiContextList, new AIHint(WorldGenAIType.WANDERING, false));
-						if(m != null) {
-							monsters.add(m);
-						}
+		List<Monster> monsters = generatePairedItemsAndMonsters(parent, idGen, map, goList, 40, 40, wgResult.getSpawns(), aiContextList);
+		
+		// Generate some wandering monsters too
+		{
+			for(int x = 0; x < 20; x++) {
+				Position p = AIUtils.findRandomPositionOnMap(0, 0, map.getXSize(), map.getYSize(), false, map);
+				if(p != null) {
+					Monster m = generateSingleMonsterAtPosition(map, p, parent, idGen, aiContextList, new AIHint(WorldGenAIType.WANDERING, false));
+					if(m != null) {
+						monsters.add(m);
 					}
 				}
 			}
-			
-			List<Position> posOfShrubsToAdd = new ArrayList<>();
+		}
 		
+		List<Position> posOfShrubsToAdd = new ArrayList<>();
+		List<Integer> grassTileNumbers = Arrays.asList(TileTypeList.GRASS_TILES).stream().map(e -> e.getNumber()).collect(Collectors.toList());
+	
+		// Randomly select positions on the map to place shrubs; only place shrubs on tiles containing grass.
+		{
+			
 			int numberOfShrubs = (int)(map.getXSize()*map.getYSize()*0.002); 
 			while(posOfShrubsToAdd.size() < numberOfShrubs) {
 				
@@ -109,11 +112,11 @@ public class WorldGeneration {
 					Tile t = map.getTile(p);
 					if(t != null && t.isPresentlyPassable() && t.getGroundObjects().size() == 0 && t.getCreatures().size() == 0 && t.getTileProperties().size() == 0) {
 						TileType[] tt = t.getTileTypeLayers();
-						if(tt != null && tt.length == 1 && tt[0].getNumber() == TileTypeList.GRASS.getNumber()) {
+						if(tt != null && tt.length == 1 && grassTileNumbers.contains(tt[0].getNumber()) ) {
 							final Position fP = p;
 							
 							if(!posOfShrubsToAdd.stream().anyMatch(e -> e.distanceBetween(fP) < 10 )) {
-								goodPosition = true;	
+								goodPosition = true;
 							}
 						}
 					}
@@ -124,86 +127,95 @@ public class WorldGeneration {
 					posOfShrubsToAdd.add(p);
 				}
 			}
+		}
+		
+		TileType[] shrubTiles = new TileType[] {
+				TileTypeList.SHRUB_1,
+				TileTypeList.SHRUB_2,
+				TileTypeList.SHRUB_3,
+				TileTypeList.SHRUB_4,
+				TileTypeList.SHRUB_5,
+				TileTypeList.SHRUB_6
+		};
+		
+		posOfShrubsToAdd.forEach( e -> {
 			
-			TileType[] shrubTiles = new TileType[] {
-					TileTypeList.SHRUB_1,
-					TileTypeList.SHRUB_2,
-					TileTypeList.SHRUB_3,
-					TileTypeList.SHRUB_4,
-					TileTypeList.SHRUB_5,
-					TileTypeList.SHRUB_6
-			};
+			// Find the grass tile type that is already at that tyile
+			TileType grassTileType = Arrays.asList(map.getTile(e).getTileTypeLayers()).stream().filter(g -> grassTileNumbers.contains(g)).findFirst().orElse(TileTypeList.GRASS_75);
 			
-			posOfShrubsToAdd.forEach( e -> {
-				
-				TileType newTileType = shrubTiles[(int)(Math.random()*shrubTiles.length)];
-				
-				Tile newTile = new Tile(true, new ImmutablePassableTerrain(newTileType), new ImmutablePassableTerrain(TileTypeList.GRASS));
-				
-				map.putTile(e, newTile);
-				
-			});
+			TileType newTileType = shrubTiles[(int)(Math.random()*shrubTiles.length)];
 			
-			System.out.println("* Verifying map integrity.");
-			{
-				Map<Position, Boolean> added = new HashMap<>();
+			List<ITerrain> terrainList = new ArrayList<>();
+			terrainList.add(new ImmutablePassableTerrain(newTileType));
+			terrainList.add(new ImmutablePassableTerrain(grassTileType));
+//				terrainList.addAll(oldTile.)
+			
+			Tile newTile = new Tile(true, terrainList); 
+			
+			map.putTile(e, newTile);
+			
+		});
+		
+		// TODO: CURR - Verify that all map tiles have terrain in their terrain list
+		
+		System.out.println("* Verifying map integrity.");
+		{
+			Map<Position, Boolean> added = new HashMap<>();
+			
+			SimpleMap<Boolean> accessMap = new SimpleMap<Boolean>(map.getXSize(), map.getYSize());
+			for(int y = 0; y < map.getYSize(); y++) {
+				for(int x = 0; x < map.getXSize(); x++) {
+					accessMap.putTile(x, y, false);
+				}
+			}
+			
+			Position pq = AIUtils.findRandomPositionOnMap(0, 0, map.getXSize(), map.getYSize(), false, map);
+			List<Position> posList = new ArrayList<>();
+			posList.add(pq);
+			while(posList.size() > 0) {
+				Position currPos = posList.remove(0);
 				
-				SimpleMap<Boolean> accessMap = new SimpleMap<Boolean>(map.getXSize(), map.getYSize());
-				for(int y = 0; y < map.getYSize(); y++) {
-					for(int x = 0; x < map.getXSize(); x++) {
-						accessMap.putTile(x, y, false);
+				if(!map.getTile(currPos).isPresentlyPassable()) {
+					log.severe("Position on map returned a non-passable tile, which should not happen.", lc);
+				}
+				
+				accessMap.putTile(currPos.getX(), currPos.getY(), true);
+				
+				// Add neighbours
+				for(Position nextPos : AIUtils.getValidNeighbouringPositions(currPos, map)) {
+					
+					Tile t = map.getTile(nextPos);
+					
+					Boolean nextBool = accessMap.getTile(nextPos.getX(), nextPos.getY());
+					if( (nextBool == null || nextBool == false) && t != null && t.isPresentlyPassable() && added.get(nextPos) == null)  {
+						posList.add(nextPos);
+						added.put(nextPos, true);
 					}
 				}
 				
-				Position pq = AIUtils.findRandomPositionOnMap(0, 0, map.getXSize(), map.getYSize(), false, map);
-				List<Position> posList = new ArrayList<>();
-				posList.add(pq);
-				while(posList.size() > 0) {
-					Position currPos = posList.remove(0);
+			}
+			
+			for(int y = 0; y < map.getYSize(); y++) {
+				for(int x = 0; x < map.getXSize(); x++) {
+					Tile realMapTile = map.getTile(x, y);
+					Boolean simpleMapAccessible = accessMap.getTile(x, y);
 					
-					if(!map.getTile(currPos).isPresentlyPassable()) {
-						log.severe("Position on map returned a non-passable tile, which should not happen.", lc);
-					}
-					
-					accessMap.putTile(currPos.getX(), currPos.getY(), true);
-					
-					// Add neighbours
-					for(Position nextPos : AIUtils.getValidNeighbouringPositions(currPos, map)) {
-						
-						Tile t = map.getTile(nextPos);
-						
-						Boolean nextBool = accessMap.getTile(nextPos.getX(), nextPos.getY());
-						if( (nextBool == null || nextBool == false) && t != null && t.isPresentlyPassable() && added.get(nextPos) == null)  {
-							posList.add(nextPos);
-							added.put(nextPos, true);
-						}
-					}
-					
-				}
-				
-				for(int y = 0; y < map.getYSize(); y++) {
-					for(int x = 0; x < map.getXSize(); x++) {
-						Tile realMapTile = map.getTile(x, y);
-						Boolean simpleMapAccessible = accessMap.getTile(x, y);
-						
-						if(realMapTile.isPresentlyPassable() && !simpleMapAccessible) {
-							log.severe("Map integrity error at: ("+x+", "+y+")", lc);
-						}
+					if(realMapTile.isPresentlyPassable() && !simpleMapAccessible) {
+						log.severe("Map integrity error at: ("+x+", "+y+")", lc);
 					}
 				}
+			}
 
-				
+			
 //				String dump = accessMap.dumpMap(e -> {
 //					return e != null ? (e.booleanValue() ? "t" : "f") : "f";
 //				});
 //				
 //				System.out.println(dump);
-				
-			}
 			
-			return new GenerateWorldResult(map, goList, monsters, wgResult.getSpawns(), aiContextList);
 		}
-				
+		
+		return new GenerateWorldResult(map, goList, monsters, wgResult.getSpawns(), aiContextList);
 	}
 
 	
@@ -466,11 +478,11 @@ public class WorldGeneration {
 		int Y_SIZE = m.getYSize();
 		
 		
-		ITerrain grass = new ImmutablePassableTerrain(TileTypeList.GRASS);
+		ITerrain grass = new ImmutablePassableTerrain(TileTypeList.GRASS_75);
 		for(int x = 0; x < X_SIZE; x++) {
 			
 			for(int y = 0; y < Y_SIZE; y++) {
-				Tile t = new Tile(true, null, grass);
+				Tile t = new Tile(true, grass);
 				m.putTile(x, y, t);
 				
 			}
@@ -487,7 +499,7 @@ public class WorldGeneration {
 				for(int y = 0; y < Y_SIZE; y++) {
 					if(result[x][y] != 0) {
 						
-						Tile t = new Tile(true, null, new ImmutablePassableTerrain(TileTypeList.DIRT_PATH));
+						Tile t = new Tile(true, new ImmutablePassableTerrain(TileTypeList.DIRT_PATH));
 						m.putTile(x,  y, t);
 						
 					}

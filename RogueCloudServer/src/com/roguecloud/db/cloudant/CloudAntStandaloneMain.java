@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.roguecloud.db.DbLeaderboardEntry;
 import com.roguecloud.db.DbUser;
+import com.roguecloud.utils.ServerUtil;
 
 /** Simple standalone class for developing the Cloudant db outside of Rogue Cloud server. */
 public class CloudAntStandaloneMain {
@@ -65,12 +66,13 @@ public class CloudAntStandaloneMain {
 		CloudantDbBackend cdbb = new CloudantDbBackend();
 		
 		List<DbUser> users = new ArrayList<>();
-		users.add(new DbUser(1, "jgw", "newpassword"));
-		users.add(new DbUser(2, "jgw2", "newpassword"));
-		users.add(new DbUser(3, "jgw3", "newpassword"));
-		users.add(new DbUser(4, "jgw4", "newpassword"));
-		users.add(new DbUser(5, "jgw5", "newpassword"));
-		users.add(new DbUser(6, "jgw6", "newpassword"));
+		String password = ServerUtil.SHA_256_FIELD+ServerUtil.oneWayFunction("newpassword");
+		users.add(new DbUser(1, "jgw", password));
+		users.add(new DbUser(2, "jgw2", password));
+		users.add(new DbUser(3, "jgw3", password));
+		users.add(new DbUser(4, "jgw4", password));
+		users.add(new DbUser(5, "jgw5", password));
+		users.add(new DbUser(6, "jgw6", password));
 
 		cdbb.writeNewOrExistingUsers(users);
 		

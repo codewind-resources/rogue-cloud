@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.websocket.RemoteEndpoint.Basic;
 import javax.websocket.Session;
 
+import com.roguecloud.client.LibertyClientInstance;
 import com.roguecloud.client.container.LibertyWsBrowserEndpoint.LibertyWSClientWorldStateListener;
 import com.roguecloud.utils.Logger;
 
@@ -46,6 +47,8 @@ public class LibertyClientBrowserSessionWrapper {
 	
 	public LibertyClientBrowserSessionWrapper(Session session) {
 		if(session == null) { throw new IllegalArgumentException(); }
+		
+		LibertyClientInstance.getInstance().add(this);
 		
 		this.session_synch = session;
 		thread = new ClientSessionThread();

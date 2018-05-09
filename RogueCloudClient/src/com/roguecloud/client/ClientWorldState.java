@@ -286,21 +286,17 @@ public class ClientWorldState {
 						Integer passableInt = (Integer)layers.get(0);
 						boolean passable = passableInt == 1;
 						
+						List<ITerrain> terrainList = new ArrayList<>();
 						
-						ITerrain fgTerrain = null, bgTerrain = null;
-						
-						if(layers.size() == 3) {
-							List<Integer> fgLayer = (List<Integer>) layers.get(1);
-							fgTerrain = createTerrain(passable, fgLayer, lc);
-							
-							List<Integer> bgLayer = (List<Integer>) layers.get(2);
-							bgTerrain = createTerrain(passable, bgLayer, lc);
-							
-						} else {
-							List<Integer> fgLayer = (List<Integer>) layers.get(1);
-							fgTerrain = createTerrain(passable, fgLayer, lc);
+						for(int layersIndex = 1; layersIndex < layers.size(); layersIndex++) {
+							List<Integer> currLayer = (List<Integer>) layers.get(layersIndex);
+							ITerrain currTerrain = createTerrain(passable, currLayer, lc);
+							if(currTerrain != null) {
+								terrainList.add(currTerrain);
+							}
 						}
-						Tile newTile = new Tile(passable, fgTerrain, bgTerrain);
+						
+						Tile newTile = new Tile(passable, terrainList);
 						newTile.setLastTickUpdated(update.getGameTicks());
 						
 						localMap.putTile(worldPosX,  worldPosY, newTile);

@@ -45,6 +45,10 @@ public class ResourceServlet extends HttpServlet {
 
 		byte[] barr = Resources.getInstance().getFile(path);
 		
+		if(path.endsWith(".svg")) {
+			response.setContentType("image/svg+xml");	
+		}
+		
 		response.getOutputStream().write(barr);
 	}
 

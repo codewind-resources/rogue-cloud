@@ -144,7 +144,7 @@ public final class ServerInstance {
 	/** The browser client needs a list of all the available .PNG images that the server may send. This method 
 	 * returns a list of all tiles, as a JSON string, for use by the browser. */
 	private String generateTileListJson() {
-		HashMap<Integer, String> map = new HashMap<>();
+		HashMap<Integer /* tile number */, String /* tile name */> map = new HashMap<>();
 
 		TileTypeList.init();
 		
@@ -161,17 +161,27 @@ public final class ServerInstance {
 		weaponList.getList().stream().forEach( (w) -> {map.put(w.getTileType().getNumber(), w.getName()); });
 		
 		roomList.getRooms().stream().flatMap( (e) -> e.getAssignments().stream())
-			.forEach( a -> { 
-				TilePair fgTile = a.getTilePair()[0];
-
-				if(fgTile == null) {
-					log.severe("Foreground tile pair is null: " + a.getLetter()+" "+a.getName(), null);
-					return; 
-				}  
-
-				if(fgTile.getTileNumber() == -1) { return; }
+			.forEach( a -> {
 				
-				map.put(fgTile.getTileNumber(), a.getName());
+				int index = 0;
+				for(TilePair tp : a.getTilePair()) {
+					if(tp == null) {
+						log.severe("Foreground tile pair is null: " + a.getLetter()+" "+a.getName(), null);
+						return; 
+					}  
+
+					if(tp.getTileNumber() == -1) { continue; }
+					
+					String name = "";
+					if(index == 0) {
+						name = a.getName();
+					}
+					
+					map.put(tp.getTileNumber(), name);
+					
+					index++;
+				}
+				
 		});
 		
 		StringBuilder tilesSb = new StringBuilder("[");

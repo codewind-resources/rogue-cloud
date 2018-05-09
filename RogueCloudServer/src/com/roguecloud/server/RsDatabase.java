@@ -44,6 +44,7 @@ import com.roguecloud.db.MemoryDatabase;
 import com.roguecloud.json.client.JsonUserRequest;
 import com.roguecloud.json.client.JsonUserRequestResponse;
 import com.roguecloud.utils.Logger;
+import com.roguecloud.utils.ServerUtil;
 
 /**
  * This is a JAX-RS class which serves both HTML pages (for display in the browser) and serves HTTP requests
@@ -65,19 +66,20 @@ public class RsDatabase {
 	HttpServletResponse response;
 
 	@GET
-	@Path("/round")
+	@Path("/round/recent")
 	@Produces("text/html")
-	public Response getAllRoundResults() {
+	public Response getRecentRoundResults() {
 		
 		if(isRedirectToRootNeeded()) {
 			return null;
 		}
-				
-		List<DbLeaderboardEntry> l = DatabaseInstance.get().getBestOverallLeaderboardEntries();
+		
+		// Previous 4 days worth of rounds
+		List<DbLeaderboardEntry> l = DatabaseInstance.get().getBestPreviousXRoundsOfLeaderboardEntries(960);
 		
 		DatabaseUtils.sortDescendingByScore(l);
 				
-		DatabasePage dp = new DatabasePage("High Scores for all Rounds", 4);
+		DatabasePage dp = new DatabasePage("Top 200 scores for recent rounds", 4);
 		
 		dp.getEntries().add(new ArrayList<String>(Arrays.asList("Rank", "Name", "Round #", "Score"))); 
 		
@@ -89,14 +91,65 @@ public class RsDatabase {
 			
 			DbUser user = DatabaseInstance.get().getUserById(dle.getUserId());
 			if(user == null) {
-				log.severe("Unable to find yser with ID "+dle.getUserId()+" from dle with round id "+dle.getRoundId(), null);
+				log.severe("Unable to find user with ID "+dle.getUserId()+" from dle with round id "+dle.getRoundId(), null);
 				continue;
 			}
 			
 			row.add((rank+1)+". ");
-			row.add("<a href='../user/"+user.getUserId()+"/'>"+user.getUsername()+"</a>");
-			row.add("<a href='"+dle.getRoundId()+"/'>"+dle.getRoundId()+"</a>");
-			row.add(""+dle.getScore());
+			row.add("<a href='../../user/"+user.getUserId()+"/'>"+user.getUsername()+"</a>");
+			row.add("<a href='../"+dle.getRoundId()+"/'>"+dle.getRoundId()+"</a>");
+			row.add(""+formatNumber(dle.getScore()));
+			
+			dp.getEntries().add(row);
+		}
+		
+		try {
+			request.setAttribute("page", dp);
+			
+			request.getRequestDispatcher("/Table.jsp").forward(request, response);
+		} catch (ServletException | IOException e) {
+			e.printStackTrace();
+			log.severe("Error from JSP page of get all round results", null);
+		}
+		
+		return null;
+				
+	}
+
+	
+	@GET
+	@Path("/round/all")
+	@Produces("text/html")
+	public Response getAllRoundResults() {
+		
+		if(isRedirectToRootNeeded()) {
+			return null;
+		}
+				
+		List<DbLeaderboardEntry> l = DatabaseInstance.get().getBestOverallLeaderboardEntries();
+		
+		DatabaseUtils.sortDescendingByScore(l);
+				
+		DatabasePage dp = new DatabasePage("Top 200 Scores for all rounds", 4);
+		
+		dp.getEntries().add(new ArrayList<String>(Arrays.asList("Rank", "Name", "Round #", "Score"))); 
+		
+		for(int rank = 0; rank < l.size() && rank < 200; rank++) {
+			
+			List<String> row = new ArrayList<>();
+			
+			DbLeaderboardEntry dle = l.get(rank);
+			
+			DbUser user = DatabaseInstance.get().getUserById(dle.getUserId());
+			if(user == null) {
+				log.severe("Unable to find user with ID "+dle.getUserId()+" from dle with round id "+dle.getRoundId(), null);
+				continue;
+			}
+			
+			row.add((rank+1)+". ");
+			row.add("<a href='../../user/"+user.getUserId()+"/'>"+user.getUsername()+"</a>");
+			row.add("<a href='../"+dle.getRoundId()+"/'>"+dle.getRoundId()+"</a>");
+			row.add(""+formatNumber(dle.getScore()));
 			
 			dp.getEntries().add(row);
 		}
@@ -148,7 +201,7 @@ public class RsDatabase {
 			
 			row.add((rank+1)+". ");
 			row.add("<a href='../../user/"+user.getUserId()+"'>"+user.getUsername()+"</a>");
-			row.add(""+dle.getScore());
+			row.add(""+formatNumber(dle.getScore()) );
 			
 			dp.getEntries().add(row);
 		}
@@ -179,17 +232,22 @@ public class RsDatabase {
 			
 			DbUser user = db.getUserByUsername(r.getUsername());
 			if(user == null) {
+				String passwordField = ServerUtil.SHA_256_FIELD+ServerUtil.oneWayFunction(r.getPassword());
+
 				// User doesn't exist yet, so create them
-				long userId = db.createUser(new DbUser(DbUser.NEW_USER_ID, r.getUsername().toLowerCase(), r.getPassword().toLowerCase() ));
+				long userId = db.createUser(new DbUser(DbUser.NEW_USER_ID, r.getUsername().toLowerCase(), passwordField ));
 				JsonUserRequestResponse reqResponse = new JsonUserRequestResponse();
 				reqResponse.setUserId(userId);
 				return Response.ok(reqResponse).build();
 			}
 			
-			// Both username and password are case insensitive
-			if(user.getUsername().equalsIgnoreCase(r.getUsername()) && !user.getPassword().equalsIgnoreCase(r.getPassword())  ) {
-				// If the password doesn't match...
-				return Response.status(Status.FORBIDDEN).entity("Provided password does not match what is in our database. Provide the correct password, or specify a new username.").type(MediaType.TEXT_PLAIN_TYPE).build();
+			if(!user.getUsername().equalsIgnoreCase(r.getUsername())) {				
+				return Response.status(Status.FORBIDDEN).entity("Username did not match what is in the database: "+user.getUsername()+" / "+r.getUsername()).type(MediaType.TEXT_PLAIN_TYPE).build();
+			}
+			
+			if(!ServerUtil.computeAndCompareEqualPasswordHashes(user, r.getPassword())) {
+				// If the password doesn't match... (note that password is case insensitive)
+				return Response.status(Status.FORBIDDEN).entity("Provided password does not match what is in our database. Provide the correct password, or specify a new username.").type(MediaType.TEXT_PLAIN_TYPE).build();				
 			}
 			
 			JsonUserRequestResponse reqResponse = new JsonUserRequestResponse();
@@ -267,7 +325,7 @@ public class RsDatabase {
 			
 			row.add("<a href='../../round/"+dle.getRoundId()+"'>"+dle.getRoundId()+"</a>");
 			row.add(roundRank != null ? "#"+roundRank : "N/A");
-			row.add(""+dle.getScore());
+			row.add(""+formatNumber(dle.getScore()));
 			
 			dp.getEntries().add(row);			
 			
@@ -286,20 +344,6 @@ public class RsDatabase {
 		
 	}
 	
-//	@GET
-//	@Path("/user/{userId}/round/{roundId}")
-//	public Response getUserRoundData(@PathParam("userid") long userId, @PathParam("roundId") long roundId) {
-//		
-//		JsonDbLeaderboardList result = new JsonDbLeaderboardList();
-//		
-//		MemoryDatabase db = DatabaseInstance.get();
-//		List<DbLeaderboardEntry> dbl = db.getAllLeaderboardEntriesForUserAndRound(userId, roundId);
-//		
-//		System.out.println(userId+" "+roundId);
-//		
-//		return Response.ok().build();
-//	}
-
 	private boolean isRedirectToRootNeeded() {
 		if(!request.getRequestURI().endsWith("/")) {
 			
@@ -317,6 +361,10 @@ public class RsDatabase {
 		}
 		
 		return false;
+	}
+	
+	private static String formatNumber(long number) {
+		return String.format("%,d", number);		
 	}
 	
 	private static Response wrapException(Exception e) {

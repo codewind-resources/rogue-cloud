@@ -120,7 +120,7 @@ public class ClientState {
 			throw new IllegalStateException("Unable to create websocket session.");
 		}
 		
-		this.keyValueStore = new PersistentKeyValueStore(new File(new File(System.getProperty("user.home"), ".rogue-cloud"), "client-store"));
+		this.keyValueStore = new PersistentKeyValueStore(new File(new File(System.getProperty("user.home"), ".roguecloud"), "client-store"));
 		
 		this.numberOfTimesPreviouslyInterrupted = numberOfTimesPreviouslyInterrupted;
 		

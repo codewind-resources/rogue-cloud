@@ -2175,7 +2175,7 @@ public final class GameEngine {
 		
 		while(activeWSClientList.getList().size() == 0) {
 			
-			try {Thread.sleep(5000); } catch(Exception e) { /* ignore */ }
+			try {Thread.sleep(1000); } catch(Exception e) { /* ignore */ }
 			
 			if(System.nanoTime() > nextOutputMessageInNanos) {
 				nextOutputMessageInNanos = System.nanoTime() + timeBetweenMessages;
@@ -2183,7 +2183,14 @@ public final class GameEngine {
 			}
 		}
 	}
-	
+
+	/** 
+	 * The vast majority of the "game state" can be found in this class.
+	 * Thie class contains a set of shared variables that are  used only by a single thread (the game engine thread), 
+	 * and which are passed around by the game loop and the methods that the game loop calls.
+	 * 
+	 * Only a single instance of this object per round will exist at a time.  
+	 **/
 	protected static class GameContext {
 		
 		public List<RoomSpawn> roomSpawns;
@@ -2557,8 +2564,8 @@ public final class GameEngine {
 				System.out.println("Game thread started for round "+roundScope.getRoundId());
 				gameThreadRun(gc);
 			} catch (Throwable e) {
-				// TODO: EASY - log me as severe
 				e.printStackTrace();
+				log.severe("Exception thrown in game thread", e, gc.lc);
 			} finally {
 				System.err.println("Game thread terminated for round "+roundScope.getRoundId());
 			}

@@ -47,22 +47,26 @@ public class WorldGenerationUtil {
 		int X_SIZE = m.getXSize();
 		int Y_SIZE = m.getYSize();
 		
-		drawBox(m, new Tile(false, new WallTerrain(TileTypeList.BRICK_FENCE_STRAIGHT_HORIZ_TOP), null), 
-				new Tile(false, new WallTerrain(TileTypeList.BRICK_FENCE_STRAIGHT_HORIZ_BOT), null),
-				new Tile(false, new WallTerrain(TileTypeList.BRICK_FENCE_STRAIGHT_VERT_LEFT), null),
-				new Tile(false, new WallTerrain(TileTypeList.BRICK_FENCE_STRAIGHT_VERT_RIGHT), null), 
+		drawBox(m, new Tile(false, new WallTerrain(TileTypeList.BRICK_FENCE_STRAIGHT_HORIZ_TOP)), 
+				new Tile(false, new WallTerrain(TileTypeList.BRICK_FENCE_STRAIGHT_HORIZ_BOT)),
+				new Tile(false, new WallTerrain(TileTypeList.BRICK_FENCE_STRAIGHT_VERT_LEFT)),
+				new Tile(false, new WallTerrain(TileTypeList.BRICK_FENCE_STRAIGHT_VERT_RIGHT)), 
 				0, 0, X_SIZE, Y_SIZE);
 		
-		m.putTile(0, 0, new Tile(false, new WallTerrain(TileTypeList.BRICK_FENCE_CORNER_TOP_LEFT), null));
-		m.putTile(X_SIZE-1, 0, new Tile(false, new WallTerrain(TileTypeList.BRICK_FENCE_CORNER_TOP_RIGHT), null));
-		m.putTile(0, Y_SIZE-1, new Tile(false, new WallTerrain(TileTypeList.BRICK_FENCE_CORNER_BOT_LEFT), null));
-		m.putTile(X_SIZE-1, Y_SIZE-1, new Tile(false, new WallTerrain(TileTypeList.BRICK_FENCE_CORNER_BOT_RIGHT), null));
+		m.putTile(0, 0, new Tile(false, new WallTerrain(TileTypeList.BRICK_FENCE_CORNER_TOP_LEFT)));
+		m.putTile(X_SIZE-1, 0, new Tile(false, new WallTerrain(TileTypeList.BRICK_FENCE_CORNER_TOP_RIGHT)));
+		m.putTile(0, Y_SIZE-1, new Tile(false, new WallTerrain(TileTypeList.BRICK_FENCE_CORNER_BOT_LEFT)));
+		m.putTile(X_SIZE-1, Y_SIZE-1, new Tile(false, new WallTerrain(TileTypeList.BRICK_FENCE_CORNER_BOT_RIGHT)));
 		
 	}
 
-	public static DrawRoomResult drawRoom(Room r, int destX, int destY, int rotationInDegrees, IMutableMap map, boolean validate) {
 
+	public static DrawRoomResult drawRoom(Room r, int destX, int destY, int rotationInDegrees, IMutableMap map, boolean validate) {
 		DrawRoomResult result = new DrawRoomResult();
+		result.setX(destX);
+		result.setY(destY);
+		result.setHeight(r.getHeight());
+		result.setWidth(r.getWidth());
 		
 //		System.out.println("Drawing room: "+r.getName()+"  width: "+r.getWidth()+"  height: "+r.getHeight());
 		
@@ -118,10 +122,10 @@ public class WorldGenerationUtil {
 				Tile currTile = map.getTile(p);
 				
 				// If the tile is not null, then get the background terrain
-				ITerrain currTileBgTerrain = null; 
+				ITerrain terrainCurrentlyOnTile = null; 
 				if(currTile != null) {
 					TileType[] ttArr = currTile.getTileTypeLayers();
-					currTileBgTerrain = new ImmutablePassableTerrain(ttArr[ttArr.length-1]);
+					terrainCurrentlyOnTile = new ImmutablePassableTerrain(ttArr[ttArr.length-1]);
 				}
 				
 				int currX = x - destX;
@@ -165,72 +169,11 @@ public class WorldGenerationUtil {
 				Assignment a = gi.getAssignment();
 				if(a != null) {
 										
-					ITerrain bgTerrain = null;
-					{
-						// If the assignment has a background tile, then use it
-						if(a.getTilePair().length > 1) {
-							TilePair bgTilePair = a.getTilePair()[1];
-//							bgTerrain = new ImmutablePassableTerrain(new TileType(bgAssignment.getTileNumber(), bgAssignment.getRotation()));
-							if(bgTilePair.getTileNumber() == -1) {
-								if(currTileBgTerrain != null) {
-									bgTerrain = currTileBgTerrain;
-								} else {
-									// TOOD: SEVERE - log me.
-								}
-							} else {
-								bgTerrain = new ImmutablePassableTerrain(new TileType(bgTilePair.getTileNumber(), bgTilePair.getRotation() ));	
-							}
-							
-						} else {
-							// Otherwise the assignment has no background tile, so use the default background.
-							Assignment bgAssignment = gi.getBgAssignment();
-							if(bgAssignment != null) {
-								TilePair bgTilePair = bgAssignment.getTilePair()[0];
-								if(bgTilePair.getTileNumber() == -1) {
-									bgTerrain = currTileBgTerrain;
-								} else {
-									bgTerrain = new ImmutablePassableTerrain(new TileType(bgTilePair.getTileNumber(), bgTilePair.getRotation() ));	
-								}
-								
-							}
-						}
-						
-					}
+					Tile newTile = convertToTile(a, gi, terrainCurrentlyOnTile);
 					
-					Tile newTile;
-					TileType fgTileType = null;
-					{
-						TilePair fgTilePair = a.getTilePair()[0];
-						if(fgTilePair.getTileNumber() == -1) {
-							if(currTileBgTerrain != null) {
-								// Set both the bg and fg to -1
-								fgTileType = currTileBgTerrain.getTileType();
-								bgTerrain = new ImmutablePassableTerrain(fgTileType);
-							} else {
-								log.severe("Background tile pair is null: " + a.getLetter()+" "+a.getName(), null);
-							}
-							
-						} else {
-							fgTileType = new TileType(fgTilePair.getTileNumber(), fgTilePair.getRotation());
-						}
-					}
+					map.putTile(p, newTile);
 					
-					if(fgTileType != null) {
-						
-						if(a.getAnnotations().contains("Door")) {
-							newTile = new Tile(true, new DoorTerrain(fgTileType, true), bgTerrain);
-							newTile.getTilePropertiesForModification().add(new DoorTileProperty(false));
-							
-						} else if(a.getAnnotations().contains("Passable")) {
-							newTile = new Tile(true, new ImmutablePassableTerrain(fgTileType), bgTerrain);
-						} else {
-							newTile = new Tile(false, new ImmutableImpassableTerrain(fgTileType), bgTerrain);
-						}
-												
-						map.putTile(p, newTile);
-						
-					}
-					
+//					doThing(a, gi, currTileBgTerrain, map);
 				}
 			}
 		}
@@ -241,6 +184,137 @@ public class WorldGenerationUtil {
 		
 	}
 
+	private static Tile convertToTile(Assignment a, GridItem gi, ITerrain currTileBgTerrain) {
+		
+		boolean impassableTerrain = false;
+		
+		if(a.getAnnotations().contains("Passable") || a.getAnnotations().contains("Door")) {
+			impassableTerrain = false;
+		} else {
+			impassableTerrain = true;
+		}
+
+		List<ITerrain> terrainList = new ArrayList<>();
+		
+		for(TilePair tp : a.getTilePair()) {
+			ITerrain terrain;
+			if(tp.getTileNumber() == -1) {
+				terrain = currTileBgTerrain;
+			} else {
+				terrain = convertTilePair(tp, impassableTerrain);
+			}
+			
+			terrainList.add(terrain);
+		}
+		
+		boolean hasBgAssignment = false;
+
+		if(gi.getBgAssignment() != null) {
+
+			hasBgAssignment = true;
+			
+			for(TilePair tp : gi.getBgAssignment().getTilePair()) {
+				ITerrain terrain = convertTilePair(tp, impassableTerrain);
+				terrainList.add(terrain);				
+			}
+
+		}
+
+		if(currTileBgTerrain != null && !hasBgAssignment) {
+			terrainList.add(currTileBgTerrain);
+		}
+		
+		
+		Tile newTile = new Tile(!impassableTerrain, terrainList);
+		
+		return newTile;
+	}
+	
+	private static ITerrain convertTilePair(TilePair tp, boolean impassableTerrain) {
+		ITerrain terrain;
+		
+		TileType tt = new TileType(tp.getTileNumber(), tp.getRotation());
+		
+		if(impassableTerrain) {
+			terrain = new ImmutableImpassableTerrain(tt);
+		} else {
+			terrain = new ImmutablePassableTerrain(tt);
+		}
+		
+		return terrain;
+		
+	}
+	
+//	private static void doThing(Assignment a, GridItem gi, ITerrain currTileBgTerrain, IMutableMap map) {
+//		ITerrain bgTerrain = null;
+//		{
+//			// If the assignment has a background tile, then use it
+//			if(a.getTilePair().length > 1) {
+//				TilePair bgTilePair = a.getTilePair()[1];
+////				bgTerrain = new ImmutablePassableTerrain(new TileType(bgAssignment.getTileNumber(), bgAssignment.getRotation()));
+//				if(bgTilePair.getTileNumber() == -1) {
+//					if(currTileBgTerrain != null) {
+//						bgTerrain = currTileBgTerrain;
+//					} else {
+//						// TOOD: SEVERE - log me.
+//					}
+//				} else {
+//					bgTerrain = new ImmutablePassableTerrain(new TileType(bgTilePair.getTileNumber(), bgTilePair.getRotation() ));	
+//				}
+//				
+//			} else {
+//				// Otherwise the assignment has no background tile, so use the default background.
+//				Assignment bgAssignment = gi.getBgAssignment();
+//				if(bgAssignment != null) {
+//					TilePair bgTilePair = bgAssignment.getTilePair()[0];
+//					if(bgTilePair.getTileNumber() == -1) {
+//						bgTerrain = currTileBgTerrain;
+//					} else {
+//						bgTerrain = new ImmutablePassableTerrain(new TileType(bgTilePair.getTileNumber(), bgTilePair.getRotation() ));	
+//					}
+//					
+//				}
+//			}
+//			
+//		}
+//		
+//		Tile newTile;
+//		TileType fgTileType = null;
+//		{
+//			TilePair fgTilePair = a.getTilePair()[0];
+//			if(fgTilePair.getTileNumber() == -1) {
+//				if(currTileBgTerrain != null) {
+//					// Set both the bg and fg to -1
+//					fgTileType = currTileBgTerrain.getTileType();
+//					bgTerrain = new ImmutablePassableTerrain(fgTileType);
+//				} else {
+//					log.severe("Background tile pair is null: " + a.getLetter()+" "+a.getName(), null);
+//				}
+//				
+//			} else {
+//				fgTileType = new TileType(fgTilePair.getTileNumber(), fgTilePair.getRotation());
+//			}
+//		}
+//		
+//		if(fgTileType != null) {
+//			
+//			if(a.getAnnotations().contains("Door")) {
+//				newTile = new Tile(true, new DoorTerrain(fgTileType, true), bgTerrain);
+//				newTile.getTilePropertiesForModification().add(new DoorTileProperty(false));
+//				
+//			} else if(a.getAnnotations().contains("Passable")) {
+//				newTile = new Tile(true, new ImmutablePassableTerrain(fgTileType), bgTerrain);
+//				
+//			} else {
+//				newTile = new Tile(false, new ImmutableImpassableTerrain(fgTileType), bgTerrain);
+//			}
+//									
+//			map.putTile(p, newTile);
+//			
+//		}
+//
+//	}
+//	
 
 	public static void drawBox(IMutableMap m, Tile topHorizTile, Tile botHorizTile, 
 			Tile topVertTile, Tile botVertTile, int startX, int startY, int width, int height) {
@@ -284,7 +358,7 @@ public class WorldGenerationUtil {
 		
 		for(int x = startx; x < startx+w; x++) {
 			for(int y = starty; y < starty+h; y++) {
-				m.putTile(x, y, new Tile(false, terrain, null));
+				m.putTile(x, y, new Tile(false, terrain));
 			}
 		}
 		
@@ -298,16 +372,16 @@ public class WorldGenerationUtil {
 		
 		
 		
-		drawBox(m, new Tile(false, new WallTerrain(TileTypeList.ROAD_WALL_STRAIGHT_HORIZ_TOP), null), 
-				new Tile(false, new WallTerrain(TileTypeList.ROAD_WALL_STRAIGHT_HORIZ_BOT), null),
-				new Tile(false, new WallTerrain(TileTypeList.ROAD_WALL_STRAIGHT_VERT_LEFT), null),
-				new Tile(false, new WallTerrain(TileTypeList.ROAD_WALL_STRAIGHT_VERT_RIGHT), null), 
+		drawBox(m, new Tile(false, new WallTerrain(TileTypeList.ROAD_WALL_STRAIGHT_HORIZ_TOP)), 
+				new Tile(false, new WallTerrain(TileTypeList.ROAD_WALL_STRAIGHT_HORIZ_BOT)),
+				new Tile(false, new WallTerrain(TileTypeList.ROAD_WALL_STRAIGHT_VERT_LEFT)),
+				new Tile(false, new WallTerrain(TileTypeList.ROAD_WALL_STRAIGHT_VERT_RIGHT)), 
 				x, y, X_SIZE, Y_SIZE);
 		
-		m.putTile(x, y, new Tile(false, new WallTerrain(TileTypeList.ROAD_WALL_CORNER_TOP_LEFT), null));
-		m.putTile(x+X_SIZE-1, y+h, new Tile(false, new WallTerrain(TileTypeList.ROAD_WALL_CORNER_TOP_RIGHT), null));
-		m.putTile(x, y+Y_SIZE-1, new Tile(false, new WallTerrain(TileTypeList.ROAD_WALL_CORNER_BOT_LEFT), null));
-		m.putTile(x+X_SIZE-1, y+Y_SIZE-1, new Tile(false, new WallTerrain(TileTypeList.ROAD_WALL_CORNER_BOT_RIGHT), null));
+		m.putTile(x, y, new Tile(false, new WallTerrain(TileTypeList.ROAD_WALL_CORNER_TOP_LEFT)));
+		m.putTile(x+X_SIZE-1, y+h, new Tile(false, new WallTerrain(TileTypeList.ROAD_WALL_CORNER_TOP_RIGHT)));
+		m.putTile(x, y+Y_SIZE-1, new Tile(false, new WallTerrain(TileTypeList.ROAD_WALL_CORNER_BOT_LEFT)));
+		m.putTile(x+X_SIZE-1, y+Y_SIZE-1, new Tile(false, new WallTerrain(TileTypeList.ROAD_WALL_CORNER_BOT_RIGHT)));
 		
 		
 //			m.putTile(0, 0, t);
@@ -321,17 +395,17 @@ public class WorldGenerationUtil {
 		int X_SIZE = m.getXSize();
 		int Y_SIZE = m.getYSize();
 		
-		Tile horizTile = new Tile(false, new WallTerrain(TileTypeList.WOOD_WALL_STRAIGHT_HORIZ), null);
+		Tile horizTile = new Tile(false, new WallTerrain(TileTypeList.WOOD_WALL_STRAIGHT_HORIZ));
 		
-		Tile vertTile = new Tile(false, new WallTerrain(TileTypeList.WOOD_WALL_STRAIGHT_VERT), null);
+		Tile vertTile = new Tile(false, new WallTerrain(TileTypeList.WOOD_WALL_STRAIGHT_VERT));
 		
 		
 		drawBox(m, horizTile, horizTile, vertTile, vertTile, 0, 0, X_SIZE, Y_SIZE);
 		
-		m.putTile(0, 0, new Tile(false, new WallTerrain(TileTypeList.WOOD_WALL_CORNER_TOP_LEFT), null));
-		m.putTile(X_SIZE-1, 0, new Tile(false, new WallTerrain(TileTypeList.WOOD_WALL_CORNER_TOP_RIGHT), null));
-		m.putTile(0, Y_SIZE-1, new Tile(false, new WallTerrain(TileTypeList.WOOD_WALL_CORNER_BOT_LEFT), null ));
-		m.putTile(X_SIZE-1, Y_SIZE-1, new Tile(false, new WallTerrain(TileTypeList.WOOD_WALL_CORNER_BOT_RIGHT), null));
+		m.putTile(0, 0, new Tile(false, new WallTerrain(TileTypeList.WOOD_WALL_CORNER_TOP_LEFT)));
+		m.putTile(X_SIZE-1, 0, new Tile(false, new WallTerrain(TileTypeList.WOOD_WALL_CORNER_TOP_RIGHT)));
+		m.putTile(0, Y_SIZE-1, new Tile(false, new WallTerrain(TileTypeList.WOOD_WALL_CORNER_BOT_LEFT)));
+		m.putTile(X_SIZE-1, Y_SIZE-1, new Tile(false, new WallTerrain(TileTypeList.WOOD_WALL_CORNER_BOT_RIGHT)));
 		
 	}
 
@@ -347,6 +421,12 @@ public class WorldGenerationUtil {
 		
 		/** Whether or not the draw succeeded; depends on if validation is enable, and if there were any conflicts */
 		boolean isValid = false;
+		
+		int x;
+		int y;
+		
+		int width;
+		int height;
 		
 		public DrawRoomResult() {
 		}
@@ -366,6 +446,39 @@ public class WorldGenerationUtil {
 		public List<Position> getItemSpawns() {
 			return itemSpawns;
 		}
+
+		public int getX() {
+			return x;
+		}
+
+		public void setX(int x) {
+			this.x = x;
+		}
+
+		public int getY() {
+			return y;
+		}
+
+		public void setY(int y) {
+			this.y = y;
+		}
+
+		public int getWidth() {
+			return width;
+		}
+
+		public void setWidth(int width) {
+			this.width = width;
+		}
+
+		public int getHeight() {
+			return height;
+		}
+
+		public void setHeight(int height) {
+			this.height = height;
+		}
+
 		
 	}
 }

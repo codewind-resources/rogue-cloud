@@ -146,7 +146,7 @@ public class Resources {
 			return null;
 		}
 
-		if (!(path.endsWith(".js") || path.endsWith(".png") || path.endsWith(".html"))) {
+		if (!(path.endsWith(".js") || path.endsWith(".png") || path.endsWith(".html") || path.endsWith(".svg"))) {
 			return null;
 		}
 
