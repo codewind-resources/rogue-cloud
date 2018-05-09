@@ -37,8 +37,6 @@ public class MonsterRuntimeStats {
 
 	private static final boolean ENABLED = RCRuntime.CHECK;
 	
-	// TODO: What's this for?
-	
 	public MonsterRuntimeStats() {
 		arrayOfMaps = new ArrayList<HashMap<Long, MonsterRuntimeEntry>>();
 		

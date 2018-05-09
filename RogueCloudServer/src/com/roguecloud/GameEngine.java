@@ -2175,7 +2175,7 @@ public final class GameEngine {
 		
 		while(activeWSClientList.getList().size() == 0) {
 			
-			try {Thread.sleep(5000); } catch(Exception e) { /* ignore */ }
+			try {Thread.sleep(1000); } catch(Exception e) { /* ignore */ }
 			
 			if(System.nanoTime() > nextOutputMessageInNanos) {
 				nextOutputMessageInNanos = System.nanoTime() + timeBetweenMessages;
@@ -2564,8 +2564,8 @@ public final class GameEngine {
 				System.out.println("Game thread started for round "+roundScope.getRoundId());
 				gameThreadRun(gc);
 			} catch (Throwable e) {
-				// TODO: EASY - log me as severe
 				e.printStackTrace();
+				log.severe("Exception thrown in game thread", e, gc.lc);
 			} finally {
 				System.err.println("Game thread terminated for round "+roundScope.getRoundId());
 			}
