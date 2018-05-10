@@ -71,7 +71,7 @@ Tiles which were previously seen, but are not currently in view, are called 'sta
 
 ## My character died, now what?
 
-When your agent's life (their 'hit points', known as HP) drops to 0, they are considered 'dead' and are temporarily no longer able to interfact with the world. Fortunately, after 200 game ticks (about 20 seconds), your agent comes back to life, and your character begins interacting with the world again!
+When your agent's life (their 'hit points', known as HP) drops to 0, they are considered 'dead' and are temporarily no longer able to interact with the world. Fortunately, after 200 game ticks (about 20 seconds), your agent comes back to life, and your character begins interacting with the world again!
 
 However, dying is not zero cost. There is a steep price to be paid:
 * When your character dies, they randomly drop 50% of all the items: this includes potions, weapons, and armour (both those equipped, and those in their inventory). If another player finds your stuff before you revive, you won't be able to get it back!
