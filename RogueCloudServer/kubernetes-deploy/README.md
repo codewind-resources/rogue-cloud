@@ -45,7 +45,7 @@ docker push registry.ng.bluemix.net/rogue-cloud-repo/rogue-cloud:latest
 
 #### Using Load Balancer
 ```
-kubectl apply -f rogue-cloud.server.yaml
+kubectl apply -f rogue-cloud-server.yaml
 kubectl apply -f load-balancer.yaml
 ```
 

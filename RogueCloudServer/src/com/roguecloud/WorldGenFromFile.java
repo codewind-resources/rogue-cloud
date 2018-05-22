@@ -200,7 +200,7 @@ public class WorldGenFromFile {
 			
 //			for(int y = 0; y < charMap.getYSize()-40; y += 50) {
 //				for(int x = 0; x < charMap.getXSize()- 40; x+= 50) { 
-//					WorldGenerationUtil.drawRoom(roomList.getRoomByName("New House"), x, y, 0, aMap, false);
+//					WorldGenerationUtil.drawRoom(roomList.getRoomByName("Library"), x, y, 0, aMap, false);
 //
 //				}
 //			}
@@ -389,10 +389,11 @@ public class WorldGenFromFile {
 	}
 	
 	
-	/** Whether or not we can get to a road from this position, by only grossing grass.  
+	/** Whether or not we can get to a road from this position, by only crossing grass.  
 	 * Returns a non-empty list if a path is available, otherwise an empty list is returned.*/
 	private static List<Position> canWeGetToARoad(int initialX, int initialY, int xDelta, int yDelta, IMap aMap)  {
-		// TODO: EASY - add sanity check to delta
+		
+		if(Math.abs(xDelta) > 1 || Math.abs(yDelta) > 1) { throw new IllegalArgumentException("xDelta and yDelta must be 0, 1, or -1");  }
 		
 		List<Position> result = new ArrayList<>();
 		
@@ -506,15 +507,16 @@ public class WorldGenFromFile {
 	/** Each alphanumeric character in the world file corresponds to a specific type of room (or other structure). */
 	private static class Entry {
 		
-		private static final String SMALL_HOUSE = "New House2";
+		private static final String SMALL_HOUSE_NW = "New House NW";
+		private static final String SMALL_HOUSE_SE = "New House SE";
 
 		/** Each alphanumeric character in the world file corresponds to a specific type of room (or other structure). */
 		public static enum Type { 
 			ROAD("r", null), 
-			SMALL_HOUSE_SOUTH_DOOR("a", SMALL_HOUSE, 0), 
-			SMALL_HOUSE_WEST_DOOR("b", SMALL_HOUSE, 0), 
-			SMALL_HOUSE_EAST_DOOR("c", SMALL_HOUSE), 
-			SMALL_HOUSE_NORTH_DOOR("d", SMALL_HOUSE, 0), 
+			SMALL_HOUSE_SOUTH_DOOR("a", SMALL_HOUSE_SE, 0), 
+			SMALL_HOUSE_WEST_DOOR("b", SMALL_HOUSE_NW, 0), 
+			SMALL_HOUSE_EAST_DOOR("c", SMALL_HOUSE_SE), 
+			SMALL_HOUSE_NORTH_DOOR("d", SMALL_HOUSE_NW, 0), 
 			BASKETBALL_COURT("e", "Basketball Court"), 
 			LIBRARY("f", "Library"),
 			GRAVEYARD("g", "Graveyard"),

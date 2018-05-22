@@ -21,8 +21,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 
 import com.cloudant.client.api.ClientBuilder;
 import com.cloudant.client.api.CloudantClient;
@@ -308,12 +313,31 @@ public class CloudantDbBackend implements IDBBackend {
 	private static Database db() {
 		CloudantClient client;
 		try {
-			client = ClientBuilder.url(new URL(ServerUtil.getConfigValue(CONFIG_URL)))
-					.username(ServerUtil.getConfigValue(CONIG_USERNAME))
-					.password(ServerUtil.getConfigValue(CONFIG_PASSWORD)).build();
+			String url = ServerUtil.getConfigValue(CONFIG_URL);
+			String username = ServerUtil.getConfigValue(CONIG_USERNAME);
+			String password = ServerUtil.getConfigValue(CONFIG_PASSWORD);
+			String dbName = ServerUtil.getConfigValue(CONFIG_DB_NAME);
+
+			SSLSocketFactory internalSSLSocketFactory = null;
+			
+			try {
+				SSLContext context = SSLContext.getInstance("TLSv1.2");
+				context.init(null, null, null);
+				internalSSLSocketFactory = context.getSocketFactory();
+			} catch (KeyManagementException e) {
+				throw new RuntimeException(e);
+			} catch (NoSuchAlgorithmException e) {
+				throw new RuntimeException(e);
+			}
+			
+			client = ClientBuilder.url(new URL(url))
+					.username(username)
+					.password(password)
+					.customSSLSocketFactory(internalSSLSocketFactory)
+					.build();
 			
 			// Get a Database instance to interact with, but don't create it if it doesn't already exist
-			Database db = client.database(ServerUtil.getConfigValue(CONFIG_DB_NAME), true);
+			Database db = client.database(dbName, true);
 
 			return db;
 
