@@ -333,3 +333,84 @@ bAAAAAAc
 aaaapaaa
 uuuuuuuu
 }
+
+
+New House SE:
+a = 104 
+b = 112 / 314 
+c = 113 / 316 
+d = 102
+e = 103
+. = 300 	@Passable
+g = 114 
+h = 104 
+i = 104 
+j = 114 / 104
+k = 112 / 104 
+l = 113 / 104 
+m = 2058
+n = 116 
+o = 117 
+p = 107		Door 	@Door
+q = 108 / 316 	Door 	@Door
+r = 105	/ 122	@Passable
+s = 120 / 314		
+t = 119 / 300		@Passable
+u = 119 / -1	@Passable
+v = 121 / 113 / 316
+w = 114 / 119
+* = 300		@Passable
+
+A = 318 	@Passable
+B = 314		@Passable
+{
+daaahaae
+sttttttv
+b.!.g..c
+kirijiil
+stttwttv
+b.@.n..q
+bAAAAAAc
+aaaapaaa
+uuuuuuuu
+}
+
+New House NW:
+a = 104 
+b = 112 / 314 
+c = 113 / 316 
+d = 102
+e = 103
+. = 300 	@Passable
+g = 114 
+h = 104 
+i = 104 
+j = 114 / 104
+k = 112 / 104 
+l = 113 / 104 
+m = 2058
+n = 116 
+o = 117 
+p = 107		Door 	@Door
+q = 106 / 314 	Door 	@Door
+r = 105	/ 122	@Passable
+s = 120 / 314		
+t = 119 / 300		@Passable
+u = 119 / -1	@Passable
+v = 121 / 113 / 316
+w = 114 / 119
+* = 300		@Passable
+
+A = 318 	@Passable
+B = 314		@Passable
+{
+dapahaae
+sttttttv
+b.!.g..c
+kirijiil
+stttwttv
+q.@.n..c
+bAAAAAAc
+aaaaaaaa
+uuuuuuuu
+}
