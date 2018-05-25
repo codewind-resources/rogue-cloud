@@ -80,15 +80,17 @@ public static final String PASSWORD = "(specify a password here!)";
 ```
 * The username and password you specify are automatically registered when your code first begins controlling a character on the game map.
 
-3) Hit ``CTRL-P`` (on Mac, use ``Command-P``) and type ``SimpleAI.java`` and select ``SimpleAI.java``.
+3) In the code editor, hit ``CTRL-S`` (``Command-S`` on Mac) in order to save your changes
 
-4) This class is the main AI class. Changes made to this class are reflected in your AI running on the Liberty Server.
+4) Hit ``CTRL-P`` (on Mac, use ``Command-P``) and type ``SimpleAI.java`` and select ``SimpleAI.java``.
+
+5) This class is the main AI class. Changes made to this class are reflected in your AI running on the Liberty Server.
 
 ### E) Next steps: watch your agent go, and start coding
 
 To watch your agent as it interacts with the game world, switch to the ``Open app`` tab. You see a URL at the top of the page:
 
-Add ``/gameclient/StartAgent`` to the end of the URL, such that it looks like:
+Add ``gameclient/StartAgent`` to the end of the URL, such that it looks like:
 * ``http://localhost:(port)/gameclient/StartAgent``
 * where (port) is the randomly generated local port for the server.
 
