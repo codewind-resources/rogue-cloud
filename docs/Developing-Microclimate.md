@@ -70,7 +70,7 @@ Next, we import the Rogue Cloud game client into our Microclimate workspace:
 ### D) Register a user and then make changes to the SimpleAI class
 
 1) In the code editor, hit ``CTRL-P`` (``Command-P`` on Mac) and type ``StartAgentServlet.java``, and select ``StartAgentServlet.java``.
-* ``CTRL-P/Command-P`` is a great way to find quickly Java classes in the Microclimate code editor.
+* ``CTRL-P/Command-P`` is a great way to quickly find Java classes in the Microclimate code editor.
 * *Note*: You *might* need to click inside the code editor for this shortcut key to work.
 
 2) Edit the following fields to create a new user and password.
