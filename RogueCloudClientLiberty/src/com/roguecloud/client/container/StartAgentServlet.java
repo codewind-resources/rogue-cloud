@@ -42,7 +42,9 @@ import com.roguecloud.client.utils.ClientUtil;
 import com.roguecloud.resources.Resources;
 import com.roguecloud.resources.Resources.Page;
 import com.roguecloud.utils.Logger;
+import com.roguecloud.utils.RCUtils;
 import com.roguecloud.utils.RegisterUser;
+import com.roguecloud.utils.RegisterUser.ClientApiVersionReturn;
 
 /** This class will both start the player AI code, and also serve the browser UI page to the player. */
 @WebServlet("/StartAgent")
@@ -156,12 +158,24 @@ public class StartAgentServlet extends HttpServlet {
 			return;
 		}
 		
-		if(!RegisterUser.isClientApiVersionSupported(RCSharedConstants.CLIENT_API_VERSION, SERVER_URL, 90 * 1000)) {
+		ClientApiVersionReturn v = RegisterUser.isClientApiVersionSupported(RCSharedConstants.CLIENT_API_VERSION, SERVER_URL, 65 * 1000);
+		
+		if(!v.isSupported() && v.getException() == null) {
 			
 			lastError = "\nError: This version of the Rogue Cloud client is deprecated, and thus is no longer supported by the newer version running on the Rogue Cloud game server.\n";
 			lastError += "\n";
 			lastError += "Instructions on how to upgrade to the latest client are available from the Rogue Cloud git repo:\n";
 			lastError += "https://github.com/microclimate-dev2ops/rogue-cloud/blob/master/docs/Updating-To-Latest-Client-Code.md";
+			
+			ClientContainerUtil.loudlyInformUser(lastError);
+			return;
+		} else if(!v.isSupported() && v.getException() != null) {
+			lastError = "\nError: An exception occurred while attempting to connect to the game server at "+SERVER_URL+".\n";
+			lastError += "\n";
+			lastError += RCUtils.convertThrowableToString(v.getException())+"\n";
+			lastError += "\n";
+			lastError += "More information on troubleshooting Rogue Cloud issues is available from the git repo:\n";
+			lastError += "https://github.com/microclimate-dev2ops/rogue-cloud/blob/master/docs/Troubleshooting.md";
 			
 			ClientContainerUtil.loudlyInformUser(lastError);
 			return;

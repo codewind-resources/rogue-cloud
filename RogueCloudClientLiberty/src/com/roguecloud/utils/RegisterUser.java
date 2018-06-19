@@ -31,7 +31,7 @@ import com.roguecloud.json.client.JsonUserRequestResponse;
 /** HTTP client utility method to register a new user in the server's user database if they are not already registered. */
 public class RegisterUser {
 
-	public static boolean isClientApiVersionSupported(String apiVersion, String resourceUrl, long expireTimeInMsecs) {
+	public static ClientApiVersionReturn isClientApiVersionSupported(String apiVersion, String resourceUrl, long expireTimeInMsecs) {
 		
 		long expireTime = System.nanoTime() + TimeUnit.NANOSECONDS.convert(expireTimeInMsecs, TimeUnit.MILLISECONDS);
 		
@@ -39,15 +39,19 @@ public class RegisterUser {
 		
 		boolean connectionSucceeded = false;
 		
+		Exception lastException = null;
+		
 		while(System.nanoTime() < expireTime && !connectionSucceeded) {
 			
 			int httpResponseCode = -1;
 			
 			try {
 				httpResponseCode = issueClientApiVersionSupportedRequest(apiVersion, resourceUrl);
+				lastException = null;
 			} catch(Exception ce) {
 				/* unable to connect, try again after waiting. */
 				RCUtils.sleep(1000);
+				lastException = ce;
 			}
 			
 			if(httpResponseCode != 404 && httpResponseCode != 500 && httpResponseCode != -1) {
@@ -58,7 +62,13 @@ public class RegisterUser {
 			
 		}
 		
-		return lastResult;
+		if(lastResult) {
+			// Success
+			return new ClientApiVersionReturn(true, null);
+		} 
+		
+		// API Version not supported, or unable to connect.
+		return new ClientApiVersionReturn(lastResult, lastException);
 	}
 	
 	private static int issueClientApiVersionSupportedRequest(String apiVersion, String resourceUrl) {
@@ -111,6 +121,28 @@ public class RegisterUser {
 		JsonUserRequestResponse jsonResponse = response.readEntity(JsonUserRequestResponse.class);
 	
 		return jsonResponse.getUserId();
+		
+	}
+	
+	/** Return value for 'isClientApiVersionSupported' */
+	public static class ClientApiVersionReturn {
+		private final boolean supported;
+		private final Exception exception;
+		
+		public ClientApiVersionReturn(boolean supported, Exception exception) {
+			this.supported = supported;
+			this.exception = exception;
+		}
+
+		/** True if client api version is supported, false if not supported or an error occurred */
+		public boolean isSupported() {
+			return supported;
+		}
+
+		public Exception getException() {
+			return exception;
+		}
+		
 		
 	}
 }
