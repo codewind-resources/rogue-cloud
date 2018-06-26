@@ -25,6 +25,8 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -35,23 +37,25 @@ import com.cloudant.client.api.Database;
 import com.cloudant.client.api.model.Response;
 import com.cloudant.client.api.views.AllDocsResponse;
 import com.cloudant.client.org.lightcouch.NoDocumentException;
+import com.cloudant.client.org.lightcouch.TooManyRequestsException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.roguecloud.db.DbLeaderboardEntry;
 import com.roguecloud.db.DbUser;
 import com.roguecloud.db.file.IDBBackend;
 import com.roguecloud.utils.Logger;
+import com.roguecloud.utils.MutableObject;
 import com.roguecloud.utils.ServerUtil;
 
 /** 
  * This database backend writes database entries to Cloudant. In order to use this backend, Cloudant credentials must
- * be specified as Environment variables, system properties, or server.xml jndi values.
+ * be specified as Environment variables, system properties, or server.xml JNDI values.
  *
  * The required credential properties are listed in the CONFIG_* fields below.
  **/
 public class CloudantDbBackend implements IDBBackend {
 
-	private final static Logger log = Logger.getInstance();
+	private static final Logger log = Logger.getInstance();
 	
 	private static final boolean LOGGING = true;
 	
@@ -97,10 +101,14 @@ public class CloudantDbBackend implements IDBBackend {
 		out("* Requesting users from Cloudant, up to "+nextUserId);
 		
 		for(long x = 1; x < nextUserId; x++) {
-			try {
-				CloudantDbUser cdbUser = db.find(CloudantDbUser.class, USER+x);
-				result.add((DbUser)cdbUser);
-			} catch(NoDocumentException e) { System.err.println("*Ignoring NDE on user:"+x); }
+			final long finalX = x;
+			
+			retryOnFail(MAX_TIME_IN_MSECS, INITIAL_TIME_TO_WAIT, UPDATE_FACTOR, () -> {
+				try {
+					CloudantDbUser cdbUser = db.find(CloudantDbUser.class, USER+finalX);
+					result.add((DbUser)cdbUser);
+				} catch(NoDocumentException e) { System.err.println("*Ignoring NDE on user:"+finalX); }
+			});
 		}
 		
 		return result;
@@ -111,32 +119,60 @@ public class CloudantDbBackend implements IDBBackend {
 	public List<DbLeaderboardEntry> getAllLeaderboardEntries() {
 		Database db = db();
 		
-		List<DbLeaderboardEntry> result = new ArrayList<>();
+		List<DbLeaderboardEntry> retrievedDocs = new ArrayList<>();
 
-		try {
-			out("* Retrieving all document IDs");
-			AllDocsResponse adr = db.getAllDocsRequestBuilder().includeDocs(false).build().getResponse();
-			
-			int count = 0;
-			
-			out("* Retrieving at most "+adr.getDocIds().size()+" leaderboard docs.");
-			List<String> docIds = adr.getDocIds();
-			for(String docId : docIds) {
-				if(!docId.contains(LDB_ENTRY)) { continue; }
+		out("* Retrieving all document IDs");
+		
+		final List<String> docIds = new ArrayList<>();
+
+		retryOnFail(MAX_TIME_IN_MSECS, INITIAL_TIME_TO_WAIT, UPDATE_FACTOR, () -> {
+			AllDocsResponse adr;
+			try {
+				adr = db.getAllDocsRequestBuilder().includeDocs(false).build().getResponse();
+				docIds.addAll(adr.getDocIds());
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		});
+		
+
+		int lastOutputDocsRetrieved = 0;
+		
+		while(docIds.size() > 0) {
+
+			// Remove 100 at a time
+			List<String> toRetrieve = new ArrayList<>();
+			while(toRetrieve.size() < 100 && docIds.size() > 0) {
 				
-				CloudantDbLeaderboardEntry dle = db.find(CloudantDbLeaderboardEntry.class, docId);
+				String currDocId = docIds.remove(0);
 				
-				result.add((DbLeaderboardEntry)dle);
-				count++;
+				if(!currDocId.contains(LDB_ENTRY)) { continue; }
+
+				toRetrieve.add(currDocId);
 			}
 			
-			out("* Retrieved "+count+" leaderboard docs.");
+			retryOnFail(MAX_TIME_IN_MSECS, INITIAL_TIME_TO_WAIT, UPDATE_FACTOR, () -> {
 			
-		} catch (IOException e1) {
-			e1.printStackTrace();
+				try {
+					retrievedDocs.addAll(db.getAllDocsRequestBuilder().keys(toRetrieve.toArray(new String[toRetrieve.size()])).includeDocs(true).build()
+					           .getResponse().getDocsAs(CloudantDbLeaderboardEntry.class));
+					
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			
+			});
+			
+			if(retrievedDocs.size() - lastOutputDocsRetrieved > 500) {
+				lastOutputDocsRetrieved = retrievedDocs.size();
+				System.out.println("Retrieved "+retrievedDocs.size()+" docs.");
+			}
 		}
 		
-		return result;
+		out("* Retrieved "+retrievedDocs.size()+" leaderboard docs.");
+			
+		
+		return retrievedDocs;
 	}
 
 	@Override
@@ -149,22 +185,25 @@ public class CloudantDbBackend implements IDBBackend {
 				continue;
 			}
 			
-			boolean create;
+			AtomicBoolean create = new AtomicBoolean(false);
 			
-			try {
-					CloudantDbUser cdbu = db.find(CloudantDbUser.class, USER+dbu.getUserId());
-					if(cdbu != null) {
-						out("Updating user in db: "+dbu);
-					// We found an existing entry in the database so update it
-					cdbu.copyFromParam(dbu);
-					db.update(cdbu);
-					create = false;
-				} else {
-					create = true;
-				}
-			} catch(NoDocumentException e) { create = true; } 
+			retryOnFail(MAX_TIME_IN_MSECS, INITIAL_TIME_TO_WAIT, UPDATE_FACTOR, () -> {
+				try {
+						CloudantDbUser cdbu = db.find(CloudantDbUser.class, USER+dbu.getUserId());
+						if(cdbu != null) {
+							out("Updating user in db: "+dbu);
+						// We found an existing entry in the database so update it
+						cdbu.copyFromParam(dbu);
+						db.update(cdbu);
+						create.set(false);
+					} else {
+						create.set(true);
+					}
+				} catch(NoDocumentException e) { create.set(true); }
 			
-			if(create) {
+			});
+			
+			if(create.get()) {
 				
 				synchronized(lock) {
 					if(dbu.getUserId() > nextUserId_synch_lock) {
@@ -173,15 +212,21 @@ public class CloudantDbBackend implements IDBBackend {
 					writeValueAsLong(VALUE_NEXTUSERID, nextUserId_synch_lock, db);
 				}
 				
-				CloudantDbUser cdbu = new CloudantDbUser();
-				cdbu.copyFromParam(dbu);
-				cdbu.set_id("user:"+dbu.getUserId());
-				db.save(cdbu);
-				out("Created new user in db: "+dbu);
+				retryOnFail(MAX_TIME_IN_MSECS, INITIAL_TIME_TO_WAIT, UPDATE_FACTOR, () -> {
+					CloudantDbUser cdbu = new CloudantDbUser();
+					cdbu.copyFromParam(dbu);
+					cdbu.set_id("user:"+dbu.getUserId());
+					db.save(cdbu);
+					out("Created new user in db: "+dbu);
+				});
 			}
 			
 		}
 	}
+	
+	private static final long MAX_TIME_IN_MSECS= 120 * 1000;
+	private static final long INITIAL_TIME_TO_WAIT = 100;
+	private static final float UPDATE_FACTOR = 2f;
 
 	@Override
 	public void writeNewOrExistingLeaderboardEntries(List<DbLeaderboardEntry> dbe) {
@@ -194,76 +239,105 @@ public class CloudantDbBackend implements IDBBackend {
 				return;
 			}
 			
-			boolean create;
+			final AtomicBoolean create = new AtomicBoolean(false);
 			
 			String id = LDB_ENTRY+dle.getRoundId()+"-"+dle.getUserId();
 			
-			try {
-				CloudantDbLeaderboardEntry cdble = db.find(CloudantDbLeaderboardEntry.class, id);
-				if(cdble != null) {
-					// We found an existing entry in the database so update it
-					cdble.copyFromParam(dle);
-					db.update(cdble);
-					create = false;
-					out("Updating leaderboard in db: "+dle);
-				} else {
-					create = true;
-				}
-			} catch(NoDocumentException e) { create = true; } 
+			retryOnFail(MAX_TIME_IN_MSECS, INITIAL_TIME_TO_WAIT, UPDATE_FACTOR, () -> {
+				try {
 
-			if(create) {
-				CloudantDbLeaderboardEntry cdble = new CloudantDbLeaderboardEntry();				
-				cdble.copyFromParam(dle);
-				cdble.set_id(id);
-				db.save(cdble);
-				out("Creating leaderboard in db: "+dle);
+					CloudantDbLeaderboardEntry cdble = db.find(CloudantDbLeaderboardEntry.class, id);
+					if(cdble != null) {
+						// We found an existing entry in the database so update it
+						cdble.copyFromParam(dle);
+						db.update(cdble);
+						create.set(false);
+						out("Updating leaderboard in db: "+dle);
+					} else {
+						create.set(true);
+					}
+				} catch(NoDocumentException e) { create.set(true); } 
+				
+			});
+
+			if(create.get()) {
+				retryOnFail(MAX_TIME_IN_MSECS, INITIAL_TIME_TO_WAIT, UPDATE_FACTOR, () -> {
+					CloudantDbLeaderboardEntry cdble = new CloudantDbLeaderboardEntry();				
+					cdble.copyFromParam(dle);
+					cdble.set_id(id);
+					db.save(cdble);
+					out("Creating leaderboard in db: "+dle);
+				});
 			}
 
 		}
 	}
 		
 	private static long getNextUserId(Database db) {
-		return readValueAsLong(VALUE_NEXTUSERID, db, 0);
+		return readValueAsLongNew(VALUE_NEXTUSERID, db, 0);
 	}
 	
 	private static void writeValueAsLong(String field, long value, Database db) {
 		
-		boolean create = false;
-		try { 
-			InputStream is = db.find(field);
-			if(is != null)  {
-				JsonObject jo = (JsonObject) new JsonParser().parse(new InputStreamReader(is));
-				String rev = jo.get("_rev").getAsString();
+		final AtomicBoolean create = new AtomicBoolean(false);
+		retryOnFail(MAX_TIME_IN_MSECS, INITIAL_TIME_TO_WAIT, UPDATE_FACTOR, () -> {
+			try { 
 				
+				InputStream is = db.find(field);
+				if(is != null)  {
+	
+					JsonObject jo = (JsonObject) new JsonParser().parse(new InputStreamReader(is));
+					String rev = jo.get("_rev").getAsString();
+					
+					JsonObject json = new JsonObject();
+					json.addProperty("_id", field);
+					json.addProperty("value", value);
+					json.addProperty("_rev", rev);
+					
+					@SuppressWarnings("unused")
+					Response response = db.update(json);
+				}
+			} catch(NoDocumentException nde) {
+				create.set(true);
+			}
+			
+		});
+				
+
+		if(create.get()) {
+			
+			retryOnFail(MAX_TIME_IN_MSECS, INITIAL_TIME_TO_WAIT, UPDATE_FACTOR, () -> {
 				JsonObject json = new JsonObject();
 				json.addProperty("_id", field);
 				json.addProperty("value", value);
-				json.addProperty("_rev", rev);
-				Response response = db.update(json);
 				
-			}
-		} catch(NoDocumentException nde) {
-			create = true;
-		}
-
-		if(create) {
-			JsonObject json = new JsonObject();
-			json.addProperty("_id", field);
-			json.addProperty("value", value);
-			Response response = db.save(json);
+				@SuppressWarnings("unused")
+				Response response = db.save(json);				
+			});
+			
 		}
 		
 	}
 	
-	private static long readValueAsLong(String field, Database db, long defaultIfNotFound) {
+	private static long readValueAsLongNew(String field, Database db, long defaultIfNotFound) {
+		
+		final MutableObject<InputStream> isM = new MutableObject<>();
+		
+		retryOnFail(MAX_TIME_IN_MSECS, INITIAL_TIME_TO_WAIT, UPDATE_FACTOR, () -> {
+			try {
+				isM.set(db.find(field));
+			} catch(NoDocumentException nde ) {
+				if(!(nde instanceof NoDocumentException)) { nde.printStackTrace(); }
+			}
+		});
+		
+		InputStream is = isM.get();
+		if(is == null) {
+			return defaultIfNotFound;
+		}
 		
 		try {
-			
-			InputStream is = db.find(field);
-			if(is == null) {
-				return defaultIfNotFound;
-			}
-			
+
 			JsonObject jo = (JsonObject) new JsonParser().parse(new InputStreamReader(is));
 			return jo.get("value").getAsLong();
 			
@@ -347,15 +421,71 @@ public class CloudantDbBackend implements IDBBackend {
 
 	}
 
+	public void internalSetNextRoundId(long nextRoundId) {
+		
+		Database db = db();
+		writeValueAsLong(VALUE_NEXTROUNDID, nextRoundId, db);
+		
+	}
+	
+	public long internalGetNextRoundId() {
+		Database db = db();
+		return readValueAsLongNew(VALUE_NEXTROUNDID, db, 1);
+	}
+	
 	@Override
 	public long getAndIncrementNextRoundId() {
 		
 		Database db = db();
 		
-		long returnValue = readValueAsLong(VALUE_NEXTROUNDID, db, 1);
+		long returnValue = readValueAsLongNew(VALUE_NEXTROUNDID, db, 1);
 		
 		writeValueAsLong(VALUE_NEXTROUNDID, returnValue+1, db);
 		
 		return returnValue;
+	}
+	
+	
+	/**
+	 * Keep retrying a runnable until it succeeds
+	 * @param maxTimeInMsecs The total time to keep retrying, in milliseconds
+	 * @param initialTimeToWaitOnFailInMsecs The initial time to wait between failures
+	 * @param updateFactorOnFail After each failure, multiple the time to wait by this value
+	 * @param r The actual bit of code to run
+	 */
+	private static void retryOnFail(long maxTimeInMsecs, long initialTimeToWaitOnFailInMsecs, float updateFactorOnFail, Runnable r) { 
+		if(updateFactorOnFail < 1) { throw new IllegalArgumentException("update factor must be >= 1"); }
+		
+		long expireTimeInNanos = System.nanoTime() + TimeUnit.NANOSECONDS.convert(maxTimeInMsecs, TimeUnit.MILLISECONDS);
+		
+		long timeToSleepInMsecs = initialTimeToWaitOnFailInMsecs;
+		
+		Throwable lastThrowable = null;
+		
+		while(System.nanoTime() < expireTimeInNanos) {
+			
+			try {
+				r.run();
+				lastThrowable = null;
+				break;
+			} catch(Throwable t) {
+				if(!(t instanceof TooManyRequestsException)) {
+					System.err.println(t.getClass().getName()+" "+t.getMessage());					
+				}
+				lastThrowable = t;
+				try { Thread.sleep(timeToSleepInMsecs); } catch (InterruptedException e) { throw new RuntimeException(e); }
+				timeToSleepInMsecs *= updateFactorOnFail;
+			}
+			
+		}
+		
+		if(lastThrowable != null) {
+			if(lastThrowable instanceof RuntimeException) {
+				throw (RuntimeException)lastThrowable;
+			} else {
+				throw new RuntimeException(lastThrowable);
+			}
+		}
+		
 	}
 }
