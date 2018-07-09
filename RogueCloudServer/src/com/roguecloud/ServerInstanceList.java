@@ -39,8 +39,14 @@ public final class ServerInstanceList {
 
 	private static final ServerInstanceList instance = new ServerInstanceList();   
 	
+	private final long startTimeInNanos;
+	
 	private ServerInstanceList() {
+
+		this.startTimeInNanos = System.nanoTime();
+
 		try {
+			
 			NG.getInstance().setWhoami("server");
 			
 			onlyInstance = new ServerInstance();
@@ -66,6 +72,10 @@ public final class ServerInstanceList {
 		
 	}
 
+	public long getStartTimeInNanos() {
+		return startTimeInNanos;
+	}
+	
 	
 	/** Periodically dumps thread stack traces for debugging purposes. */
 	private static class ThreadStackDumpThread extends Thread{

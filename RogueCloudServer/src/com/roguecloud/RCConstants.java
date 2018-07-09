@@ -37,6 +37,9 @@ public class RCConstants {
 	
 	public static final double PLAYER_HP_REDUCTION_ON_DEATH = 0.8d; 
 
+	/** The health check endpoint will return 500 after (at least) this amount of time */
+	public static final long RESTART_SERVER_AFTER_X_NANOSECONDS = TimeUnit.NANOSECONDS.convert(7, TimeUnit.DAYS);
+	
 	/* Values below this line must be carefully updated, as they could affect the ability of the Javascript to 
 	 * correct display the world, in the browser. */
 	

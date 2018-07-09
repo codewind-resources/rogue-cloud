@@ -13,4 +13,10 @@ spec:
       containers:
       - name: rogue-cloud
         image: registry.ng.bluemix.net/rogue-cloud-repo/rogue-cloud
+        livenessProbe:
+          httpGet:
+            path: /RogueCloudServer/RogueCloudServerHealth
+            port: 9080
+          initialDelaySeconds: 240
+          periodSeconds: 900
 

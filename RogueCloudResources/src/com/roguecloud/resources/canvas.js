@@ -18,171 +18,121 @@
 
 function canvasJs(spriteSize, myCanvas, consoleDomElement, leaderboardDomElement, metricsDomElement, viewType, optionalUuid) {
 
-	var viewTypeParam = viewType;
+
+var viewTypeParam = viewType;
 	
-	console.log("view type is "+viewType);
-	
+console.log("view type is "+viewType);
+
+
+// secondaryCanvas/secondaryCtx are a copy of the last frame that was drawn to the screen BEFORE
+// the damage values, hp indicators, and usernames were drawn. This copy can then be used to refresh the 
+// screen without a full redraw. 
 var secondaryCanvas = document.createElement("canvas"),
 	secondaryCtx = secondaryCanvas.getContext("2d");
 
-secondaryCtx.canvas.width = myCanvas.width;
-secondaryCtx.canvas.height = myCanvas.height;
+//  Whether secondaryCtx contains frame data (this is always true after the first frame is drawn)
+var secondaryCtxDrawn = false;
+{
+	secondaryCtx.canvas.width = myCanvas.width;
+	secondaryCtx.canvas.height = myCanvas.height;
+}
 
 var currCanvasWidth = myCanvas.width;
 var currCanvasHeight = myCanvas.height;
 
-
-var secondaryCtxDrawn = false;
-
-var mostRecentCreaturesList = null;
-	
-
-var SPREAD = [
-	[0, -1], // N
-	[1, -1], // NE
-	[1, 0], // E
-	[1, 1], // SE
-	[0, 1], // S
-	[-1, 1], // SW
-	[-1, 0], // W
-	[-1, -1] // NW
-];
-
-myCanvas.addEventListener("mouseout", function(e) {
-	var element = document.getElementById('creatureInfo'); 
-	element.innerHTML = ""; 
-	element.style.display="none";
-
-});
-
-myCanvas.addEventListener("mousemove", function(e) {
-	
-	if(!globalState.mouseMoveEnabled) {
-		return;
-	}
-
-	// if(mostRecentCreaturesList != null)	 {
-
-	// 	for(var x = 0; x < mostRecentCreaturesList.length; x++) {
-			
-	// 		var creature = mostRecentCreaturesList[x];
-
-	// 	}
-
-	// }
-
-
-	var pageX = e.clientX;
-	var pageY = e.clientY;
-	
-	var worldCol = Math.max(0, Math.floor(pageX/globalState.spriteSize) + globalState.startX - 4);
-	var worldRow = Math.max(0, Math.floor(pageY/globalState.spriteSize) + globalState.startY - 4);
-	
-	var localTileMap = new Map();
-	
-	var newHtml = "<span id='creatureInfoSpan'>";
-	
-	newHtml += "<table>";
-	
-//	newHtml += ""+worldCol+" "+worldRow+" ";
-	
-	var containsValue = false;
-	
-	for(var x = worldCol; x < worldCol+8; x++) {
-		for(var y = worldRow; y< worldRow+8; y++) {
-			var tiles = getFromDataMap(x, y, globalState.currWorldX, globalState.currWorldY);
-			if(tiles == null) { continue; }
-			localTileMap.set(tiles[0].num, tiles[0].num );
-		}
-	}
-	
-	localTileMap.forEach(function(value, key) {
-		
-		var name = globalState.globalTileMap.get(value);
-		if(name == null || name.trim().length == 0) {
-			return;
-		}
-		newHtml += "<tr><td><img src='resources/tiles/"+value+".png' width='42' height='42'/></td><td><span style='margin-left: 20px; margin-right: 20px;'>"+name+"</span></td>"
-		containsValue = true;
-//		newHtml += "<img src='resources/tiles/"+value+".png' width='42' height='42'/>&nbsp;&nbsp;"+name+"<br/>"
-
-	});
-	
-	newHtml += "</table>";
-
-	newHtml += "</span>";
-	
-	// newHtml += "( "+worldCol+", "+worldRow+")<br/>";
-	
-	// $('div.moveAble').innerHTML = "new content!";
-	
-	var element = document.getElementById('creatureInfo'); 
-	element.innerHTML = newHtml; 
-	
-	if(!containsValue) {
-		element.style.display="none";	
-	} else {
-		element.style.display="block";
-	}
-	
-	// $(document).getElementById("test").innerHTML = "new content"
-	
-	$('div.moveAble').css({
-		'top' : pageY + 20
-	});
-	
-	$('div.moveAble').css({
-		'left' : pageX + 20
-	});
-
-	
-}, false);
-
-
 var debugMessagesReceived = 0;
 
+addCanvasListeners();
 
 var globalState;
 
+// Create and define globalState object.
 {
-	globalState =  {};
-	globalState.dirtyRedraw = null;
-	
-	globalState.viewType = viewType;
-	globalState.damageGradient = generateDamageGradient();
-	globalState.globalTileMap = new Map(/* tile number -> tile name */);
-	globalState.imagesLoaded = false;
-	
-	for(var x = 0; x < GLOBAL_TILES_JSON.length; x++) {
-		globalState.globalTileMap.set(GLOBAL_TILES_JSON[x][0], GLOBAL_TILES_JSON[x][1]);
+	{
+		globalState =  {};
+		globalState.dirtyRedraw = null;
+		
+		globalState.viewType = viewType;
+		globalState.damageGradient = generateDamageGradient();
+		globalState.globalTileMap = new Map(/* tile number -> tile name */);
+		globalState.imagesLoaded = false;
+		
+		for(var x = 0; x < GLOBAL_TILES_JSON.length; x++) {
+			globalState.globalTileMap.set(GLOBAL_TILES_JSON[x][0], GLOBAL_TILES_JSON[x][1]);
+		}
+
+		globalState.nextFrameId = -1;
+		
+		globalState.contextWidthSet = true /*false*/;
+		
+		globalState.spriteSize = spriteSize;
+
+		// The tile (x,y) coords for the top-left hand side of the canvas
+		globalState.startX = null;
+		globalState.startY = null;
+		
+		// The world X coord of the top left hand tile, eg browser tile (0, 0) - from json property 'currWorldPosX' of browser update json
+		globalState.currWorldX = -1;
+
+		// The world Y coord of the top left hand tile - from json property 'currWorldPosY' of browser update json
+		globalState.currWorldY = -1;
+
+
+		globalState.frameQueue = [];
+		
+		globalState.entityList = [];
+		
+		globalState.prevDataMap = new Map( /* x*y coord -> num+rot */);
+
+		globalState.dataArray = null;
+		
+		globalState.imageMap = new Map( /* num -> img */);
+
+		// Primary canvas context	
+		globalState.ctx = myCanvas.getContext("2d");
+		
+		// Absolute time of last frame draw in milliseconds
+		globalState.lastFrameDrawTime = 0;
+
+		// Tile are scaled to size before they are drawn to the map, but scaling is
+		// a CPU intensive process, so we cache each scale down in this map.
+		// Used by drawRotatedImage(...)
+		globalState.scaleCache = new Map( /* tile number -> { "imgdata" : Image{ (...) } } */);
+
+		// offscreenCanvas and offscreenContext are used by drawRotatedImage(...) to draw and cache scaled-down sprites
+		globalState.offscreenCanvas = document.createElement('canvas');
+		globalState.offscreenContext = globalState.offscreenCanvas.getContext('2d');
+		{
+			globalState.offscreenCanvas.width = spriteSize; 
+			globalState.offscreenCanvas.height = spriteSize; 
+		}
+
+		globalState.leaderboardData = {
+			"currRound" : 0,
+			"timeleft" : "",
+			"yourscore" : "",
+			"leaderboard" : "",
+			"leaderboard_list" : "",
+			"overall" : "",
+			"stats" : "",
+			"leaderboard_curr_winner" : ""
+		};
+		
+		globalState.console = new Array();
+		
+		globalState.mouseMoveEnabled = true;
+
 	}
 
-	globalState.nextFrameId = -1;
+	createWebSocketAndSetInGlobalState();
 	
-	globalState.contextWidthSet = true /*false*/;
-	
-	globalState.spriteSize = spriteSize;
-	
-	globalState.currWorldX = -1;
-	globalState.currWorldY = -1;
-	globalState.frameQueue = [];
-	
-	globalState.entityList = [];
-	
-	// globalState.entitySpreadMap = new Map( /* x*y coord -> spread */);
-	
-	globalState.prevDataMap = new Map( /* x*y coord -> num+rot */);
+}
 
-	globalState.dataArray = null;
-	
-	globalState.imageMap = new Map( /* num -> img */);
-	
-	globalState.ctx = myCanvas.getContext("2d");
-	
+function createWebSocketAndSetInGlobalState() {
 	console.log("pre?");
 	try {
 		
-		var loc = window.location, new_uri;
+		let loc = window.location, new_uri;
 		if (loc.protocol === "https:") {
 		    new_uri = "wss:";
 		} else {
@@ -261,57 +211,14 @@ var globalState;
 		}
 		
 		if(json.type == "JsonUpdateBrowserUI") {
-			
-			if(json.newEventHtml != null) {
-				for(var x = 0; x < json.newEventHtml.length; x++) {
-					globalState.console.unshift(json.newEventHtml[x]);		
-				}
-			}
-			if(consoleDomElement != null) {
-				updateConsoleUI(globalState.console, consoleDomElement);
-			}
-			
-			if(leaderboardDomElement != null) {
-				updateLeaderboardUI(leaderboardDomElement, json, globalState.leaderboardData);
-			}
-			
-			if(json.combatEvents != null && json.combatEvents.length > 0) {
-				
-				for(var c = 0; c < json.combatEvents.length; c++) {
-					var entry = json.combatEvents[c];
-					var spread = SPREAD[Math.floor(SPREAD.length * Math.random())]
+		
+			processUpdateJsonBrowserUI(json);
 
-					var magnitudeSpriteSize = spriteSize > 10 ? spriteSize : 5;
-					
-					var magnitude = Math.floor(7 * (magnitudeSpriteSize/22));
-					
-					var newEntry = {
-						worldx : entry.x,
-						worldy : entry.y,
-						xoffset : 0,
-						yoffset: 0,
-						frame : 0,
-						directionX : magnitude * spread[0],
-						directionY : magnitude * spread[1],
-						damage : entry.damage
-					};
-					
-					globalState.entityList.push(newEntry);
-				}
-				
-			}
-			
 			return;
-		} else {
-			
-			if(viewType == "SERVER_VIEW_FOLLOW" && globalState.nextFrameId % 10 == 0) {
-//				console.log(json);
-			}
-			
-		}
+		} 
 		
 		if(globalState.nextFrameId == -1) {
-			var frameJson = json; //jQuery.parseJSON(event.data);
+			let frameJson = json;
 			globalState.nextFrameId = frameJson.frame;
 		}
 		
@@ -322,25 +229,7 @@ var globalState;
 			drawFrame(event);
 		}
 		
-	}
-	
-	
-	globalState.leaderboardData = {
-			"currRound" : 0,
-			"timeleft" : "",
-			"yourscore" : "",
-			"leaderboard" : "",
-			"leaderboard_list" : "",
-			"overall" : "",
-			"stats" : "",
-			"leaderboard_curr_winner" : ""
-	}
-	
-//	globalState.consoleDomElement = consoleDomElement;
-	
-	globalState.console = new Array();
-	
-	globalState.mouseMoveEnabled = true;
+	}	
 }
 
 function reestablishConnection() {
@@ -360,31 +249,60 @@ function reestablishConnection() {
 	}
 }
 
-addEvent(window, "resize", function(event) {
-	if(currCanvasWidth != myCanvas.width || currCanvasHeight != myCanvas.height) {
-		currCanvasWidth = myCanvas.width;
-		currCanvasHeight = myCanvas.height;
-		console.log("resize in canva?")
-		reestablishConnection();
+function processUpdateJsonBrowserUI(json) {
+
+	if(json.newEventHtml != null) {
+		for(let x = 0; x < json.newEventHtml.length; x++) {
+			globalState.console.unshift(json.newEventHtml[x]);		
+		}
 	}
-});
+	if(consoleDomElement != null) {
+		updateConsoleUI(globalState.console, consoleDomElement);
+	}
+	
+	if(leaderboardDomElement != null) {
+		updateLeaderboardUI(leaderboardDomElement, json, globalState.leaderboardData);
+	}
+	
+	if(json.combatEvents != null && json.combatEvents.length > 0) {
+		
+		for(let c = 0; c < json.combatEvents.length; c++) {
+			let entry = json.combatEvents[c];
+			let spread = SPREAD[Math.floor(SPREAD.length * Math.random())]
 
-
-var lastFrameTime = 0;
+			let magnitudeSpriteSize = spriteSize > 10 ? spriteSize : 5;
+			
+			let magnitude = Math.floor(7 * (magnitudeSpriteSize/22));
+			
+			let newEntry = {
+				worldx : entry.x,
+				worldy : entry.y,
+				xoffset : 0,
+				yoffset: 0,
+				frame : 0,
+				directionX : magnitude * spread[0],
+				directionY : magnitude * spread[1],
+				damage : entry.damage
+			};
+			
+			globalState.entityList.push(newEntry);
+		}
+		
+	}	
+}
 
 
 globalState.interval = setInterval( function() {
 	
 	var frameQueue = globalState.frameQueue;
 
-//	console.log("fq length: "+frameQueue.length);
+	//	console.log("fq length: "+frameQueue.length);
 
 	// Depending on how far behind we are in drawing the latest frames, we wait between 30 and 100 msecs.
 	var minimumElapsed = 30+7*Math.max(0, (10-frameQueue.length));	
-	if(window.performance.now() - lastFrameTime < minimumElapsed ) {
+	if(window.performance.now() - globalState.lastFrameDrawTime < minimumElapsed ) {
 		return;
 	}
-	
 	
 	while(true) {
 	
@@ -406,7 +324,7 @@ globalState.interval = setInterval( function() {
 		
 //		console.log("lowest frame: "+lowestFrame);
 		
-		outer: for(var x = 0; x < frameQueue.length; x++) {
+		for(var x = 0; x < frameQueue.length; x++) {
 			
 			if(frameQueue[x].frame < lowestFrame) {
 				frameQueue.splice(x, 1);
@@ -417,10 +335,9 @@ globalState.interval = setInterval( function() {
 				drawFrameNewer(frameQueue[x],  /*globalState.nextFrameId % 10 != 0 &&*/ frameQueue.length > 10  );
 				frameQueue.splice(x, 1);
 				frameFound = true;
-				lastFrameTime = window.performance.now();
+				globalState.lastFrameDrawTime = window.performance.now();
 				
 				return;
-				// break outer;
 			}	
 		}
 				
@@ -455,9 +372,13 @@ function disposeGlobalState() {
 	globalState.imageMap = {};
 	globalState.console = {};
 	globalState.dataArray = {};
-	globalState.entityList = {};
 	globalState.dirtyRedraw = {};
 	clearInterval(globalState.interval);
+	globalState.scaleCache = null;
+
+	globalState.offscreenCanvas = null;
+	globalState.offscreenContext = null;
+
 //	globalState = {};	
 }
 
@@ -468,7 +389,6 @@ function addToDataMap(x, y, worldXSize, worldYSize, imageNumber, rotation, layer
 	var entry = getFromDataMap(x, y); 
 	if(entry == null || entry.length != layerSize) {
 		entry = [];
-// 				entry = new int[layerSize];
 		globalState.prevDataMap.set(x*32768+y, entry);
 	}
 
@@ -487,7 +407,10 @@ function drawFrameNewer(param, skipdraw) {
 	
 	var spriteSize = globalState.spriteSize;	
 
+	// The tile (x,y) coords for the top-left hand side of the canvas
 	var startX = 0, startY = 0;	
+
+	// Width/height of the canvas in # of tiles, for example, 40x40
 	var actualWidth = 0, actualHeight = 0;
 
 	if(param.fullSent == true) {
@@ -498,36 +421,28 @@ function drawFrameNewer(param, skipdraw) {
 		actualWidth = Math.floor(myCanvas.width/spriteSize)+2;
 		actualHeight = Math.floor(myCanvas.height/spriteSize)+2;
 		
-	//	var startX = param.currWorldPosX;
-	//	var startY = param.currWorldPosY;
-		
-		var centerPointX = Math.floor(param.currViewWidth/2)+param.currWorldPosX;
-		var centerPointY = Math.floor(param.currViewHeight/2)+param.currWorldPosY;
+		let centerPointX = Math.floor(param.currViewWidth/2)+param.currWorldPosX;
+		let centerPointY = Math.floor(param.currViewHeight/2)+param.currWorldPosY;
 	
 		centerPointX -= Math.floor(actualWidth/2);
 		centerPointY -= Math.floor(actualHeight/2);
 	
-		// centerPointX++;
-		// centerPointY++;
-		
 		startX = centerPointX;
 		startY = centerPointY;
+
 	} else {
+
 		actualWidth = param.currViewWidth;
 		actualHeight = param.currViewHeight;
 		startX = param.currWorldPosX;
 		startY = param.currWorldPosY;
 	}
 
-	
+	// Replace the primary context with a clean drawing of the world (without usernames/damage drawn)
 	if(!skipdraw && secondaryCtxDrawn) {
-		// ctx.fillStyle="#000000";
-		// ctx.fillRect(0, 0, 350, 350);		
 		ctx.drawImage(secondaryCanvas, 0, 0);
-		// ctx.drawImage(secondaryCanvas, 0, 820); // , 300, 266);
 	}
 
-	
 	if(skipdraw) {
 		console.log("skipping draw of "+param.frame);
 	}
@@ -541,53 +456,44 @@ function drawFrameNewer(param, skipdraw) {
 		// First frame
 		currRedrawManager = new RedrawManager(spriteSize*5, spriteSize*5);
 		
-		// if(globalState.viewType != "SERVER_VIEW_WORLD") {
-			ctx.fillStyle="rgb(174, 223, 101)";
-		// } else {
-		//	ctx.fillStyle="#349D3D";	
-		// }
-		
+		// Draw the right 200 pixels as a different shade, to match the leaderboard panel
+		ctx.fillStyle="rgb(174, 223, 101)";
 		ctx.fillRect(0, 0, ctx.canvas.width-200, ctx.canvas.height);
-
 		ctx.fillStyle="#27782e";
-		
 		ctx.fillRect(ctx.canvas.width-200, 0, ctx.canvas.width, ctx.canvas.height);
 		
-		
-		
 	}
-	
-	
-//	ctx.fillStyle="#CC66CC";
-//	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-	
+		
 	if(param.currWorldPosX != globalState.currWorldX || param.currWorldPosY != globalState.currWorldY || globalState.currWorldX == null || globalState.currWorldY == null) {
 		currRedrawManager.flagPixelRect(0, 0, param.currViewWidth*spriteSize, param.currViewHeight*spriteSize);
 	}
 	
+	// An array of delta frames: a delta frame is a rectangles of tiles that were updated in the world { tile_x, tile_y, width of rect, height of rect, data : [ tile data ] }
+	// See BrowserWebSocketClientShared
 	var mapData = param.frameData;
 	
 	if(!globalState.contextWidthSet) {
+		// I think this whole block can be removed
 		ctx.canvas.width = window.innerWidth;
 		ctx.canvas.height = window.innerHeight;
 		globalState.contextWidthSet = true;
 	}
-		
+
+	// For each updated tile on the map, update the dataMap with the latest contents
 	var numDelta = mapData.length;
-	for(var deltaIndex = 0; deltaIndex < numDelta; deltaIndex++) {
-		
-		var deltaBody = mapData[deltaIndex];
-		
-		var width = deltaBody.w;
-		var height = deltaBody.h;
-		var dbx = deltaBody.x;
-		var dby = deltaBody.y;
-		
-		if(true || globalState.viewType == "SERVER_VIEW_WORLD") {
-			
-			var x = (dbx+param.currWorldPosX-startX);
-			var y = (dby+param.currWorldPosY-startY);
+	for(let deltaIndex = 0; deltaIndex < numDelta; deltaIndex++) {
+		// For each delta frame...
+
+		let deltaBody = mapData[deltaIndex];
+		let width = deltaBody.w;
+		let height = deltaBody.h;
+		let dbx = deltaBody.x;
+		let dby = deltaBody.y;
+
+		// Flag the update rectangle as dirty
+		{	
+			let x = (dbx+param.currWorldPosX-startX);
+			let y = (dby+param.currWorldPosY-startY);
 			if(x < 0 ) {
 				x = 0;
 			}
@@ -595,39 +501,31 @@ function drawFrameNewer(param, skipdraw) {
 				y = 0;
 			}
 			currRedrawManager.flagPixelRect(x*spriteSize, y*spriteSize, width*spriteSize, height*spriteSize);
-
-			
-//			currRedrawManager.flagPixelRect(dbx*spriteSize, dby*spriteSize, width*spriteSize, height*spriteSize);
-			
 		}
 		
-//		if(width*height > 1000 && globalState.viewType == "SERVER_VIEW_WORLD") {
-//			console.log("update: "+width+" "+height);
-//		}
-				
-		var arrayContents = deltaBody.data;
+		let arrayContents = deltaBody.data;
 		
-		var count = 0;
-		
-		for(var x = 0; x < arrayContents.length; x++) {
+		for(let x = 0; x < arrayContents.length; x++) {
+			// For each updated tile in the delta frame...
 			
-			var col = (x % width+dbx);
-			var row = (Math.floor(x / width)+dby);
+			let col = (x % width+dbx);
+			let row = (Math.floor(x / width)+dby);
 			
-			var colPixel = col * spriteSize;
-			var rowPixel = row * spriteSize;
+			let colPixel = col * spriteSize;
+			let rowPixel = row * spriteSize;
 
 			
-			for(var layerIndex = arrayContents[x].length-1; layerIndex >= 0; layerIndex--) {
+			for(let layerIndex = arrayContents[x].length-1; layerIndex >= 0; layerIndex--) {
+				// For each layer in the tile...
 				
-				var num = arrayContents[x][layerIndex][0];
+				let num = arrayContents[x][layerIndex][0];
 				
-				var img = globalState.imageMap.get(num);
+				let img = globalState.imageMap.get(num);
 
-				var rotation = arrayContents[x][layerIndex].length == 1 ? 0 : arrayContents[x][layerIndex][1];
+				let rotation = arrayContents[x][layerIndex].length == 1 ? 0 : arrayContents[x][layerIndex][1];
 				
-				var worldX = col+param.currWorldPosX;
-				var worldY = row+param.currWorldPosY;
+				let worldX = col+param.currWorldPosX;
+				let worldY = row+param.currWorldPosY;
 				
 				addToDataMap(worldX, worldY, param.currViewWidth, param.currViewHeight, num, rotation, layerIndex, arrayContents[x].length);
 
@@ -635,107 +533,52 @@ function drawFrameNewer(param, skipdraw) {
 			
 		}
 		
-		
-		
-// 				for(var x = 0; x < param.currViewWidth; x++) {
-// 					for(var y = 0; y < param.currViewHeight; y++) {
-// 						var cachedTile = getFromDataMap(param.currWorldPosX+x, param.currWorldPosY+y);
-// 						if(cachedTile != null) {
-// 							var img = imageMap.get(cachedTile.num);
-// 							if(img != null) {
-// // 								jgwCount++;
-// 	 							drawRotatedImage(ctx, img, x*spriteSize, y*spriteSize, cachedTile.rot);
-// 							}
-// 						}
-// 					}
-// 				}
-
-		
 	} // end deltaIndex for
 
 	if(!skipdraw) {
-		
 
-//		ctx.fillStyle="#FFFFFF";
-//		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);		
-		
-		
-//		for(var x = 0; x < param.currViewWidth; x++) {
-//			for(var y = 0; y < param.currViewHeight; y++) {
-//				var cachedTile = getFromDataMap(param.currWorldPosX+x, param.currWorldPosY+y, param.currViewWidth, param.currViewHeight);
-//				if(cachedTile != null) {
-//					for(var layerIndex = cachedTile.length-1; layerIndex >= 0; layerIndex--) {
-//						var img = globalState.imageMap.get(cachedTile[layerIndex].num);
-//						if(img != null) {
-////							drawRotatedImage(ctx, img, x*spriteSize, y*spriteSize, cachedTile[layerIndex].num,  cachedTile[layerIndex].rot);
-//						}							
-//					}
-//				} 
-//			}
-//		}
-
-		
-		if(true || globalState.viewType == "SERVER_VIEW_WORLD") {
-			
-//			actualWidth = Math.floor(myCanvas.width/spriteSize)+2;
-//			actualHeight = Math.floor(myCanvas.height/spriteSize)+2;
-//			
-////			var startX = param.currWorldPosX;
-////			var startY = param.currWorldPosY;
-//			
-//			var centerPointX = Math.floor(param.currViewWidth/2)+param.currWorldPosX;
-//			var centerPointY = Math.floor(param.currViewHeight/2)+param.currWorldPosY;
-//
-//			centerPointX -= Math.floor(actualWidth/2);
-//			centerPointY -= Math.floor(actualHeight/2);
-//
-//			startX = centerPointX;
-//			startY = centerPointY;
-			
-//			console.log("starting: "+startX+" "+startY);
-			
-			for(var x = 0; x < actualWidth; x++) {
-				for(var y = 0; y < actualHeight; y++) {
+		for(let x = 0; x < actualWidth; x++) {
+			for(let y = 0; y < actualHeight; y++) {
+				// For each tile in the view, check if it is dirty (and we thus we need to redraw it)
+				
+				let redraw = currRedrawManager.getByPixel(x*spriteSize, y*spriteSize);
+				
+				if(redraw) {
+					let cachedTile = getFromDataMap(startX+x, startY+y, param.currViewWidth, param.currViewHeight);
 					
-					var redraw = currRedrawManager.getByPixel(x*spriteSize, y*spriteSize);
-					// redraw = true;
-					if(redraw) {
-						var cachedTile = getFromDataMap(startX+x, startY+y, param.currViewWidth, param.currViewHeight);
-						
-						if(cachedTile != null) {
-							for(var layerIndex = cachedTile.length-1; layerIndex >= 0; layerIndex--) {
-								var layer = cachedTile[layerIndex];
-								
-								var img = globalState.imageMap.get(layer.num);
-								if(img != null) {
-									drawRotatedImage(ctx, img, x*spriteSize, y*spriteSize, layer.num,  layer.rot);
-								}							
-							}
+					if(cachedTile != null) {
+						for(let layerIndex = cachedTile.length-1; layerIndex >= 0; layerIndex--) {
+							let layer = cachedTile[layerIndex];
+							
+							let img = globalState.imageMap.get(layer.num);
+							if(img != null) {
+								drawRotatedImage(ctx, img, x*spriteSize, y*spriteSize, layer.num,  layer.rot);
+							}							
 						}
-						
 					}
+					
 				}
-			}	
+			}
 		}
 
+		// Copy the up-to-date main canvas to th  secondary ctx
 		secondaryCtx.drawImage(myCanvas, 0, 0);
 		secondaryCtxDrawn = true;
-		// primaryCtx.drawImage(secondaryCanvas);
-		
-		mostRecentCreaturesList = param.creatures;
-		for(var x = 0; x < param.creatures.length; x++) {
+
+		// Now that we have a clean copy of the canvas stored in secondaryCtx, we are going to draw username/creature damage on the main canvas
+		for(let x = 0; x < param.creatures.length; x++) {
 			
-			var creature = param.creatures[x];
-			var percent = Math.max(0, creature.hp) / creature.maxHp;
+			let creature = param.creatures[x];
+			let percent = Math.max(0, creature.hp) / creature.maxHp;
 			
-			var posX = creature.position[0]-startX;
-			var posY = creature.position[1]-startY;
+			let posX = creature.position[0]-startX;
+			let posY = creature.position[1]-startY;
 
 			if(posY >= actualHeight-2) {
 				continue;
 			}
 			
-			var percentIndex = Math.max( 0, Math.min(99, 100*percent));
+			let percentIndex = Math.max( 0, Math.min(99, 100*percent));
 			
 			// Draw colour part of damage bar
 			ctx.fillStyle=globalState.damageGradient[Math.floor(percentIndex)]; 
@@ -752,12 +595,12 @@ function drawFrameNewer(param, skipdraw) {
 				
 				ctx.font = globalState.viewType == "SERVER_VIEW_WORLD" ? '9px sans-serif' : '12px sans-serif';				
 				
-				var textSizeWidth = ctx.measureText(creature.username).width;
-				var textSizeHeight = ctx.measureText("M").width;
+				let textSizeWidth = ctx.measureText(creature.username).width;
+				let textSizeHeight = ctx.measureText("M").width;
 				
-				var yDelta = globalState.viewType == "SERVER_VIEW_WORLD" ? 10: 0;
+				let yDelta = globalState.viewType == "SERVER_VIEW_WORLD" ? 10: 0;
 				
-				var xPos = posX*(spriteSize) + Math.floor(spriteSize/2) - Math.floor(textSizeWidth/2)
+				let xPos = posX*(spriteSize) + Math.floor(spriteSize/2) - Math.floor(textSizeWidth/2)
 				
 				ctx.fillStyle="black";
 				ctx.fillRect(xPos, (posY+2)*(spriteSize)-textSizeHeight+2+yDelta, textSizeWidth+6, textSizeHeight+8);
@@ -774,21 +617,19 @@ function drawFrameNewer(param, skipdraw) {
 		
 		if(globalState.viewType == "SERVER_VIEW_FOLLOW") {
 			serverViewFollowPos = { x : param.currWorldPosX, y : param.currWorldPosY, w: param.currViewWidth, h: param.currViewHeight };
-//			serverViewFollowPos = { x : startX, y : startY, w: param.currViewWidth, h: param.currViewHeight };
-			
 			
 		} else if(globalState.viewType == "SERVER_VIEW_WORLD") {
 			
 			// Blue rectangle 
 			if(serverViewFollowPos != null) {
 				
-				var lineWidth = 3;
+				let lineWidth = 3;
 				ctx.beginPath();
 				ctx.lineWidth=""+lineWidth;
 				ctx.strokeStyle="#000099";
 				
-				var rectX = (serverViewFollowPos.x*spriteSize)-lineWidth;
-				var rectY = (serverViewFollowPos.y*spriteSize)-lineWidth;
+				let rectX = (serverViewFollowPos.x*spriteSize)-lineWidth;
+				let rectY = (serverViewFollowPos.y*spriteSize)-lineWidth;
 				
 				ctx.rect(rectX, rectY, serverViewFollowPos.w*spriteSize, serverViewFollowPos.h*spriteSize);
 				// globalState.dirtyRedraw.flagPixelRect( (rectX)-lineWidth, (rectY)-lineWidth, (serverViewFollowPos.w*spriteSize)+(lineWidth*2), (serverViewFollowPos.h*spriteSize)+(lineWidth*2) );
@@ -797,65 +638,37 @@ function drawFrameNewer(param, skipdraw) {
 			  
 		}
 		
-		
-//		if(viewType != "SERVER_VIEW_FOLLOW") {
-//			console.log("-----------------------");
-//			for(var gx = 0; gx < gridWidth; gx++) {
-//				for(var gy = 0; gy < gridHeight; gy++) {
-//					var redrawGrid = redrawMap.map.get(gx*32768/*gridHeight*/+gy);
-//					if(redrawGrid == true) {
-//	//					console.log("("+gx+", "+gy+")");
-//						
-//						console.log("("+gx+","+gy+") -> "+gx*redrawMap.gridSizeX*spriteSize+" "+gy*redrawMap.gridSizeY*spriteSize);
-//						
-//						ctx.fillStyle="black";
-//						ctx.fillRect(gx*redrawMap.gridSizeX*spriteSize, gy*redrawMap.gridSizeY*spriteSize, redrawMap.gridSizeX*spriteSize, redrawMap.gridSizeY*spriteSize);
-//	//					ctx.fillRect(gx*gridWidth*spriteSize, gy*gridHeight*spriteSize, gridWidth*spriteSize, gridHeight*spriteSize);
-//						
-//	//					ctx.beginPath();
-//	//					ctx.lineWidth="2";
-//	//					ctx.strokeStyle="#FF0000";
-//	//					ctx.rect(gx*gridWidth, gy*gridHeight, gridWidth, gridHeight);
-//	//					ctx.stroke();
-//	
-//					}
-//				}
-//			}
-//		}
-
-		
 		// Draw frame rate
 		ctx.fillStyle="white";	
 		ctx.font = '15px sans-serif';
 		ctx.fillText(param.frame, 20, 20);
-		// globalState.dirtyRedraw.flagPixelRect(10, 0, 100, 70); 
 	} // end skip draw
 
 	
 	// Draw floating damage text
 	if(!skipdraw && globalState.entityList != null) {
 		
-		var fontSize = 20;
+		let fontSize = 20;
 		
 		if(spriteSize < 10) {
 			fontSize = 10;
 		}
 		
-		for(var c = 0; c < globalState.entityList.length; c++) {
-			var entity = globalState.entityList[c];
+		for(let c = 0; c < globalState.entityList.length; c++) {
+			let entity = globalState.entityList[c];
 
 			entity.frame++;
 			
-			var col = entity.worldx - startX; // param.currWorldPosX;
-			var row = entity.worldy - startY; // param.currWorldPosY;
+			let col = entity.worldx - startX; // param.currWorldPosX;
+			let row = entity.worldy - startY; // param.currWorldPosY;
 			
 			entity.xoffset += entity.directionX*5;
 			entity.yoffset += entity.directionY*5;
 			
 			
 			if(row >= 0 && col >= 0 && row < param.currViewHeight && col <= param.currViewWidth) {
-				var colX = col*globalState.spriteSize;
-				var colY = row*globalState.spriteSize;
+				let colX = col*globalState.spriteSize;
+				let colY = row*globalState.spriteSize;
 				
 				// Don't draw text outside the visible world on the canvas 
 				if(colX + entity.xoffset < actualWidth*spriteSize && colY + entity.yoffset < actualHeight*spriteSize) {
@@ -868,6 +681,7 @@ function drawFrameNewer(param, skipdraw) {
 				}
 			}
 			
+			// If an entity has drawn for more than 10 frames, remove it
 			if(entity.frame > 10) {
 				globalState.entityList.splice(c,1);
 				c--;
@@ -921,36 +735,25 @@ function loadAndCall(event, nextFunction) {
 	
 }
 
-
-var scaleCache = new Map();
-
-
-//var scaleNum =0;
-//var scaleCached = 0;
-//var scaleUncached = 0;
-
-var offscreenCanvas = document.createElement('canvas');
-var offscreenContext = offscreenCanvas.getContext('2d');
-offscreenCanvas.width = spriteSize; // 300px;
-offscreenCanvas.height = spriteSize; //300px;
-
-
-var TO_RADIANS = Math.PI/180; 
 function drawRotatedImage(context, image, x, y, num, angle) {
 
-	var spriteSize = globalState.spriteSize;
+	var TO_RADIANS = Math.PI/180; 
+
+	let spriteSize = globalState.spriteSize;
+
+	let scaleCache = globalState.scaleCache;
+
+	let offscreenCanvas = globalState.offscreenCanvas;
+	let offscreenContext = globalState.offscreenContext;
 	
-	// Fast path
-	if(angle == 0) {
+	// Fast path (no rotation required)
+	if(angle == 0 && scaleCache != null) {
 
-//		scaleNum++;
-//		if(scaleNum % 100 == 0) {
-//			console.log(scaleNum+" "+scaleCached+" "+scaleUncached);
-//		} 
-
-		var inCache = false;
+		let inCache = false;
 		
-		var val = scaleCache.get(num);
+		let val = scaleCache.get(num);
+
+		// If we have previously cached the tile 'num', then draw it
 		if(val != null) {
 			inCache = true;
 			if(val.imgdata.complete) {				
@@ -959,21 +762,13 @@ function drawRotatedImage(context, image, x, y, num, angle) {
 			} 		
 		}
 		
-//		scaleUncached++;
-		
-		
 		context.drawImage(image, x, y, spriteSize, spriteSize);
-
-//		offscreenContext.fillStyle="#FFFFFF";
-//		offscreenContext.clearRect(0, 0, 300, 300);
-
 
 		if(!inCache) {
 			offscreenContext.clearRect(0, 0, spriteSize, spriteSize);
 			offscreenContext.drawImage(image, 0, 0, spriteSize, spriteSize);
 		
 			var newimg = new Image();
-//			offscreenContext.getImageData(0, 0, spriteSize, spriteSize);
 			newimg.src = offscreenCanvas.toDataURL('image/png'); 
 			
 			var entry = { "imgdata" :  newimg  };
@@ -1001,39 +796,6 @@ function drawRotatedImage(context, image, x, y, num, angle) {
  
 	context.restore(); 
 }
-/*
-function myCanvas(myMap) {
-
-	var spriteSize = globalState.spriteSize;
-	
-	var c = document.getElementById("myCanvas");
-	var ctx = c.getContext("2d");
-	ctx.canvas.width = window.innerWidth;
-	ctx.canvas.height = window.innerHeight;
-	
-	var arrayContents = mapData.data;
-	
-	for(var x = 0; x < arrayContents.length; x++) {
-	
-		var col = (x % mapData.width) * spriteSize;
-		var row = Math.floor(x / mapData.width) * spriteSize;
-
-		var img = myMap.get(arrayContents[x][0])
-
-		var rotation = arrayContents[x] == 1 ? 0 : arrayContents[x][1];
-		
-		drawRotatedImage(ctx, img, col, row, rotation);
-		
-	}
-	
-} */
-
-function generateUuid() {
-	function gen_rand4() {
-		return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-	}
-	return gen_rand4() + gen_rand4() + '-' + gen_rand4() + '-' + gen_rand4() + '-' + gen_rand4() + '-' + gen_rand4() + gen_rand4() + gen_rand4();
-}
 
 function generateDamageGradient() {
 	var result = [];
@@ -1055,23 +817,6 @@ function generateDamageGradient() {
 	return result;
 	
 }
-
-function convertToHex(x) {
-	var str = x.toString(16);
-	return (str.length==1) ? "0"+str : str;
-}
-
-function convertSecondsToMinutes(totalSeconds) {
-	
-	var minutes = Math.floor(totalSeconds/60);
-	
-	var seconds = totalSeconds - (minutes*60);
-	
-	
-	return minutes+":"+(seconds < 10 ? "0"+seconds : seconds);
-	
-}
-
 
 function updateLeaderboardUI(leaderboardDomElement,  json /* : JsonUpdateBrowserUI */,  leaderboardData /* : globalState.leaderboardData */) {
 
@@ -1225,7 +970,6 @@ function updateConsoleUI(console, consoleDomElement) {
 		str += console[x]+"<br/>\n";
 	}	
 	
-//	var element = document.getElementById('console'); 
 	consoleDomElement.innerHTML = "<span id='console_span'><b>Event Log</b>:<br/><br/>"+str+"</span>"; 
 
 }
@@ -1233,6 +977,98 @@ function updateConsoleUI(console, consoleDomElement) {
 function formatScore(score) {
 	return score.toLocaleString();
 }
+
+
+function addCanvasListeners() {
+
+	myCanvas.addEventListener("mouseout", function(e) {
+		var element = document.getElementById('creatureInfo'); 
+		element.innerHTML = ""; 
+		element.style.display="none";
+
+	});
+
+	myCanvas.addEventListener("mousemove", function(e) {
+		
+		if(!globalState.mouseMoveEnabled) {
+			return;
+		}
+
+		var pageX = e.clientX;
+		var pageY = e.clientY;
+		
+		var worldCol = Math.max(0, Math.floor(pageX/globalState.spriteSize) + globalState.startX - 4);
+		var worldRow = Math.max(0, Math.floor(pageY/globalState.spriteSize) + globalState.startY - 4);
+		
+		var localTileMap = new Map();
+		
+		var newHtml = "<span id='creatureInfoSpan'>";
+		
+		newHtml += "<table>";
+		
+		var containsValue = false;
+		
+		for(let x = worldCol; x < worldCol+8; x++) {
+			for(let y = worldRow; y< worldRow+8; y++) {
+				let tiles = getFromDataMap(x, y, globalState.currWorldX, globalState.currWorldY);
+				if(tiles == null) { continue; }
+				localTileMap.set(tiles[0].num, tiles[0].num );
+			}
+		}
+		
+		localTileMap.forEach(function(value, key) {
+			
+			let name = globalState.globalTileMap.get(value);
+			if(name == null || name.trim().length == 0) {
+				return;
+			}
+			newHtml += "<tr><td><img src='resources/tiles/"+value+".png' width='42' height='42'/></td><td><span style='margin-left: 20px; margin-right: 20px;'>"+name+"</span></td>"
+			containsValue = true;
+
+		});
+		
+		newHtml += "</table>";
+
+		newHtml += "</span>";
+		
+		// newHtml += "( "+worldCol+", "+worldRow+")<br/>";
+		
+		// $('div.moveAble').innerHTML = "new content!";
+		
+		var element = document.getElementById('creatureInfo'); 
+		element.innerHTML = newHtml; 
+		
+		if(!containsValue) {
+			element.style.display="none";	
+		} else {
+			element.style.display="block";
+		}
+		
+		// $(document).getElementById("test").innerHTML = "new content"
+		
+		$('div.moveAble').css({
+			'top' : pageY + 20
+		});
+		
+		$('div.moveAble').css({
+			'left' : pageX + 20
+		});
+
+		
+	}, false);
+
+	addEvent(window, "resize", function(event) {
+		if(currCanvasWidth != myCanvas.width || currCanvasHeight != myCanvas.height) {
+			currCanvasWidth = myCanvas.width;
+			currCanvasHeight = myCanvas.height;
+			console.log("resize in canva?")
+			reestablishConnection();
+		}
+	});
+
+}
+
+
 
 }
 
