@@ -81,6 +81,10 @@ public class HealthEndpoint extends HttpServlet {
 					
 				}
 			} 
+		} else {
+			synchronized(logCount_synch) {
+				logCount_synch.set(0);
+			}
 		}
 		
 		
