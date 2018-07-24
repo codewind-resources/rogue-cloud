@@ -35,6 +35,11 @@ public class TransferFileDbToCloudant {
 
 	public static void main(String[] args) {
 
+		System.setProperty(CloudantDbBackend.CONIG_USERNAME, "");
+		System.setProperty(CloudantDbBackend.CONFIG_PASSWORD, "");
+		System.setProperty(CloudantDbBackend.CONFIG_DB_NAME, "");
+		System.setProperty(CloudantDbBackend.CONFIG_URL, "");
+
 //		transferFileDbToCloudant();
 		
 //		transferCloudantToFileDb();
@@ -42,6 +47,7 @@ public class TransferFileDbToCloudant {
 //		compareTwoFileDbs();
 	}
 	
+	@SuppressWarnings("unused")
 	private static void compareTwoFileDbs() {
 		FileDbBackend fdb1 = new FileDbBackend(new File("C:\\roguecloud-import"));
 		FileDbBackend fdb2 = new FileDbBackend(new File("C:\\delme\\.roguecloud"));
@@ -113,19 +119,30 @@ public class TransferFileDbToCloudant {
 	
 	@SuppressWarnings("unused")
 	private static void transferFileDbToCloudant() {
-		FileDbBackend fdb = new FileDbBackend(new File("C:\\roguecloud-import"));
+//		File inputDir = new File("C:\\roguecloud-import");
+		File inputDir = new File("C:\\delme\\.roguecloud");
+		FileDbBackend fdb = new FileDbBackend(inputDir);
 	
-		System.setProperty(CloudantDbBackend.CONIG_USERNAME, "");
-		System.setProperty(CloudantDbBackend.CONFIG_PASSWORD, "");
-		System.setProperty(CloudantDbBackend.CONFIG_DB_NAME, "");
-		System.setProperty(CloudantDbBackend.CONFIG_URL, "");
-
 		CloudantDbBackend cdb = new CloudantDbBackend();
 		
 		cdb.internalSetNextRoundId(fdb.internalGetNextRoundId());
 		
 		cdb.writeNewOrExistingUsers(fdb.getAllUsers());
-		cdb.writeNewOrExistingLeaderboardEntries(fdb.getAllLeaderboardEntries());
+
+		// Add date/time from file modified date  
+		{
+			List<DbLeaderboardEntry> fdbList = fdb.getAllLeaderboardEntries();
+			for(DbLeaderboardEntry dle : fdbList) {
+				File actualFile = new File(inputDir, "rounds/round-"+dle.getRoundId()+".txt");
+				if(!actualFile.exists()) {
+					throw new RuntimeException("Unable to find file: "+actualFile.getPath());
+				}
+				long time = actualFile.lastModified();
+				dle.setDateTime(time);
+			}
+			cdb.writeNewOrExistingLeaderboardEntries(fdbList);
+		}
+		
 	}
 
 	
@@ -136,12 +153,6 @@ public class TransferFileDbToCloudant {
 		dest.mkdirs();
 		
 		FileDbBackend fdb = new FileDbBackend(dest);
-		
-		System.setProperty(CloudantDbBackend.CONIG_USERNAME, "");
-		System.setProperty(CloudantDbBackend.CONFIG_PASSWORD, "");
-		System.setProperty(CloudantDbBackend.CONFIG_DB_NAME, "");
-		System.setProperty(CloudantDbBackend.CONFIG_URL, "");
-
 		CloudantDbBackend cdb = new CloudantDbBackend();
 
 		{
@@ -154,7 +165,6 @@ public class TransferFileDbToCloudant {
 			}
 			fdb.writeNewOrExistingUsers(newUsers);
 		}
-		
 
 		{
 			List<DbLeaderboardEntry> newDles = new ArrayList<>();

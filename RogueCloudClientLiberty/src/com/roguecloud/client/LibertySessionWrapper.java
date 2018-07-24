@@ -184,10 +184,16 @@ public class LibertySessionWrapper implements ISessionWrapper {
 			try {
 				
 				changeState(WrapperState.WAITING_FOR_CONFIRMATION);
+
+				String connectJsonString = om.writeValueAsString(ccj);
+
+				if(Logger.CLIENT_SENT) {
+					log.interesting("Client sending text: "+connectJsonString, null);
+				}
 				
 				session_synch_lock = session;
 				basicRemote_synch_lock = session.getBasicRemote();
-				basicRemote_synch_lock.sendBinary(CompressionUtils.compressToByteBuffer(om.writeValueAsString(ccj)));
+				basicRemote_synch_lock.sendBinary(CompressionUtils.compressToByteBuffer(connectJsonString));
 								
 //				basicRemote_synch_lock.sendText(om.writeValueAsString(ccj));
 				
@@ -365,6 +371,10 @@ public class LibertySessionWrapper implements ISessionWrapper {
 	// Called by endpoint message handler
 	public void receiveJson(String str, Session session) {
 		
+		if(Logger.CLIENT_RECEIVED) {
+			log.interesting("Client received message: "+str, null);
+		}
+		
 		ObjectMapper om = new ObjectMapper();
 		try {
 			String messageType = (String) om.readValue(str, Map.class).get("type");
@@ -522,10 +532,10 @@ public class LibertySessionWrapper implements ISessionWrapper {
 					if(state_synch_lock == WrapperState.WAITING_FOR_RESEND) {
 						
 						if(session_synch_lock.isOpen()) {
-							// Send the last 100 messages. This ensures that the server wil receive any text that we sent during the outage. 
+							// Send the last 100 messages. This ensures that the server will receive any text that we sent during the outage. 
 							// If the server receives a duplicate of a message that it has already received, it will ignore it. 
 							for(String previousMessage : localLast100Messages) {
-								if(Logger.CLIENT_SENT) { log.info("Sending previous text: "+previousMessage, parent.getLogContext()); }
+								if(Logger.CLIENT_SENT) { log.interesting("Client sending previous text: "+previousMessage, parent.getLogContext()); }
 								if(NG.ENABLED) { NG.log(RCRuntime.GAME_TICKS.get(), "Sending previous text:" +previousMessage); }
 								try {
 									basicRemote_synch_lock.sendBinary(CompressionUtils.compressToByteBuffer(previousMessage));
@@ -573,7 +583,7 @@ public class LibertySessionWrapper implements ISessionWrapper {
 							
 							 if(session_synch_lock.isOpen()) {
 								try {
-									if(Logger.CLIENT_SENT) { log.info("Sending current text: "+str, parent.getLogContext()); }
+									if(Logger.CLIENT_SENT) { log.interesting("Client sending text: "+str, parent.getLogContext()); }
 									if(NG.ENABLED) { NG.log(RCRuntime.GAME_TICKS.get(), "Sending current text:" +str); }
 									
 									basicRemote_synch_lock.sendBinary(CompressionUtils.compressToByteBuffer(str));

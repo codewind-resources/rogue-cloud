@@ -25,7 +25,6 @@ import javax.websocket.RemoteEndpoint.Basic;
 import javax.websocket.Session;
 
 import com.roguecloud.client.LibertyClientInstance;
-import com.roguecloud.client.container.LibertyWsBrowserEndpoint.LibertyWSClientWorldStateListener;
 import com.roguecloud.utils.Logger;
 
 public class LibertyClientBrowserSessionWrapper {
@@ -43,7 +42,7 @@ public class LibertyClientBrowserSessionWrapper {
 	
 	private boolean disposed_synch_lock = false;
 	
-	private LibertyWSClientWorldStateListener listener;
+//	private LibertyWSClientWorldStateListener listener;
 	
 	public LibertyClientBrowserSessionWrapper(Session session) {
 		if(session == null) { throw new IllegalArgumentException(); }
@@ -63,13 +62,13 @@ public class LibertyClientBrowserSessionWrapper {
 		thread.addMessage(message);
 	}
 
-	public void setListener(LibertyWSClientWorldStateListener listener) {
-		this.listener = listener;
-	}
+//	public void setListener(LibertyWSClientWorldStateListener listener) {
+//		this.listener = listener;
+//	}
 	
-	public LibertyWSClientWorldStateListener getListener() {
-		return listener;
-	}
+//	public LibertyWSClientWorldStateListener getListener() {
+//		return listener;
+//	}
 	
 	
 	public void dispose() {

@@ -705,6 +705,7 @@ public final class GameEngine {
 		changedTilesNewPlayers.clear();
 
 		if(!gc.isRoundOver && System.nanoTime() > roundScope.getCurrentRoundEndInNanos()) {
+			// Round is over!
 			roundScope.setNextRoundStartInNanos(System.nanoTime()+RCConstants.TIME_BETWEEN_ROUNDS_IN_NANOS); 
 			gc.isRoundOver = true;
 			
@@ -723,7 +724,7 @@ public final class GameEngine {
 				long userId = e.getKey();
 				long score = e.getValue();
 			
-				db.createOrUpdateDbLeaderboardEntry(new DbLeaderboardEntry(userId, score, gc.roundScope.getRoundId()));
+				db.createOrUpdateDbLeaderboardEntry(new DbLeaderboardEntry(userId, score, gc.roundScope.getRoundId(), System.currentTimeMillis()));
 			});
 			
 		}

@@ -687,7 +687,7 @@ function drawFrameNewer(param, skipdraw) {
 				c--;
 			}
 		}
-	}
+	} // end !skipdraw
 	
 	if(!skipdraw && globalState.viewType == "SERVER_VIEW_WORLD") {
 	      ctx.beginPath();
