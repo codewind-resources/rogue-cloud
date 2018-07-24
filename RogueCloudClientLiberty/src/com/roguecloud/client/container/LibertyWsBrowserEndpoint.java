@@ -110,7 +110,7 @@ public class LibertyWsBrowserEndpoint {
 					return;
 				} else {
 					LibertyWSClientWorldStateListener l = new LibertyWSClientWorldStateListener(wrapper, session);
-					wrapper.setListener(l);
+//					wrapper.setListener(l);
 					
 					WorldStateListeners.getInstance().addListener(l);
 					

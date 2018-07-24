@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: rogue-cloud
-        image: registry.ng.bluemix.net/rogue-cloud-repo/rogue-cloud
+        image: mycluster.icp:8500/default/rogue-cloud:latest
         livenessProbe:
           httpGet:
             path: /RogueCloudServer/RogueCloudServerHealth

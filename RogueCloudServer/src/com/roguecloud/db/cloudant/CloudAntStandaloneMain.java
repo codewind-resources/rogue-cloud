@@ -39,17 +39,19 @@ public class CloudAntStandaloneMain {
 		
 		List<DbLeaderboardEntry> ldbs = new ArrayList<>();
 		
-		ldbs.add(new DbLeaderboardEntry(1, 10, 1));
-		ldbs.add(new DbLeaderboardEntry(2, 10, 1));
-		ldbs.add(new DbLeaderboardEntry(3, 10, 1));
-		ldbs.add(new DbLeaderboardEntry(4, 10, 1));
-		ldbs.add(new DbLeaderboardEntry(5, 10, 1));
+		long dateTime = System.currentTimeMillis();
 		
-		ldbs.add(new DbLeaderboardEntry(1, 10, 2));
-		ldbs.add(new DbLeaderboardEntry(2, 10, 2));
-		ldbs.add(new DbLeaderboardEntry(3, 10, 2));
-		ldbs.add(new DbLeaderboardEntry(4, 10, 2));
-		ldbs.add(new DbLeaderboardEntry(5, 10, 2));
+		ldbs.add(new DbLeaderboardEntry(1, 10, 1, dateTime));
+		ldbs.add(new DbLeaderboardEntry(2, 10, 1, dateTime));
+		ldbs.add(new DbLeaderboardEntry(3, 10, 1, dateTime));
+		ldbs.add(new DbLeaderboardEntry(4, 10, 1, dateTime));
+		ldbs.add(new DbLeaderboardEntry(5, 10, 1, dateTime));
+		
+		ldbs.add(new DbLeaderboardEntry(1, 10, 2, dateTime));
+		ldbs.add(new DbLeaderboardEntry(2, 10, 2, dateTime));
+		ldbs.add(new DbLeaderboardEntry(3, 10, 2, dateTime));
+		ldbs.add(new DbLeaderboardEntry(4, 10, 2, dateTime));
+		ldbs.add(new DbLeaderboardEntry(5, 10, 2, dateTime));
 
 		cdbb.writeNewOrExistingLeaderboardEntries(ldbs);
 		

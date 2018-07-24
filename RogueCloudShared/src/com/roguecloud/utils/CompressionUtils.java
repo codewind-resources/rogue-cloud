@@ -25,7 +25,14 @@ import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
-/** For internal server use only: deflate compression and decompression, tuned for high CPU throughput. */
+import com.roguecloud.RCRuntime;
+
+/** For internal server use only: This class provides simple deflate compression/decompression of Strings, 
+ * with the compression tuned for high CPU throughput. 
+ * 
+ * You can disable compression setting RCRuntime.ENABLE_DEFLATE_COMPRESSION to false, but you must ensure that this value is
+ * set to false on both the client and server.
+ * */
 public final class CompressionUtils {
 
 	private static final Logger log = Logger.getInstance();
@@ -39,6 +46,12 @@ public final class CompressionUtils {
 	}
 	
 	private final static byte[] compressString(String str) {
+
+		// If compression is disabled, then just return a byte array of a UTF-8 string
+		if(!RCRuntime.ENABLE_DEFLATE_COMPRESSION) {
+			return str.getBytes();
+		}
+		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		
 		DeflaterOutputStream dos = new DeflaterOutputStream(baos, new Deflater(Deflater.BEST_SPEED) );
@@ -58,6 +71,12 @@ public final class CompressionUtils {
 
 	
 	private final static String decompressString(byte[] str) {
+		
+		// If compression is disabled, then the byte array is just a UTF-8 string
+		if(!RCRuntime.ENABLE_DEFLATE_COMPRESSION) {
+			return new String(str);
+		}
+
 		
 		InflaterInputStream dis = new InflaterInputStream(new ByteArrayInputStream(str));
 		

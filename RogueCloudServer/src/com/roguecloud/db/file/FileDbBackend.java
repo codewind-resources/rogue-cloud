@@ -50,6 +50,21 @@ public class FileDbBackend implements IDBBackend {
 		this.keyValueStore_synch_lock = new SafeKeyValueStore(new File(dbRoot, "key-store"));
 	}
 	
+	public long internalGetNextRoundId() {
+		synchronized(lock) {
+			long nextId = keyValueStore_synch_lock.readId(KEY_ROUND_ID).orElse(1l);
+			
+			return nextId;
+		}
+		
+	}
+	
+	public void internalSetNextRoundId(long nextRoundId) {
+		synchronized(lock) {
+			keyValueStore_synch_lock.writeId(KEY_ROUND_ID, nextRoundId);
+		}
+	}
+	
 	public long getAndIncrementNextRoundId() {
 		
 		synchronized(lock) {

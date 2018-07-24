@@ -16,6 +16,8 @@
 
 package com.roguecloud.db;
 
+import java.util.Date;
+
 /** A leaderboard entry for a player that played in a given round. This object is serialized to json. */
 public class DbLeaderboardEntry implements IDBObject {
 
@@ -24,15 +26,17 @@ public class DbLeaderboardEntry implements IDBObject {
 	long userId;
 	long roundId;
 	long score;
+	long dateTime;
 
 
 	public DbLeaderboardEntry() {
 	}
 	
-	public DbLeaderboardEntry(long userId, long score, long roundId) {
+	public DbLeaderboardEntry(long userId, long score, long roundId, long dateTime) {
 		this.userId = userId;
 		this.score = score;
 		this.roundId = roundId;
+		this.dateTime = dateTime;
 	}
 
 	public long getUserId() {
@@ -46,6 +50,10 @@ public class DbLeaderboardEntry implements IDBObject {
 	public long getRoundId() {
 		return roundId;
 	}
+	
+	public long getDateTime() {
+		return dateTime;
+	}
 
 	public void setUserId(long userId) {
 		this.userId = userId;
@@ -58,20 +66,26 @@ public class DbLeaderboardEntry implements IDBObject {
 	public void setRoundId(long roundId) {
 		this.roundId = roundId;
 	}
+		
+	public void setDateTime(long dateTime) {
+		this.dateTime = dateTime;
+	}
+	
 	
 	public void copyFromParam(DbLeaderboardEntry dle) {
 		setRoundId(dle.getRoundId());
 		setScore(dle.getScore());
 		setUserId(dle.getUserId());
+		setDateTime(dle.getDateTime());
 	}
 	
 	@Override
 	public String toString() {
-		return userId+" "+this.score+" "+this.roundId;
+		return userId+" "+this.score+" "+this.roundId+" "+(dateTime > 0 ? (new Date(dateTime)) : "--");
 	}
 
 	public DbLeaderboardEntry fullClone() {
-		return new DbLeaderboardEntry(this.userId, this.score, this.roundId);
+		return new DbLeaderboardEntry(this.userId, this.score, this.roundId, this.dateTime);
 	}
 	
 	public static boolean isValid(DbLeaderboardEntry e) {
