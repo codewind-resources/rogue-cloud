@@ -3,7 +3,7 @@
 
 This page is for developers who are interested in how Rogue Cloud is implemented, and/or want to add new features to the game (or, perhaps, even fix bugs!).
 
-For developers that only wish to play the game (which involves writing your own Rogue Cloud agent code), see [Getting Started](GettingStarted.md).
+If you only wish to play the game (which involves writing your own Rogue Cloud agent code), see [Getting Started](GettingStarted.md).
 
 
 ## First steps
