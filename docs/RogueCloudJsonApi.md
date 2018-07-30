@@ -1,6 +1,6 @@
 ## Introduction
 
-To enter a game round, an agent connects to the server on the client WebSocket URL `(server URL)/api/client`. The client sends a `ClientConnection` message, and the server replies. From that point on, the server will send the client 10 frame updates per second, which correspond to what is happening in the part of the world that the agent can see. Every 10 seconds, the client has the opportunity to send an action to the server, such as move, attack, pick up an item, and so no. 
+To enter a game round, an agent connects to the server on the client WebSocket URL `(server URL)/api/client`. The client sends a `ClientConnection` message, and the server replies. From that point on, the server will send the client 10 frame-updates-per-second, which correspond to what is happening in the part of the world that the agent can see. Every tenth-of-a-second, the client has the opportunity to send an action to the server, such as move, attack, pick up an item, and so on. 
 
 ## All messages between the client and server are JSON messages
 
