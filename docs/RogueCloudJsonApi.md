@@ -1,3 +1,7 @@
+## Introduction
+
+To enter a game round, an agent connects to the server on the client WebSocket URL `(server URL)/api/client`. The client sends a `ClientConnection` message, and the server replies. From that point on, the server will send the client 10 frame updates per second, which correspond to what is happening in the part of the world that the agent can see. Every 10 seconds, the client has the opportunity to send an action to the server, such as move, attack, pick up an item, and so no. 
+
 ## All messages between the client and server are JSON messages
 
 The contents and format of all JSON messages you see are based on the `Json*` Java classes. If the name of a Java class name begins with `Json`, then its main purpose is to be converted to/from JSON strings. Each of the fields of `Json*` Java classes correspond to a field in the JSON message that is sent between the server and the client.
@@ -30,8 +34,6 @@ In Java, conversion to and from JSON is performed using the Jackson library. Thi
 
 
 ## Communication between client and server during a traditional game round
-
-To enter a game round, an agent connects to the server on the client WebSocket URL `(server URL)/api/client`. The client sends a `ClientConnection` message, and the server replies. From that point on, the server will send the client 10 frame updates per second, which correspond to what is happening in the part of the world that the agent can see. Every 10 seconds, the client has the opportunity to send an action to the server, such as move, attack, pick up an item, and so no. 
 
 All messages between the client and server, including actions and frame updates, are JSON objects (see examples below).
 
