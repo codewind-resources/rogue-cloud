@@ -12,11 +12,11 @@ Start playing the game by visiting our docs:
 
 ## <a name="tech"></a> The Technology Behind the Game
 
-Rogue Cloud is built on **Open Liberty**, the premier platform for building Java cloud-native applications and microservices.
-  * Learn more about our latest and greatest [open source enterprise application server](https://openliberty.io/).
-
 Building microservices and cloud-native applications requires tools that lets developers rapidly develop and deploy applications to the cloud.
   * Learn more about **Microclimate**, our [container-based development tools driving end-to-end delivery and rapid iteration of Node/Java/Swift application development](https://microclimate-dev2ops.github.io/).
+
+Rogue Cloud is built on **Open Liberty**, the premier platform for building Java cloud-native applications and microservices.
+  * Learn more about our latest and greatest [open source enterprise application server](https://openliberty.io/).
 
 Rogue Cloud is designed to showcase the capabilities of our Kubernetes-based **IBM Cloud Private** and the public **IBM Cloud Kubernetes Service** services.
   * Learn more about deploying your containers to Kubernetes using the [IBM Cloud Private](https://www.ibm.com/cloud-computing/products/ibm-cloud-private/) and the [IBM Cloud Kubernetes Service](https://www.ibm.com/cloud/container-service) services.
