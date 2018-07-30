@@ -81,7 +81,7 @@ import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 
 /** 
- * Contains the current state of the world for the current round; the data in this class are used to provide up-to-date data on
+ * Contains the current state of the world for the current round; the data in this class are used to provide an up-to-date view of
  * the current world state to the IClient/RemoteClient interface of the player's AI code.
  *
  * The data in this class are predominantly updated by JsonFrameUpdates received from the server, which contains everything

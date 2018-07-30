@@ -196,7 +196,7 @@ public class ActiveWSClientSession {
 		@Override
 		public void run() {
 
-			log.info("AWSClientSessionSender started for "+session_synch, logContext);
+			log.info("ActiveWSClientSessionSender started for "+session_synch, logContext);
 			
 			try {
 				boolean continueLoop = true;
@@ -211,19 +211,8 @@ public class ActiveWSClientSession {
 				while(continueLoop) {
 					
 					if(roundScope.isRoundComplete()) {
-//						if(roundExpireTimeInNanos == -1) {
-////							ObjectMapper om = new ObjectMapper();
-////							if(type == Type.BROWSER) {
-////								b.sendText(om.writeValueAsString(new JsonRoundComplete()));	
-////							} else {
-////								b.sendBinary(CompressionUtils.compressToByteBuffer(om.writeValueAsString(new JsonRoundComplete())));								
-////							}
-////							log.interesting("Sending round complete to client", logContext);
-//							roundExpireTimeInNanos = System.nanoTime() + TimeUnit.NANOSECONDS.convert(2, TimeUnit.MINUTES);	
-//						} else if(System.nanoTime() > roundExpireTimeInNanos) {
-							log.interesting("Exiting loop on round expiration.", logContext);
-							continueLoop = false;
-//						}						
+						log.interesting("Exiting loop on round expiration.", logContext);
+						continueLoop = false;
 					}
 					
 					synchronized(stringsToSend_synch) {
@@ -266,7 +255,7 @@ public class ActiveWSClientSession {
 				t.printStackTrace();
 			
 			} finally {
-				log.info("AWSClientSessionSender ended for "+session_synch, logContext);
+				log.info("ActiveWSClientSessionSender ended for "+session_synch, logContext);
 				
 				ServerUtil.runInAnonymousThread( () -> {
 					try {
