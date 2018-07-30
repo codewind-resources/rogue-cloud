@@ -31,7 +31,8 @@ import com.roguecloud.creatures.ICreature;
  * For more information on building an advanced AI, consult the documentation on Github page.
  * You can also consult the implementation details of the SimpleAI class for an example of how to structure an agent implementation. 
  * 
- * To switch to using this class, change the 'StartAgentServlet.constructMyAI()' method to return an instance of this class. 
+ * To switch to running this class (rather than SimpleAI), change the 'StartAgentServlet.constructMyAI()' method 
+ * to return an instance of this class. 
  * 
  **/
 public class AdvancedAI extends RemoteClient {

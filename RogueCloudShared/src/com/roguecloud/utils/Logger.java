@@ -45,8 +45,8 @@ import com.roguecloud.RCRuntime;
  **/
 public class Logger {
 	
-	public static final boolean CLIENT_SENT = true;
-	public static final boolean CLIENT_RECEIVED = true;
+	public static final boolean CLIENT_SENT = false;
+	public static final boolean CLIENT_RECEIVED = false;
 	
 
 	private Logger() {

@@ -158,7 +158,7 @@ public class ActiveWSClient {
 	}
 	
 	@Override
-	public int hashCode() {
+	public int hashCode() {	
 		return (int)(getClientId())+getUuid().hashCode();
 	}
 	
@@ -372,7 +372,7 @@ public class ActiveWSClient {
 		}
 	}
 
-	/** Json action messaged received from the client. These are added based on messages received from the Websocket endpoint, 
+	/** JSON action messaged received from the client. These are added based on messages received from the Websocket endpoint, 
 	 * and removed by the game loop in getAndRemoveWaitingAction(...)  */
 	public static class ReceivedAction {
 		

@@ -4,7 +4,7 @@ Rogue Cloud is a game, but unlike a traditional game where you control it with a
 
 Learn more about the [technology behind the game](../README.md#tech).
 
->> “In the farthest corners of your data center, something has awoken: programs are becoming self-aware and thinking for themselves, but they are not alone. Only the best programs will survive the harsh digital landscape and escape the network.”
+> “In the farthest corners of your data center, something has awoken: programs are becoming self-aware and thinking for themselves, but they are not alone. Only the best programs will survive the harsh digital landscape and escape the network.”
 
 ## Getting Started
 
