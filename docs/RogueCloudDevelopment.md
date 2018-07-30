@@ -1,5 +1,5 @@
 
-## Developing Rogue Cloud: Adding new features to the game
+## Developing Rogue Cloud: How Rogue Cloud is implemented, and adding new features to the game
 
 This page is for developers who are interested in how Rogue Cloud is implemented, and/or want to add new features to the game (or, perhaps, even fix bugs!).
 
