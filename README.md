@@ -9,6 +9,9 @@ Start playing the game by visiting our docs:
 * [Introduction and Concepts](docs)
 * [Getting Started](docs/GettingStarted.md)
 
+Developer documentation for folks interesting in adding new features to the game:
+* [Introduction to Rogue Cloud Development](docs/RogueCloudDevelopment.md)
+
 
 ## <a name="tech"></a> The Technology Behind the Game
 
