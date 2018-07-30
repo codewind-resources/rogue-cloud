@@ -1,4 +1,3 @@
-
 ## Introduction
 
 Rogue Cloud is an open-world top-down 2D multiplayer game, but unlike a traditional game where you control it with a controller, keyboard, or mouse, with Rogue Cloud you are actually writing code to control your character as it interacts with vast, dangerous game world. Behind the scenes the code that you write is packaged into a websocket-based microservice, which like a traditional microservice, provides or supports a variety of cloud-native requirements.
@@ -9,7 +8,7 @@ Start playing the game by visiting our docs:
 * [Introduction and Concepts](docs)
 * [Getting Started](docs/GettingStarted.md)
 
-Developer documentation for folks interesting in adding new features to the game:
+Developer documentation for folks interested in how it's implemented, or adding new features to the game:
 * [Introduction to Rogue Cloud Development](docs/RogueCloudDevelopment.md)
 
 
