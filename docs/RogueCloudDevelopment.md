@@ -18,4 +18,4 @@ Once you've got that up and running, you can take a look at what role of [each t
 
 You can also look at the JSON WebSocket API docs, which describe the [JSON-based communication protocol between the client and the server](RogueCloudJsonApi.md).
 
-Next, check out the advanced documetation that goes into detail on how the [world state is communicated between the client and server](RogueCloudJsonWorldState.md).
+Next, check out the advanced documentation that goes into detail on how the [world state is communicated between the client and server](RogueCloudJsonWorldState.md).
