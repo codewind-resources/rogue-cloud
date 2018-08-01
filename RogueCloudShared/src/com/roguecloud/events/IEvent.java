@@ -44,11 +44,12 @@ public interface IEvent {
 	/** Which frame (also known as a tick) of the game did the event occur at? */
 	public long getFrame();
 	
-	/** Was the specified creature involed with this event? Returns true if the character was involed (attacked/defended/moved/etc), or false otherwise.  */
+	/** Was the specified creature involved with this event? Returns true if the character was actively involved (attacked/defended/moved/etc), or false otherwise. 
+	 * Thus it returns false if the event does not apply to the creature. */
 	public boolean isCreatureInvolved(ICreature creature);
 
 	/** Return all creatures involved in this event: for an attack event this is both the attacker/defender, while for other actions this will only
-	 * include the character that performed the action. */
+	 * include the character that performed the action (for example, for a move action, the character that moved). */
 	public ICreature[] getCreaturesInvolved();
 	
 }
