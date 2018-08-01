@@ -32,7 +32,6 @@ You can see above how the names of the Java fields correspond to the names of th
 In Java, conversion to and from JSON is performed using the Jackson library. This is performed using Jackson's `ObjectMapper` class, which you will see throughout the code. The primary methods we use from `ObjectMapper` are `readValue(...)` (convert a JSON string to Java) and `writeValueAsString(...)` (convert a Java object to JSON string).
 
 
-
 ## Communication between client and server during a traditional game round
 
 All messages between the client and server, including actions and frame updates, are JSON objects (see examples below).
@@ -66,7 +65,8 @@ server -> client: {"type":"JsonFrameUpdate","gameTicks":1,"frame":1,"selfState":
 - Events that occurred in the previous frame (did other characters move or attack? did they drink a potion? etc)
 - Any items (weapons, armour, potions) that are lying on the ground (which any character can pick up).
 
-The contents of this JSON message can be found in `JsonFrameUpdate.java`. See the "advanced" topic for more information about this object.
+The contents of this JSON message can be found in `JsonFrameUpdate.java`. See the [advanced world state topic for more information](RogueCloudJsonWorldState.md) about this object.
+
 
 #### UI Updates
 
