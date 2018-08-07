@@ -172,7 +172,7 @@ Here is an example of a weapon object, from the `worldState.weapons` field:
     "tile": 2449
   }
 ```
-The description of each of the fields above, and how they are used by the combat system, can be found in the Rogue Cloud documentation on Github, and in the `Combat.java` class.
+The description of each of the fields above, and how they are used by the combat system, can be found in the `Combat.java` class.
 
 Note that the above object does not have a world coordinate. This is because the world position of an object is contained in the `worldState.visibleObjects` field, like so:
 ```
