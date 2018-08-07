@@ -17,3 +17,5 @@ Here are instructions on how to [setup your Eclipse-based development environmen
 Once you've got that up and running, you can take a look at what role of [each the projects have, important classes in those projects, and websocket/http endpoints used in the game server and game client](RCDevArchitecture.md).
 
 You can also look at the JSON WebSocket API docs, which describe the [JSON-based communication protocol between the client and the server](RogueCloudJsonApi.md).
+
+Next, check out the advanced documentation that goes into detail on how the [world state is communicated between the client and server](RogueCloudJsonWorldState.md).

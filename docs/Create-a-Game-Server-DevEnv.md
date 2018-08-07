@@ -105,3 +105,7 @@ The projects should now import into your workspace, and there should be no error
 If you instead see an error (like an invalid username/password), correct the issue and then Stop and Start the server again.
 
 9. If you copy-paste the above URL into a browser, you can now watch your character play the game!
+
+### Next Steps
+
+After your environment has ben setup, return to the [Rogue Cloud Developer page](RogueCloudDevelopment.md) for the next steps.
