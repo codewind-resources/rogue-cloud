@@ -10,6 +10,8 @@ Learn more about the [technology behind the game](../README.md#tech).
 
 To run the Rogue Cloud game client on your local machine see [Rogue Cloud Getting Started](GettingStarted.md).
 
+For developers interested in how the game server is implemented, or that want to add new features to the game, visit the [Rogue Cloud Game Server documentation](RogueCloudDevelopment.md) page.
+
 ## Key Concepts
 
 Your character in the game world is referred to as an agent. Your agent is entirely controlled by the code that you write. What the agent sees around it is communicated to your code by the Rogue Cloud game server through JSON over Websockets, and the actions of your agent (move, attack, equip item, and so on) are communicated back to the server over the same channel.
