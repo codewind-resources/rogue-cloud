@@ -1,4 +1,4 @@
-### JsonWorldState: the main mechanism for communicating what's going on in the game world
+## JsonWorldState: the main mechanism for communicating what's going on in the game world
 
 The vast majority of the game world and its current state is communicated from the game server to the game client, using the `JsonWorldState` object. Within this JSON object is a description of a small part of the world: the player characters can't see the full game world, they can only see a small section of it.
 
