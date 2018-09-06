@@ -39,7 +39,7 @@ Where:
 
 * *Example*: `E = 1967, 90 / 105, 180 	Fence`
 
-You can combine tile number and rotation into a single layer, and still have multiple layers. In the above example there are multiple layers.
+You can combine tile number and rotation into a single layer, and still have multiple layers. In the above example there are two  layers: on top is tile 1967 rotated 90 degrees, and below that is tile 105 rotated 180 degrees. When this is rendered in game, the player will see exactly that.
 
 #### 5) Annotations: `@Bg` 	`@Passable` `@Door`
 
@@ -49,7 +49,7 @@ You can combine tile number and rotation into a single layer, and still have mul
 
 `@Bg` - Indicates that this tile replaces the background if a creature steps on it. Add this only if a tile is disappearing when a creature walks on it.
 
-####6) Special letters: `*`
+#### 6) Special letters: `*`
 
 The `*` letter is used to set the default background for a room. If the room text contains a space (eg " "), then it will have the background listed at the `*` character.
 
