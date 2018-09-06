@@ -9,8 +9,11 @@ Each room in the `rooms.txt` file begins with this:
 (Room name - this is the same as the room name in map-new-mappings.txt):
 ```
 
-
 ### Letter assignments:
+
+Letter assignments assign letters/number/symbols (eg ASCII characters) to specific tiles on the grid. So, for example, when you see A in the grid, it means there is a corresponding letter assignment that indicates what tiles should be displayed at that location on the grid. A simple assignment like `A = 1152 Fridge`, means that whenever you see A in the grid, tile 1152 is displayed (and if the user mouses over the tile it will say Fridge).
+
+**Letter assignments can come in different formats, listed here**:
 
 #### 1) `* = # Name`
 
@@ -19,7 +22,7 @@ Each room in the `rooms.txt` file begins with this:
 Where:
 * `*` = A single letter or symbol (example: a, b, 0, C, ., etc)
 * `#` = The tile number to display at this location (eg there should exist a file #.png, where # is the number)
-Name = This name will be displayed when the user mouses over the tile in the game UI (but otherwise is not used)
+* `Name` = This name will be displayed when the user mouses over the tile in the game UI (but otherwise is not used)
 
 #### 2) `* = #, %`
 
@@ -43,22 +46,21 @@ You can combine tile number and rotation into a single layer, and still have mul
 
 #### 5) Annotations: `@Bg` 	`@Passable` `@Door`
 
-`@Passable` - All tiles in the room are impassable by default; this means that monsters and creatures can't walk on them. This is true for walls and furniture, but shouldn't be true for floor tiles. For this reason, floor tiles (or other tiles that can be walked on) should be annotated with `@Passable`.
+`@Passable` - All tiles in a room are impassable by default; this means that monsters and creatures can't walk on them. This is true for walls and furniture, but shouldn't be true for floor tiles. For this reason, floor tiles (or other tiles that can be walked on) should be annotated with `@Passable`.
 
-`@Door` - Add this to doors tiles.
+`@Door` - Add this to tiles which are doors. Doors are passable by default.
 
 `@Bg` - Indicates that this tile replaces the background if a creature steps on it. Add this only if a tile is disappearing when a creature walks on it.
 
 #### 6) Special letters: `*`
 
-The `*` letter is used to set the default background for a room. If the room text contains a space (eg " "), then it will have the background listed at the `*` character.
+The `*` letter is used to set the default background for a room. If the room tile layout grid contains a space (eg " "), then it will have the background listed at the `*` character.
 
 #### 7) Special tile numbers: `-1`
 
-The `-1` tile number is used to indicate transparency. 
+The `-1` tile number is used to indicate transparency with whatever is underneath the room (for example, grass).  
 
-
-### Room tile layout
+### Room tile layout grid
 
 Each letter corresponds to a letter specified above. Each space on the grid is a tile in the world. 
 
