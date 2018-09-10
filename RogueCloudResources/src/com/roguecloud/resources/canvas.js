@@ -50,7 +50,11 @@ var globalState;
 {
 	{
 		globalState =  {};
-		globalState.dirtyRedraw = null;
+		
+		// globalState.dirtyRedraw = null;
+		
+		// True if he have drawn at least one frame to the screen, false otherwise. (Used for misc init) 
+		globalState.firstFrameDrawn = false;		
 		
 		globalState.viewType = viewType;
 		globalState.damageGradient = generateDamageGradient();
@@ -63,18 +67,18 @@ var globalState;
 
 		globalState.nextFrameId = -1;
 		
-		globalState.contextWidthSet = true /*false*/;
+//		globalState.contextWidthSet = true /*false*/;
 		
 		globalState.spriteSize = spriteSize;
 
-		// The tile (x,y) coords for the top-left hand side of the canvas
+		// The world (x,y) tile coords for the top-left-hand-side of the canvas
 		globalState.startX = null;
 		globalState.startY = null;
-		
-		// The world X coord of the top left hand tile, eg browser tile (0, 0) - from json property 'currWorldPosX' of browser update json
-		globalState.currWorldX = -1;
 
-		// The world Y coord of the top left hand tile - from json property 'currWorldPosY' of browser update json
+		
+		// The world (x, y) tile coords for the top-left-hand-side of the 80x40 agent data view 
+		// - from json property 'currWorldPosX/Y' of browser update json	
+		globalState.currWorldX = -1;
 		globalState.currWorldY = -1;
 
 
@@ -372,7 +376,7 @@ function disposeGlobalState() {
 	globalState.imageMap = {};
 	globalState.console = {};
 	globalState.dataArray = {};
-	globalState.dirtyRedraw = {};
+//	globalState.dirtyRedraw = {};
 	clearInterval(globalState.interval);
 	globalState.scaleCache = null;
 
@@ -403,11 +407,12 @@ function getFromDataMap(x, y, worldXSize, worldYSize) {
 
 
 function drawFrameNewer(param, skipdraw) {
-	var ctx = globalState.ctx;
 	
 	var spriteSize = globalState.spriteSize;	
 
 	// The tile (x,y) coords for the top-left hand side of the canvas
+	// - (startX, startY) differ from (currWorldPosX, currWorldPosY) as startX/Y uses a smaller rectangle based on sprite size, 
+	//   whereas currWorldPosX/Y uses (80, 40)
 	var startX = 0, startY = 0;	
 
 	// Width/height of the canvas in # of tiles, for example, 40x40
@@ -438,31 +443,12 @@ function drawFrameNewer(param, skipdraw) {
 		startY = param.currWorldPosY;
 	}
 
-	// Replace the primary context with a clean drawing of the world (without usernames/damage drawn)
-	if(!skipdraw && secondaryCtxDrawn) {
-		ctx.drawImage(secondaryCanvas, 0, 0);
-	}
-
 	if(skipdraw) {
 		console.log("skipping draw of "+param.frame);
 	}
-	
-	
-	var currRedrawManager = globalState.dirtyRedraw;
-	globalState.dirtyRedraw = new RedrawManager(spriteSize*5, spriteSize*5);
-	
-	if(currRedrawManager == null) {
 		
-		// First frame
-		currRedrawManager = new RedrawManager(spriteSize*5, spriteSize*5);
-		
-		// Draw the right 200 pixels as a different shade, to match the leaderboard panel
-		ctx.fillStyle="rgb(174, 223, 101)";
-		ctx.fillRect(0, 0, ctx.canvas.width-200, ctx.canvas.height);
-		ctx.fillStyle="#27782e";
-		ctx.fillRect(ctx.canvas.width-200, 0, ctx.canvas.width, ctx.canvas.height);
-		
-	}
+	var currRedrawManager = new RedrawManager(spriteSize*5, spriteSize*5);
+//	globalState.dirtyRedraw = currRedrawManager;
 		
 	if(param.currWorldPosX != globalState.currWorldX || param.currWorldPosY != globalState.currWorldY || globalState.currWorldX == null || globalState.currWorldY == null) {
 		currRedrawManager.flagPixelRect(0, 0, param.currViewWidth*spriteSize, param.currViewHeight*spriteSize);
@@ -472,12 +458,12 @@ function drawFrameNewer(param, skipdraw) {
 	// See BrowserWebSocketClientShared
 	var mapData = param.frameData;
 	
-	if(!globalState.contextWidthSet) {
-		// I think this whole block can be removed
-		ctx.canvas.width = window.innerWidth;
-		ctx.canvas.height = window.innerHeight;
-		globalState.contextWidthSet = true;
-	}
+//	if(!globalState.contextWidthSet) {
+//		// I think this whole block can be removed
+//		ctx.canvas.width = window.innerWidth;
+//		ctx.canvas.height = window.innerHeight;
+//		globalState.contextWidthSet = true;
+//	}
 
 	// For each updated tile on the map, update the dataMap with the latest contents
 	var numDelta = mapData.length;
@@ -534,119 +520,148 @@ function drawFrameNewer(param, skipdraw) {
 		}
 		
 	} // end deltaIndex for
-
+	
 	if(!skipdraw) {
+		drawFrameInner(actualWidth, actualHeight, startX, startY, param, skipdraw, currRedrawManager);
+	}
+	 
+	globalState.currWorldX = param.currWorldPosX;
+	globalState.currWorldY = param.currWorldPosY;
+	globalState.startX = startX;
+	globalState.startY = startY;
 
-		for(let x = 0; x < actualWidth; x++) {
-			for(let y = 0; y < actualHeight; y++) {
-				// For each tile in the view, check if it is dirty (and we thus we need to redraw it)
+}
+
+function drawFrameInner(actualWidth, actualHeight, startX, startY, param, skipdraw, currRedrawManager) {
+
+	var ctx = globalState.ctx;
+	
+	var spriteSize = globalState.spriteSize;	
+
+	// Replace the primary context with a clean drawing of the world (without usernames/damage drawn)
+	if(secondaryCtxDrawn) {
+		ctx.drawImage(secondaryCanvas, 0, 0);
+	}
+
+	if(!globalState.firstFrameDrawn) {
+		// Draw the right 200 pixels as a different shade, to match the leaderboard panel
+		ctx.fillStyle="rgb(174, 223, 101)";
+		ctx.fillRect(0, 0, ctx.canvas.width-200, ctx.canvas.height);
+		ctx.fillStyle="#27782e";
+		ctx.fillRect(ctx.canvas.width-200, 0, ctx.canvas.width, ctx.canvas.height);
+		
+		globalState.firstFrameDrawn = true;
+	} 
+		
+	for(let x = 0; x < actualWidth; x++) {
+		for(let y = 0; y < actualHeight; y++) {
+			// For each tile in the view, check if it is dirty (and we thus we need to redraw it)
+			
+			let redraw = currRedrawManager.getByPixel(x*spriteSize, y*spriteSize);
+			
+			if(redraw) {
+				let cachedTile = getFromDataMap(startX+x, startY+y, param.currViewWidth, param.currViewHeight);
 				
-				let redraw = currRedrawManager.getByPixel(x*spriteSize, y*spriteSize);
-				
-				if(redraw) {
-					let cachedTile = getFromDataMap(startX+x, startY+y, param.currViewWidth, param.currViewHeight);
-					
-					if(cachedTile != null) {
-						for(let layerIndex = cachedTile.length-1; layerIndex >= 0; layerIndex--) {
-							let layer = cachedTile[layerIndex];
-							
-							let img = globalState.imageMap.get(layer.num);
-							if(img != null) {
-								drawRotatedImage(ctx, img, x*spriteSize, y*spriteSize, layer.num,  layer.rot);
-							}							
-						}
+				if(cachedTile != null) {
+					for(let layerIndex = cachedTile.length-1; layerIndex >= 0; layerIndex--) {
+						let layer = cachedTile[layerIndex];
+						
+						let img = globalState.imageMap.get(layer.num);
+						if(img != null) {
+							drawRotatedImage(ctx, img, x*spriteSize, y*spriteSize, layer.num,  layer.rot);
+						}							
 					}
-					
 				}
+				
 			}
 		}
+	}
 
-		// Copy the up-to-date main canvas to th  secondary ctx
-		secondaryCtx.drawImage(myCanvas, 0, 0);
-		secondaryCtxDrawn = true;
+	// Copy the up-to-date main canvas to the secondary ctx
+	secondaryCtx.drawImage(myCanvas, 0, 0);
+	secondaryCtxDrawn = true;
 
-		// Now that we have a clean copy of the canvas stored in secondaryCtx, we are going to draw username/creature damage on the main canvas
-		for(let x = 0; x < param.creatures.length; x++) {
-			
-			let creature = param.creatures[x];
-			let percent = Math.max(0, creature.hp) / creature.maxHp;
-			
-			let posX = creature.position[0]-startX;
-			let posY = creature.position[1]-startY;
+	// Now that we have a clean copy of the canvas stored in secondaryCtx, we are going to draw username/creature damage on the main canvas
+	for(let x = 0; x < param.creatures.length; x++) {
+		
+		let creature = param.creatures[x];
+		let percent = Math.max(0, creature.hp) / creature.maxHp;
+		
+		let posX = creature.position[0]-startX;
+		let posY = creature.position[1]-startY;
 
-			if(posY >= actualHeight-2) {
-				continue;
-			}
+		if(posY >= actualHeight-2) {
+			continue;
+		}
+		
+		let percentIndex = Math.max( 0, Math.min(99, 100*percent));
+		
+		// Draw colour part of damage bar
+		ctx.fillStyle=globalState.damageGradient[Math.floor(percentIndex)]; 
+		ctx.fillRect(posX*spriteSize,(posY+1)*spriteSize+5,spriteSize*percent,4);
+		// globalState.dirtyRedraw.flagPixelRect(posX*spriteSize,(posY+1)*spriteSize+5,spriteSize*percent,4);
+		
+		// Draw grey part of damage bar
+		ctx.fillStyle="#666666";
+		ctx.fillRect(posX*spriteSize+spriteSize*percent,(posY+1)*spriteSize+5,spriteSize*(1-percent),4);
+		// globalState.dirtyRedraw.flagPixelRect(posX*spriteSize+spriteSize*percent,(posY+1)*spriteSize+5,spriteSize*(1-percent),4);
+		
+		// Draw username as white on black text
+		if(creature.username != null /*&& (globalState.viewType == "SERVER_VIEW_FOLLOW" || globalState.viewType == "CLIENT_VIEW")*/ ) {
 			
-			let percentIndex = Math.max( 0, Math.min(99, 100*percent));
+			ctx.font = globalState.viewType == "SERVER_VIEW_WORLD" ? '9px sans-serif' : '12px sans-serif';				
 			
-			// Draw colour part of damage bar
-			ctx.fillStyle=globalState.damageGradient[Math.floor(percentIndex)]; 
-			ctx.fillRect(posX*spriteSize,(posY+1)*spriteSize+5,spriteSize*percent,4);
-			// globalState.dirtyRedraw.flagPixelRect(posX*spriteSize,(posY+1)*spriteSize+5,spriteSize*percent,4);
+			let textSizeWidth = ctx.measureText(creature.username).width;
+			let textSizeHeight = ctx.measureText("M").width;
 			
-			// Draw grey part of damage bar
-			ctx.fillStyle="#666666";
-			ctx.fillRect(posX*spriteSize+spriteSize*percent,(posY+1)*spriteSize+5,spriteSize*(1-percent),4);
-			// globalState.dirtyRedraw.flagPixelRect(posX*spriteSize+spriteSize*percent,(posY+1)*spriteSize+5,spriteSize*(1-percent),4);
+			let yDelta = globalState.viewType == "SERVER_VIEW_WORLD" ? 10: 0;
 			
-			// Draw username as white on black text
-			if(creature.username != null /*&& (globalState.viewType == "SERVER_VIEW_FOLLOW" || globalState.viewType == "CLIENT_VIEW")*/ ) {
-				
-				ctx.font = globalState.viewType == "SERVER_VIEW_WORLD" ? '9px sans-serif' : '12px sans-serif';				
-				
-				let textSizeWidth = ctx.measureText(creature.username).width;
-				let textSizeHeight = ctx.measureText("M").width;
-				
-				let yDelta = globalState.viewType == "SERVER_VIEW_WORLD" ? 10: 0;
-				
-				let xPos = posX*(spriteSize) + Math.floor(spriteSize/2) - Math.floor(textSizeWidth/2)
-				
-				ctx.fillStyle="black";
-				ctx.fillRect(xPos, (posY+2)*(spriteSize)-textSizeHeight+2+yDelta, textSizeWidth+6, textSizeHeight+8);
-				// globalState.dirtyRedraw.flagPixelRect(xPos, (posY+2)*(spriteSize)-textSizeHeight+2+yDelta, textSizeWidth+6, textSizeHeight+8);
-				
-				
-				ctx.fillStyle="white";	
+			let xPos = posX*(spriteSize) + Math.floor(spriteSize/2) - Math.floor(textSizeWidth/2)
+			
+			ctx.fillStyle="black";
+			ctx.fillRect(xPos, (posY+2)*(spriteSize)-textSizeHeight+2+yDelta, textSizeWidth+6, textSizeHeight+8);
+			// globalState.dirtyRedraw.flagPixelRect(xPos, (posY+2)*(spriteSize)-textSizeHeight+2+yDelta, textSizeWidth+6, textSizeHeight+8);
+			
+			
+			ctx.fillStyle="white";	
 //				ctx.font = '12px sans-serif';				
-				ctx.fillText(creature.username, xPos+3, (posY+2)*spriteSize+4+yDelta);
-				
-			}
+			ctx.fillText(creature.username, xPos+3, (posY+2)*spriteSize+4+yDelta);
+			
+		}
 
-		}
+	}
+	
+	if(globalState.viewType == "SERVER_VIEW_FOLLOW") {
+		serverViewFollowPos = { x : param.currWorldPosX, y : param.currWorldPosY, w: param.currViewWidth, h: param.currViewHeight };
 		
-		if(globalState.viewType == "SERVER_VIEW_FOLLOW") {
-			serverViewFollowPos = { x : param.currWorldPosX, y : param.currWorldPosY, w: param.currViewWidth, h: param.currViewHeight };
-			
-		} else if(globalState.viewType == "SERVER_VIEW_WORLD") {
-			
-			// Blue rectangle 
-			if(serverViewFollowPos != null) {
-				
-				let lineWidth = 3;
-				ctx.beginPath();
-				ctx.lineWidth=""+lineWidth;
-				ctx.strokeStyle="#000099";
-				
-				let rectX = (serverViewFollowPos.x*spriteSize)-lineWidth;
-				let rectY = (serverViewFollowPos.y*spriteSize)-lineWidth;
-				
-				ctx.rect(rectX, rectY, serverViewFollowPos.w*spriteSize, serverViewFollowPos.h*spriteSize);
-				// globalState.dirtyRedraw.flagPixelRect( (rectX)-lineWidth, (rectY)-lineWidth, (serverViewFollowPos.w*spriteSize)+(lineWidth*2), (serverViewFollowPos.h*spriteSize)+(lineWidth*2) );
-				ctx.stroke();
-			}
-			  
-		}
+	} else if(globalState.viewType == "SERVER_VIEW_WORLD") {
 		
-		// Draw frame rate
-		ctx.fillStyle="white";	
-		ctx.font = '15px sans-serif';
-		ctx.fillText(param.frame, 20, 20);
-	} // end skip draw
+		// Blue rectangle 
+		if(serverViewFollowPos != null) {
+			
+			let lineWidth = 3;
+			ctx.beginPath();
+			ctx.lineWidth=""+lineWidth;
+			ctx.strokeStyle="#000099";
+			
+			let rectX = (serverViewFollowPos.x*spriteSize)-lineWidth;
+			let rectY = (serverViewFollowPos.y*spriteSize)-lineWidth;
+			
+			ctx.rect(rectX, rectY, serverViewFollowPos.w*spriteSize, serverViewFollowPos.h*spriteSize);
+			// globalState.dirtyRedraw.flagPixelRect( (rectX)-lineWidth, (rectY)-lineWidth, (serverViewFollowPos.w*spriteSize)+(lineWidth*2), (serverViewFollowPos.h*spriteSize)+(lineWidth*2) );
+			ctx.stroke();
+		}
+		  
+	}
+	
+	// Draw frame rate
+	ctx.fillStyle="white";	
+	ctx.font = '15px sans-serif';
+	ctx.fillText(param.frame, 20, 20);
 
 	
 	// Draw floating damage text
-	if(!skipdraw && globalState.entityList != null) {
+	if(globalState.entityList != null) {
 		
 		let fontSize = 20;
 		
@@ -687,9 +702,10 @@ function drawFrameNewer(param, skipdraw) {
 				c--;
 			}
 		}
-	} // end !skipdraw
+	} 
 	
-	if(!skipdraw && globalState.viewType == "SERVER_VIEW_WORLD") {
+	// In the world view, draw a black dividing line between the frames, in the centre of the screen.   
+	if(globalState.viewType == "SERVER_VIEW_WORLD") {
 	      ctx.beginPath();
 	      ctx.lineWidth=1;
 	      ctx.fillStyle="rgb(0, 0, 0)";
@@ -697,12 +713,7 @@ function drawFrameNewer(param, skipdraw) {
 	      ctx.lineTo(0, 2000);
 	      ctx.stroke();
 	}
-	
-	globalState.currWorldX = param.currWorldPosX;
-	globalState.currWorldY = param.currWorldPosY;
-	globalState.startX = startX;
-	globalState.startY = startY;
-	
+		
 } 
 	
 function loadSprite(src, id) {
