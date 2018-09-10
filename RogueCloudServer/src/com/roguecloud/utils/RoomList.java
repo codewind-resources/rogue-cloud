@@ -41,7 +41,7 @@ public class RoomList {
 	
 	public RoomList(LogContext lc) throws IOException {
 		
-		this(UniverseParserUtil.class.getClassLoader().getResourceAsStream("/universe/rooms.txt"), lc);
+		this(ServerUtil.getServerResource(UniverseParserUtil.class, "/universe/rooms.txt"), lc);		
 		
 	}
 	

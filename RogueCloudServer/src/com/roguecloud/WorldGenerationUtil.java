@@ -18,8 +18,6 @@ package com.roguecloud;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.roguecloud.map.DoorTerrain;
-import com.roguecloud.map.DoorTileProperty;
 import com.roguecloud.map.IMap;
 import com.roguecloud.map.IMutableMap;
 import com.roguecloud.map.ITerrain;
@@ -68,8 +66,6 @@ public class WorldGenerationUtil {
 		result.setHeight(r.getHeight());
 		result.setWidth(r.getWidth());
 		
-//		System.out.println("Drawing room: "+r.getName()+"  width: "+r.getWidth()+"  height: "+r.getHeight());
-		
 		if(validate) {
 			// Validate that the room can be placed.
 			for(int y = destY; y <= destX + r.getHeight(); y++) {
@@ -92,27 +88,6 @@ public class WorldGenerationUtil {
 			}
 		}
 
-//		for(int y = destY; y < destY + r.getHeight(); y++) {
-//			
-//			String str = "";
-//			for(int x = destX; x < destX + r.getWidth(); x++) {
-//
-//				int currX = x-destX;
-//				int currY = y-destY;
-//				
-//				GridItem gi;
-//				
-//				gi = r.getGrid()[ currX ][ currY  ];
-//				if(gi == null) { continue; }
-//				
-//				Assignment a = gi.getAssignment();
-//
-//				str += a.getLetter();
-//			}
-//			System.out.println(str);
-//		}
-		
-		
 		for(int y = destY; y < destY + r.getHeight(); y++) {
 			for(int x = destX; x < destX + r.getWidth(); x++) {
 
@@ -245,77 +220,6 @@ public class WorldGenerationUtil {
 		
 	}
 	
-//	private static void doThing(Assignment a, GridItem gi, ITerrain currTileBgTerrain, IMutableMap map) {
-//		ITerrain bgTerrain = null;
-//		{
-//			// If the assignment has a background tile, then use it
-//			if(a.getTilePair().length > 1) {
-//				TilePair bgTilePair = a.getTilePair()[1];
-////				bgTerrain = new ImmutablePassableTerrain(new TileType(bgAssignment.getTileNumber(), bgAssignment.getRotation()));
-//				if(bgTilePair.getTileNumber() == -1) {
-//					if(currTileBgTerrain != null) {
-//						bgTerrain = currTileBgTerrain;
-//					} else {
-//						// TOOD: SEVERE - log me.
-//					}
-//				} else {
-//					bgTerrain = new ImmutablePassableTerrain(new TileType(bgTilePair.getTileNumber(), bgTilePair.getRotation() ));	
-//				}
-//				
-//			} else {
-//				// Otherwise the assignment has no background tile, so use the default background.
-//				Assignment bgAssignment = gi.getBgAssignment();
-//				if(bgAssignment != null) {
-//					TilePair bgTilePair = bgAssignment.getTilePair()[0];
-//					if(bgTilePair.getTileNumber() == -1) {
-//						bgTerrain = currTileBgTerrain;
-//					} else {
-//						bgTerrain = new ImmutablePassableTerrain(new TileType(bgTilePair.getTileNumber(), bgTilePair.getRotation() ));	
-//					}
-//					
-//				}
-//			}
-//			
-//		}
-//		
-//		Tile newTile;
-//		TileType fgTileType = null;
-//		{
-//			TilePair fgTilePair = a.getTilePair()[0];
-//			if(fgTilePair.getTileNumber() == -1) {
-//				if(currTileBgTerrain != null) {
-//					// Set both the bg and fg to -1
-//					fgTileType = currTileBgTerrain.getTileType();
-//					bgTerrain = new ImmutablePassableTerrain(fgTileType);
-//				} else {
-//					log.severe("Background tile pair is null: " + a.getLetter()+" "+a.getName(), null);
-//				}
-//				
-//			} else {
-//				fgTileType = new TileType(fgTilePair.getTileNumber(), fgTilePair.getRotation());
-//			}
-//		}
-//		
-//		if(fgTileType != null) {
-//			
-//			if(a.getAnnotations().contains("Door")) {
-//				newTile = new Tile(true, new DoorTerrain(fgTileType, true), bgTerrain);
-//				newTile.getTilePropertiesForModification().add(new DoorTileProperty(false));
-//				
-//			} else if(a.getAnnotations().contains("Passable")) {
-//				newTile = new Tile(true, new ImmutablePassableTerrain(fgTileType), bgTerrain);
-//				
-//			} else {
-//				newTile = new Tile(false, new ImmutableImpassableTerrain(fgTileType), bgTerrain);
-//			}
-//									
-//			map.putTile(p, newTile);
-//			
-//		}
-//
-//	}
-//	
-
 	public static void drawBox(IMutableMap m, Tile topHorizTile, Tile botHorizTile, 
 			Tile topVertTile, Tile botVertTile, int startX, int startY, int width, int height) {
 		

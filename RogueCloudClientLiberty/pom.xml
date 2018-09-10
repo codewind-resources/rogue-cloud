@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>RogueCloudClientLiberty</groupId>
+	<groupId>RogueCloud</groupId>
 	<artifactId>RogueCloudClientLiberty</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
@@ -27,19 +27,19 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>RogueCloudClient</groupId>
+			<groupId>RogueCloud</groupId>
 			<artifactId>RogueCloudClient</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
-			<groupId>RogueCloudShared</groupId>
+			<groupId>RogueCloud</groupId>
 			<artifactId>RogueCloudShared</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
-			<groupId>RogueCloudResources</groupId>
+			<groupId>RogueCloud</groupId>
 			<artifactId>RogueCloudResources</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>

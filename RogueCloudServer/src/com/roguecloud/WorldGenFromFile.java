@@ -40,6 +40,8 @@ import com.roguecloud.utils.RCUtils;
 import com.roguecloud.utils.RoomList;
 import com.roguecloud.utils.RoomList.Room;
 import com.roguecloud.utils.SimpleMap;
+import com.roguecloud.utils.WorldGenFileMappings;
+import com.roguecloud.utils.WorldGenFileMappings.WorldGenFileMappingEntry;
 
 /** 
  * Generates a new map object (world) using the contents of a world text file. The world text file is generated
@@ -54,7 +56,7 @@ public class WorldGenFromFile {
 	
 	private static final Logger log = Logger.getInstance();
 	
-	public static WorldGenFromFileResult generateMapFromInputStream(RoomList roomList, InputStream mapContentsStream) throws IOException {
+	public static WorldGenFromFileResult generateMapFromInputStream(RoomList roomList, InputStream mapContentsStream, WorldGenFileMappings mappings) throws IOException {
 
 		List<String> fileContents = RCUtils.readIntoStringListAndClose(mapContentsStream);
 		
@@ -87,13 +89,13 @@ public class WorldGenFromFile {
 				y++;
 			}
 		}
-		
 
-		Map<String /*char*/, Entry.Type> mapping = new HashMap<>();
+		WorldGenFileMappingEntry roadMappingEntry = mappings.getByLetter("r");
+		if(roadMappingEntry == null) { throw new RuntimeException("Could not find road tile in mappings."); }
+
+		WorldGenFileMappingEntry waterEntry = mappings.getByLetter("w");
+		if(waterEntry == null) { throw new RuntimeException("Could not find water tile in mappings."); }
 		
-		Arrays.asList(Entry.Type.values()).forEach( e -> {
-			mapping.put(e.letter, e);
-		});
 		
 		// Convert the file contents to a map of Entry
 		SimpleMap<Entry> eMap = new SimpleMap<>(charMap.getXSize(), charMap.getYSize());
@@ -105,12 +107,13 @@ public class WorldGenFromFile {
 					
 					String ch = charMap.getTile(x, y);
 					if(ch.equals("r")) {
-						e = new Entry(Entry.Type.ROAD);
+						e = new Entry(roadMappingEntry);
 					} else if(ch.equals("w")) {
-						e = new Entry(Entry.Type.WATER);
+						e = new Entry(waterEntry);
 					
-					} else if(mapping.keySet().contains(ch)) {
-						Entry.Type t = mapping.get(ch);
+					} else if(mappings.getByLetter(ch) != null) {
+
+						WorldGenFileMappingEntry t = mappings.getByLetter(ch);
 						
 						String east = charMap.getTile(x+1, y);
 						String south = charMap.getTile(x, y+1);
@@ -175,13 +178,15 @@ public class WorldGenFromFile {
 						if(aMap.getTile(x, y) == null) {
 							t = new Tile(true, grass_75);	
 						}
-					} else if(e.type == Entry.Type.ROAD) {
+					} else if(e.getMapping() == roadMappingEntry) {
 						t = new Tile(true, road);
-					} else if(e.type == Entry.Type.WATER) {
+					} else if(e.getMapping() == waterEntry) {
 						/* ignore */
 					} else {
-						Room r = roomList.getRoomByName(e.type.name);
-						drawRoomResult = WorldGenerationUtil.drawRoom(r, x, y, e.type.rotation, aMap, false);
+						WorldGenFileMappingEntry entry = e.getMapping();
+						Room r = roomList.getRoomByName(entry.getRoomName());
+						if(r == null) { throw new RuntimeException("Unable to find room: "+entry.getLetter()+" "+entry.getColour()+" "+entry.getRoomName()); }
+						drawRoomResult = WorldGenerationUtil.drawRoom(r, x, y, 0, aMap, false);
 					}
 
 					if(t != null) {
@@ -215,14 +220,14 @@ public class WorldGenFromFile {
 				for(int x = 0; x < charMap.getXSize(); x++) {
 					Entry e = eMap.getTile(x, y);
 					
-					if(e != null && e.type == Entry.Type.WATER) {
+					if(e != null && e.getMapping() == waterEntry) {
 						
 						boolean north = isValidWaterTile(x, y-1, eMap);
 						boolean south= isValidWaterTile(x, y+1, eMap);
 						boolean west = isValidWaterTile(x-1, y, eMap);
 						boolean east = isValidWaterTile(x+1, y, eMap);
 
-						Integer tileNum = null;
+						TileType tileType = null;
 						
 						// NSWE
 						// 0000 = none -> not supported
@@ -231,23 +236,23 @@ public class WorldGenFromFile {
 						// 0011 = east, west -> not supported
 						// 0100 = north -> not supported
 						// 0101 = south, east -> 1
-						if(!north && south && !west && east ) { tileNum = 230; }
+						if(!north && south && !west && east ) { tileType = TileTypeList.WATER_1_SE; } // WATER_SE
 						// 0110 = south, west -> 3
-						if(!north && south && west && !east) { tileNum = 232; }
+						if(!north && south && west && !east) { tileType = TileTypeList.WATER_3_SW; } // WATER_SW
 						// 0111 = south, west, east -> 2
-						if(!north && south && west && east) { tileNum = 231; }
+						if(!north && south && west && east) { tileType = TileTypeList.WATER_2_S; } // WATER_S
 						// 1000 = north -> not supported
 						// 1001 = north, east ->  7
-						if(north && !south && !west && east) { tileNum = 236; }
+						if(north && !south && !west && east) { tileType = TileTypeList.WATER_7_NE; } // WATER_NE
 						// 1010 = north, west ->  9
-						if(north && !south && west && !east) { tileNum  = 238; }
+						if(north && !south && west && !east) { tileType  = TileTypeList.WATER_9_NW; } // WATER_NW
 						// 1011 = north, west, east -> 8
-						if(north && !south && west && east) { tileNum = 237; }
+						if(north && !south && west && east) { tileType = TileTypeList.WATER_8_N; } // WATER_N
 						// 1100 = noth, south -> not supported
 						// 1101 = north, south, east -> 4
-						if(north && south && !west && east) { tileNum = 233; }
+						if(north && south && !west && east) { tileType = TileTypeList.WATER_4_E; } // WATER_E
 						// 1110 = north, south, west -> 6
-						if(north && south && west && !east) { tileNum = 235; }
+						if(north && south && west && !east) { tileType = TileTypeList.WATER_6_W; } // WATER_W
 						// 1111 = north, south, east, west -> 5
 						if(north && south && east && west) {
 							
@@ -260,22 +265,21 @@ public class WorldGenFromFile {
 							
 							if(count == 3) {
 								if(!ne) {
-									tileNum = 246;
+									tileType = TileTypeList.ISLAND_7_NE;
 								} else if(!se) {
-									tileNum = 240;
+									tileType = TileTypeList.ISLAND_1_SE;
 								} else if(!nw) {
-									tileNum = 248;
+									tileType = TileTypeList.ISLAND_9_NW;
 								} else  { // sw
-									tileNum = 242;
+									tileType = TileTypeList.ISLAND_3_SW;
 								}								
 							} else {
-								tileNum = 234;	
+								tileType = TileTypeList.WATER_5_ALL;	
 							}
 						}
 						
-						if(tileNum != null) {
-							// TODO: EASY - Add this to tile list
-							Tile t = new Tile(false, new ImmutableImpassableTerrain(new TileType(tileNum, 0)));
+						if(tileType != null) {
+							Tile t = new Tile(false, new ImmutableImpassableTerrain(tileType));
 							aMap.putTile(x, y, t);
 						}
 						
@@ -384,7 +388,10 @@ public class WorldGenFromFile {
 		
 		Entry e = eMap.getTile(x, y);
 		if(e == null) { return false; }
-		return e.type == Entry.Type.WATER;
+		
+		String letter = e.getMapping().getLetter();
+		
+		return letter != null && letter.equals("w");
 		
 	}
 	
@@ -507,51 +514,17 @@ public class WorldGenFromFile {
 	/** Each alphanumeric character in the world file corresponds to a specific type of room (or other structure). */
 	private static class Entry {
 		
-		private static final String SMALL_HOUSE_NW = "New House NW";
-		private static final String SMALL_HOUSE_SE = "New House SE";
-
-		/** Each alphanumeric character in the world file corresponds to a specific type of room (or other structure). */
-		public static enum Type { 
-			ROAD("r", null), 
-			SMALL_HOUSE_SOUTH_DOOR("a", SMALL_HOUSE_SE, 0), 
-			SMALL_HOUSE_WEST_DOOR("b", SMALL_HOUSE_NW, 0), 
-			SMALL_HOUSE_EAST_DOOR("c", SMALL_HOUSE_SE), 
-			SMALL_HOUSE_NORTH_DOOR("d", SMALL_HOUSE_NW, 0), 
-			BASKETBALL_COURT("e", "Basketball Court"), 
-			LIBRARY("f", "Library"),
-			GRAVEYARD("g", "Graveyard"),
-			GAS_STATION("h", "Gas Station"),
-			WATER("w", null)
-			;
+		private final WorldGenFileMappingEntry wfgm;
+		
+		public Entry(WorldGenFileMappingEntry wfgm) {
+			this.wfgm = wfgm;
 			
-			final String letter;
-			final String name;
-			final int rotation;
-			
-			Type(String str, String name) {
-				this.letter = str;
-				this.name = name;
-				this.rotation = 0;
-			}
-			
-			Type(String str, String name, int rotation) {
-				this.letter = str;
-				this.name = name;
-				this.rotation = rotation;
-			}
-
 		}
 		
-		final Type type;
-		
-		public Entry(Type type) {
-			this.type = type;
+		public WorldGenFileMappingEntry getMapping() {
+			return wfgm;
 		}
-		
-		@Override
-		public String toString() {
-			return type.letter;
-		}
+			
 	}
 	
 }

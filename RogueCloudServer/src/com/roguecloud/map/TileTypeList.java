@@ -89,25 +89,25 @@ public class TileTypeList {
 	public static final TileType SHRUB_5 = new TileType(2197, 0, "Shrub");
 	public static final TileType SHRUB_6 = new TileType(2175, 0, "Shrub");
 	
-	public static final TileType WATER_1 = new TileType(230);
-	public static final TileType WATER_2 = new TileType(231);
-	public static final TileType WATER_3 = new TileType(232);
-	public static final TileType WATER_4 = new TileType(233);
-	public static final TileType WATER_5 = new TileType(234);
-	public static final TileType WATER_6 = new TileType(235);
-	public static final TileType WATER_7 = new TileType(236);
-	public static final TileType WATER_8 = new TileType(237);
-	public static final TileType WATER_9 = new TileType(238);
+	public static final TileType WATER_1_SE = new TileType(230);
+	public static final TileType WATER_2_S = new TileType(231);
+	public static final TileType WATER_3_SW = new TileType(232);
+	public static final TileType WATER_4_E = new TileType(233);
+	public static final TileType WATER_5_ALL = new TileType(234);
+	public static final TileType WATER_6_W = new TileType(235);
+	public static final TileType WATER_7_NE = new TileType(236);
+	public static final TileType WATER_8_N = new TileType(237);
+	public static final TileType WATER_9_NW = new TileType(238);
 	
-	public static final TileType ISLAND_1 = new TileType(240);
+	public static final TileType ISLAND_1_SE = new TileType(240);
 	public static final TileType ISLAND_2 = new TileType(241);
-	public static final TileType ISLAND_3 = new TileType(242);
+	public static final TileType ISLAND_3_SW = new TileType(242);
 	public static final TileType ISLAND_4 = new TileType(243);
 	public static final TileType ISLAND_5 = new TileType(244);
 	public static final TileType ISLAND_6 = new TileType(245);
-	public static final TileType ISLAND_7 = new TileType(246);
+	public static final TileType ISLAND_7_NE = new TileType(246);
 	public static final TileType ISLAND_8 = new TileType(247);
-	public static final TileType ISLAND_9 = new TileType(248);
+	public static final TileType ISLAND_9_NW = new TileType(248);
 	
 	public static final TileType COBBLESTONE_310 = new TileType(310);
 	public static final TileType COBBLESTONE_311 = new TileType(311);
@@ -120,7 +120,6 @@ public class TileTypeList {
 	public static final TileType COBBLESTONE_318 = new TileType(318);
 	public static final TileType COBBLESTONE_319 = new TileType(319);
 
-	// TODO: EASY - Decide what to do with this.
 	public static final TileType[] ALL_COBBLESTONE = new TileType[] {
 //			COBBLESTONE_310, 
 //			COBBLESTONE_311, 

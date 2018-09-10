@@ -62,7 +62,6 @@ public final class Tile {
 	private boolean isPresentlyPassable = true;
 	
 	public Tile(boolean presentlyPassable, List<ITerrain> terrain) { 
-		// TODO: Make sure no one else alters the terrain list after passing to us.
 		
 		if(terrain == null) { throw new IllegalArgumentException("Terrain list must not be null."); };
 		
@@ -300,7 +299,7 @@ public final class Tile {
 	
 	
 
-	// TODO: Create a player-only interface for tile, BUT only use it in the client code
+	// TODO: LOW - Create a player-only interface for tile, BUT only use it in the client code
 	
 	@SuppressWarnings("unused")
 	private Tile fullClone() {

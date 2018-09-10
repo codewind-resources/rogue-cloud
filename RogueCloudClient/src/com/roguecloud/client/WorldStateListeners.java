@@ -44,7 +44,7 @@ public class WorldStateListeners {
 		return instance;
 	}
 	
-	// TODO: We're not removing WorldStateListeners.
+	// TODO: CURR - We're not removing WorldStateListeners.
 	
 	// ------------------------------
 	

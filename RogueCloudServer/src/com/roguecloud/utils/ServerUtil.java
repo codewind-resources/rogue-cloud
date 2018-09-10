@@ -16,6 +16,10 @@
 
 package com.roguecloud.utils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -148,5 +152,34 @@ public class ServerUtil {
 		t.setName(r.getClass().getName());
 		t.setDaemon(true);
 		t.start();		
+	}
+	
+	
+	public static InputStream getServerResource(Class<?> c, String resourcePath) {
+		InputStream inputStream = c.getClassLoader().getResourceAsStream(resourcePath);
+		
+		// If we are running outside of Liberty, we need to cheat and use the user.dir to find the resources.
+		if(inputStream == null) {
+			File newFile = new File(System.getProperty("user.dir"));
+			newFile = new File(newFile.getParentFile(), "RogueCloudServer/WebContent"+resourcePath);
+			
+			if(!newFile.exists()) {
+				
+				// Here we assume we are running from the target/ directory of one of the other projects
+				newFile = new File(System.getProperty("user.dir"));
+				newFile = new File(newFile.getParentFile(), "../RogueCloudServer/WebContent"+resourcePath);
+				
+			}
+			
+			if(newFile.exists()) {
+				try {
+					inputStream = new FileInputStream(newFile);
+				} catch (FileNotFoundException e) {
+					throw new RuntimeException(e); // Convert to unchecked
+				}
+			}
+		}
+
+		return inputStream;
 	}
 }

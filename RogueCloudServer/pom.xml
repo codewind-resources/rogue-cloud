@@ -27,13 +27,13 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>RogueCloudShared</groupId>
+			<groupId>RogueCloud</groupId>
 			<artifactId>RogueCloudShared</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
-			<groupId>RogueCloudResources</groupId>
+			<groupId>RogueCloud</groupId>
 			<artifactId>RogueCloudResources</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
@@ -119,6 +119,7 @@
 							<directory>WebContent</directory>
 						</resource>
 					</webResources>
+					<attachClasses>true</attachClasses>					
 				</configuration>
 			</plugin>
 			<!-- Plugin to run unit tests -->
@@ -236,7 +237,7 @@
 							</goals>
 						</execution>
 					</executions>
-				</plugin>
+				</plugin>				
 			</plugins>
 		</pluginManagement>
 	</build>

@@ -19,7 +19,7 @@ package com.roguecloud.map;
 /** For internal use */
 public class DoorTerrain implements ITerrain {
 	
-	// TODO: LOW - Remove this class once it's replacement is in place.
+	// TODO: LOW - Remove this class once its replacement is in place.
 	
 	private final TileType tileType;
 	

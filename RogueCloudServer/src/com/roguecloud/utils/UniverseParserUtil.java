@@ -21,15 +21,13 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.roguecloud.utils.RCUtils;
-
 /** A utility class for parsing the monsters.txt, armour.txt, and weapons.txt files, all of which share a simple file format. */
 public class UniverseParserUtil {
 	
 	public static void parseItemFile(ItemParserHandler handler, String resourceUrl) throws IOException {
-		
-		InputStream inputStream = UniverseParserUtil.class.getClassLoader().getResourceAsStream(resourceUrl);
-		
+	
+		InputStream inputStream = ServerUtil.getServerResource(UniverseParserUtil.class, resourceUrl);
+						
 		String[] arr = RCUtils.readIntoString(inputStream).split("\\r?\\n");
 		
 		String currType = null;

@@ -24,7 +24,9 @@ import com.roguecloud.map.Tile;
 import com.roguecloud.utils.Logger;
 
 /** 
- * Utility methods and constants which are used to enable various DEBUG checks throughout the codebase.
+ * Utility methods and constants which are used to enable various DEBUG checks throughout the codebase. 
+ * 
+ * Many of these default to false, as they are computationally expensive when running in production.
  * 
  * This class is an internal class, for server use only. 
  */
