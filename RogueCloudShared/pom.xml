@@ -30,11 +30,11 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<parent>
 		<groupId>RogueCloud</groupId>
 		<artifactId>RogueCloudClientLibertyMaven</artifactId>
 		<version>1.0</version>
 	</parent>
-	
+
 </project>

@@ -8,7 +8,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
-	<!-- <parent> <groupId>net.wasdev.wlp.maven.parent</groupId> <artifactId>liberty-maven-app-parent</artifactId> 
+	<!-- <parent> <groupId>net.wasdev.wlp.maven.parent</groupId> <artifactId>liberty-maven-app-parent</artifactId>
 		<version>2.1.1</version> </parent> -->
 
 	<properties>
@@ -18,8 +18,8 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<app.name>RogueCloudServer</app.name>
-		<testServerHttpPort>29080</testServerHttpPort>
-		<testServerHttpsPort>29443</testServerHttpsPort>
+		<testServerHttpPort>80</testServerHttpPort>
+		<testServerHttpsPort>443</testServerHttpsPort>
 		<warContext>${app.name}</warContext>
 		<package.file>${project.build.directory}/${project.artifactId}-${project.version}.zip</package.file>
 		<packaging.type>usr</packaging.type>
@@ -71,9 +71,9 @@
 
 
 
-		<!-- <dependency> <groupId>com.ibm.websphere.appserver.api</groupId> <artifactId>com.ibm.websphere.appserver.api.servlet</artifactId> 
-			<version>1.1.18</version> <scope>provided</scope> </dependency> <dependency> 
-			<groupId>com.ibm.websphere.appserver.api</groupId> <artifactId>com.ibm.websphere.appserver.api.jaxrs20</artifactId> 
+		<!-- <dependency> <groupId>com.ibm.websphere.appserver.api</groupId> <artifactId>com.ibm.websphere.appserver.api.servlet</artifactId>
+			<version>1.1.18</version> <scope>provided</scope> </dependency> <dependency>
+			<groupId>com.ibm.websphere.appserver.api</groupId> <artifactId>com.ibm.websphere.appserver.api.jaxrs20</artifactId>
 			<version>1.0.18</version> <scope>provided</scope> </dependency> -->
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
@@ -122,9 +122,9 @@
 				</configuration>
 			</plugin>
 			<!-- Plugin to run unit tests -->
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-surefire-plugin</artifactId> 
-				<version>2.18.1</version> <executions> <execution> <phase>test</phase> <id>default-test</id> 
-				<configuration> <excludes> <exclude>**/it/**</exclude> </excludes> <reportsDirectory>${project.build.directory}/test-reports/unit</reportsDirectory> 
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-surefire-plugin</artifactId>
+				<version>2.18.1</version> <executions> <execution> <phase>test</phase> <id>default-test</id>
+				<configuration> <excludes> <exclude>**/it/**</exclude> </excludes> <reportsDirectory>${project.build.directory}/test-reports/unit</reportsDirectory>
 				</configuration> </execution> </executions> </plugin> -->
 			<!-- Enable liberty-maven plugin -->
 			<plugin>
@@ -145,8 +145,8 @@
 					<include>${packaging.type}</include>
 					<bootstrapProperties>
 						<app.location>${project.artifactId}-${project.version}.war</app.location>
-						<default.http.port>${testServerHttpPort}</default.http.port>
-						<default.https.port>${testServerHttpsPort}</default.https.port>
+						<default.http.port>80</default.http.port>
+						<default.https.port>443</default.https.port>
 					</bootstrapProperties>
 					<looseApplication>false</looseApplication>
 				</configuration>
@@ -167,15 +167,15 @@
 				</executions>
 			</plugin>
 			<!-- Plugin to run functional tests -->
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-failsafe-plugin</artifactId> 
-				<version>2.18.1</version> <executions> <execution> <phase>integration-test</phase> 
-				<id>integration-test</id> <goals> <goal>integration-test</goal> </goals> 
-				<configuration> <includes> <include>**/it/**</include> </includes> <systemPropertyVariables> 
-				<liberty.test.port>${testServerHttpPort}</liberty.test.port> <war.context>${warContext}</war.context> 
-				</systemPropertyVariables> </configuration> </execution> <execution> <id>verify-results</id> 
-				<goals> <goal>verify</goal> </goals> </execution> </executions> <configuration> 
-				<summaryFile>${project.build.directory}/test-reports/it/failsafe-summary.xml</summaryFile> 
-				<reportsDirectory>${project.build.directory}/test-reports/it</reportsDirectory> 
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.18.1</version> <executions> <execution> <phase>integration-test</phase>
+				<id>integration-test</id> <goals> <goal>integration-test</goal> </goals>
+				<configuration> <includes> <include>**/it/**</include> </includes> <systemPropertyVariables>
+				<liberty.test.port>${testServerHttpPort}</liberty.test.port> <war.context>${warContext}</war.context>
+				</systemPropertyVariables> </configuration> </execution> <execution> <id>verify-results</id>
+				<goals> <goal>verify</goal> </goals> </execution> </executions> <configuration>
+				<summaryFile>${project.build.directory}/test-reports/it/failsafe-summary.xml</summaryFile>
+				<reportsDirectory>${project.build.directory}/test-reports/it</reportsDirectory>
 				</configuration> </plugin> -->
 		</plugins>
 		<pluginManagement>
