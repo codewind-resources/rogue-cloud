@@ -11,9 +11,9 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: http
+      targetPort: 9443
       protocol: TCP
-      name: http
+      name: https
   selector:
     app: {{ template "rogue-cloud-server.name" . }}
     release: {{ .Release.Name }}

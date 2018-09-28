@@ -10,11 +10,12 @@ COPY RogueCloudShared src/RogueCloudShared
 COPY RogueCloudServer src/RogueCloudServer
 COPY pom.xml src/
 COPY .mvn src/
+RUN apt-get remove openjdk-8-jdk -y
 
 RUN ls src
 RUN cd src/ && JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/ mvn  package
-RUN cp -rf src/RogueCloudServer/target/liberty/wlp/usr/servers/defaultServer /config/
-RUN apt-get remove openjdk-8-jdk -y
+RUN cp -rf src/RogueCloudServer/target/liberty/wlp/usr/servers/defaultServer/* /config/
+RUN find /config/
 # # Upgrade to production license if URL to JAR provided
 RUN rm -rf src
 ARG LICENSE_JAR_URL

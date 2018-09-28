@@ -28,11 +28,11 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            -name: roguecloud
-             value: "/rougecloud"
+            - name: roguecloud
+              value: "/rougecloud"
           ports:
             - name: https
-              containerPort: 443
+              containerPort: 9443
               protocol: TCP
           volumeMounts:
           - mountPath: "/rougecloud"

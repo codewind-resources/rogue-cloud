@@ -20,12 +20,15 @@ ingress:
     # kubernetes.io/tls-acme: "true"
   path: /{{ .Release.Name }}/
   hosts:
-    - chart-example.local
-  tls: []
+    - apim.px-chrisp1.apicww.cloud
+  tls: 
+    - hosts:
+      - apim.px-chrisp1.apicww.cloud
+      secretName: mgmt-platform-api-tls-c0e01e2980c081eb329284f6978abefd33bd14f891eb27a6b661f07e517c8a7c
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
-storageclass: standard
+storageclass: local-storage 
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
