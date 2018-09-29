@@ -3,11 +3,7 @@ items:
 - apiVersion: v1
   kind: PersistentVolume
   metadata:
-    name: rc-local-pv
-    namespace: ""
-    resourceVersion: "1565"
-    selfLink: /api/v1/persistentvolumes/rc-local-pv
-    uid: 1106cb9b-ba9f-11e8-af74-005056871190
+    name: {{ .Release.Name }}-local-pv
   spec:
     accessModes:
     - ReadWriteOnce
@@ -16,7 +12,8 @@ items:
     claimRef:
       apiVersion: v1
       kind: PersistentVolumeClaim
-      name: misty-narwhal-pv-claim
+      name: {{ .Release.Name }}-pv-claim
+      namespace: default
     local:
       path: /apic
     nodeAffinity:
