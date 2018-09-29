@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: cminion/roguecloud
+  repository: icp-console-1e40804c8562e53c.elb.eu-west-2.amazonaws.com:8500/ibmcom/roguecloud
   tag: 0.01
   pullPolicy: IfNotPresent
 
@@ -20,11 +20,11 @@ ingress:
     # kubernetes.io/tls-acme: "true"
   path: /
   hosts:
-    - gwd.px-chrisp1.apicww.cloud
+    - icp-proxy-e8fec2e1a779a9ef.elb.eu-west-2.amazonaws.com
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
-storageclass: local-storage 
+storageclass: standard
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
