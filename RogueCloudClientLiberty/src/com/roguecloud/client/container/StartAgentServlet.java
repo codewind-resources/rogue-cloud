@@ -63,8 +63,8 @@ public class StartAgentServlet extends HttpServlet {
 	// Specify your username and password. These will be automatically registered when you first connect
 	// to the game server.
 
-	public static final String USERNAME = "LittleMan";
-	public static final String PASSWORD = "cminiontest";
+	public static final String USERNAME = "UnknownUser";
+	public static final String PASSWORD = "Test";
 
 	private static RemoteClient constructMyAI() {
 		return new SimpleAI();
@@ -73,10 +73,9 @@ public class StartAgentServlet extends HttpServlet {
 
 	// ----------------------------------------------------
 
-	// public static final String SERVER_HOST_AND_PATH_NON_URL = "roguecloud.space:29080/RogueCloudServer";
-	// public static final String SERVER_HOST_AND_PATH_NON_URL = "icp-proxy-e8fec2e1a779a9ef.elb.eu-west-2.amazonaws.com/RogueCloudServer";
 
-	public static final String SERVER_HOST_AND_PATH_NON_URL = "swatrg.cminion.cf/RogueCloudServer";
+	public static final String SERVER_HOST_AND_PATH_NON_URL = "roguecloud.space:29080/RogueCloudServer";
+	
 //	public static final String SERVER_HOST_AND_PATH_NON_URL = "localhost:29080/RogueCloudServer";
 
 	public static final String SERVER_URL = "http://"+SERVER_HOST_AND_PATH_NON_URL;

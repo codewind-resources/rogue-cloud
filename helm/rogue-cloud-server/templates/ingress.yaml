@@ -10,8 +10,9 @@ metadata:
     chart: {{ template "rogue-cloud-server.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-{{- with .Values.ingress.annotations }}
   annotations:
+    nginx.org/websocket-services: "{{ $fullName }}"
+{{- with .Values.ingress.annotations }}
 {{ toYaml . | indent 4 }}
 {{- end }}
 spec:
@@ -33,6 +34,6 @@ spec:
           - path: {{ $ingressPath }}
             backend:
               serviceName: {{ $fullName }}
-              servicePort: http
+              servicePort: https
   {{- end }}
 {{- end }}

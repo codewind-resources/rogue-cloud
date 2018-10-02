@@ -5,30 +5,26 @@
 replicaCount: 1
 
 image:
-  repository: cminion/roguecloud
+  repository: icp-console-1e40804c8562e53c.elb.eu-west-2.amazonaws.com:8500/ibmcom/roguecloud
   tag: 0.01
   pullPolicy: IfNotPresent
 
 service:
   type: ClusterIP
-  port: 443
+  port: 80 
 
 ingress:
   enabled: true
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  path: /{{ .Release.Name }}/
+  path: /
   hosts:
-    - apim.px-chrisp1.apicww.cloud
-  tls: 
-    - hosts:
-      - apim.px-chrisp1.apicww.cloud
-      secretName: mgmt-platform-api-tls-c0e01e2980c081eb329284f6978abefd33bd14f891eb27a6b661f07e517c8a7c
+    - icp-proxy-e8fec2e1a779a9ef.elb.eu-west-2.amazonaws.com
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
-storageclass: local-storage 
+storageclass: standard
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

@@ -32,18 +32,18 @@ spec:
               value: "/rougecloud"
           ports:
             - name: https
-              containerPort: 9443
+              containerPort: 80
               protocol: TCP
           volumeMounts:
           - mountPath: "/rougecloud"
             name: {{ .Release.Name }}-storage
           livenessProbe:
             httpGet:
-              path: /{{ .Release.Name }}
+              path: /
               port: https
           readinessProbe:
             httpGet:
-              path: /{{ .Release.Name }}
+              path: /
               port: https
           resources:
 {{ toYaml .Values.resources | indent 12 }}
