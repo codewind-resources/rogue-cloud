@@ -15,10 +15,10 @@ RUN apt-get remove openjdk-8-jdk -y
 RUN ls src
 RUN cd src/ && JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/ mvn  package
 RUN cp -rf src/RogueCloudServer/target/liberty/wlp/usr/servers/defaultServer/* /config/
-RUN find /config/
+
 # # Upgrade to production license if URL to JAR provided
 RUN rm -rf src
 ARG LICENSE_JAR_URL
 
-EXPOSE 443
-# RUN java  -acceptLicense /opt/ibm
+EXPOSE 19080
+RUN cd src/RogueCloudClientLiberty/ && ../mvnw liberty:run-server
