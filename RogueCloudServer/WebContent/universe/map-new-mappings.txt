@@ -1,0 +1,14 @@
+
+# letter	colour		name
+
+r 	916f21 	# road
+a 	4d08ff 	New House SE
+b 	00ff90 	New House NW
+#. 	fdfdff	
+c 	ff2100	New House SE
+d 	cf60ff	New House NW
+e 	ffb459	Basketball Court
+f 	c55bff	Library
+g 	a0a0a0	Graveyard
+h 	00ff43	Gas Station
+w 	2014ff	# water

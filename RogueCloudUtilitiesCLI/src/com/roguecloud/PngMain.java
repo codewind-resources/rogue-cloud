@@ -18,14 +18,15 @@ package com.roguecloud;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
 import com.roguecloud.utils.SimpleMap;
+import com.roguecloud.utils.WorldGenFileMappings;
+import com.roguecloud.utils.WorldGenFileMappings.WorldGenFileMappingEntry;
 
 /** Convert a .PNG file into a map.txt file, based on coloured pixels that appear in the PNG file. */
 public class PngMain {
@@ -34,23 +35,23 @@ public class PngMain {
 		
 		try {
 			
-			PngState state = new PngState();
+			if(args.length != 1) {
+				System.out.println("* One argument required: (path to universe directory of RogueCloudServer) ");
+				System.out.println("  Example: C:\\Rogue-Cloud\\Git\\RogueCloudServer\\WebContent\\universe\\");
+				return;
+			}
 			
-			String[][] pairs = new String[][] {
-					{"916f21", "r"},
-					{"4d08ff", "a"},
-					{"00ff90", "b"},
-					{"fdfdff", "."}, 
-					{"ff2100", "c"},
-					{"cf60ff", "d"},
-					{"ffb459", "e"},
-					{"c55bff", "f"},
-					{"a0a0a0", "g"},
-					{"00ff43", "h"},
-					{"2014ff", "w"}
-			};
+			System.out.println("* Generating from "+args[0]);
 			
-			Arrays.asList(pairs).stream().forEach( e -> {  state.colourToLetter.put(e[0], e[1]); });
+			File serverDir = new File(args[0]);
+			
+			File pngFile = new File(serverDir, "map-new.png");
+			
+			File outputFile = new File(serverDir, "map-new.txt");
+
+			WorldGenFileMappings mappings = new WorldGenFileMappings(new FileInputStream(new File(serverDir, "map-new-mappings.txt"))); 
+			
+			PngState state = new PngState(outputFile, pngFile, mappings);
 			
 			doInner(state);
 		} catch (IOException e) {
@@ -60,17 +61,14 @@ public class PngMain {
 	}
 	
 	private static void doInner(PngState state) throws IOException {
-		BufferedImage bi = ImageIO.read(new File("C:\\Rogue-Cloud\\Git\\RogueCloudServer\\WebContent\\universe\\map-new.png"));
+		BufferedImage bi = ImageIO.read(state.pngFile);
 
-		SimpleMap<Entry> map = new SimpleMap<Entry>(bi.getWidth(), bi.getHeight());
+		SimpleMap<PngMainEntry> map = new SimpleMap<PngMainEntry>(bi.getWidth(), bi.getHeight());
 
-//		HashMap<String, Boolean> coloursSeenMap = new HashMap<>();
-		
-//		Raster r = bi.getData();
 		for(int y = 0; y < bi.getHeight(); y++) {
 			for(int x = 0; x < bi.getWidth(); x++) {
 				
-				Entry e = new Entry();
+				PngMainEntry e = new PngMainEntry();
 				
 				e.letter = ".";
 				
@@ -81,15 +79,23 @@ public class PngMain {
 				if(val != -1) {
 					String hex = Integer.toHexString(val).substring(2);
 					
-					String letter = state.colourToLetter.get(hex);
-					if(letter == null) {
-						System.out.println("Unrecognized colour: "+hex);
+					if(hex.equalsIgnoreCase("fdfdff")) { continue; } // This colour is known ignorable
+					
+					WorldGenFileMappingEntry mapping = state.mappings.getByColour(hex); 
+					
+					if(mapping == null) {
+						System.err.println("Unrecognized colour: "+hex+" @ ("+x+", "+y+")");
+						
 					} else {
-						e.letter = letter;
+						
+						String letter = mapping.getLetter();
+						if(letter == null) {
+							System.out.println("Unrecognized colour: "+hex+" @ ("+x+", "+y+")");
+						} else {
+							e.letter = letter;
+						}					
 					}
 					
-//					coloursSeenMap.put(hex, true);
-//					System.out.println(val);
 				}
 			}
 		}
@@ -111,25 +117,31 @@ public class PngMain {
 		}
 		System.out.println(str);
 		
-		FileWriter fw = new FileWriter("C:/Rogue-Cloud/Git/RogueCloudServer/WebContent/universe/map-new.txt");
+		FileWriter fw = new FileWriter(state.outputFile); 
 		fw.write(str.toString());
 		fw.close();
-		
-		
-//		coloursSeenMap.keySet().stream().sorted().forEach(e -> {
-//			System.out.println(e);
-//		});
-		
-		
+				
 	}
 
-	/** What hexadecimal colour corresponds to what letter */
+	/** Various fields used by the algorithm*/
 	private static class PngState {
-		private final HashMap<String, String> colourToLetter = new HashMap<>();
+		
+		private final File outputFile;
+
+		private final File pngFile;
+
+		private final WorldGenFileMappings mappings;
+		
+		public PngState(File outputFile, File pngFile, WorldGenFileMappings mappings) {
+			this.outputFile = outputFile;
+			this.pngFile = pngFile;
+			this.mappings = mappings;
+		}
+		
 	}
 
 	/** The letter at a specific coordinate on the map. */
-	private static class Entry {
+	private static class PngMainEntry {
 		String letter;
 	}
 }

@@ -56,8 +56,10 @@ import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.MonsterFactory;
 import com.roguecloud.utils.RoadGenerationAlgorithm;
 import com.roguecloud.utils.RoomList;
+import com.roguecloud.utils.ServerUtil;
 import com.roguecloud.utils.SimpleMap;
 import com.roguecloud.utils.UniverseParserUtil;
+import com.roguecloud.utils.WorldGenFileMappings;
 import com.roguecloud.utils.MonsterFactory.MonsterFactoryResult;
 
 /** Utility methods for various aspects of world generation. */
@@ -72,7 +74,9 @@ public class WorldGeneration {
 		WorldGenFromFileResult wgResult;
 		
 		try {
-			wgResult = WorldGenFromFile.generateMapFromInputStream(parent.getRoomList(), UniverseParserUtil.class.getClassLoader().getResourceAsStream("/universe/map-new.txt") );
+			WorldGenFileMappings mappings = new WorldGenFileMappings(ServerUtil.getServerResource(UniverseParserUtil.class, "/universe/map-new-mappings.txt"));
+			
+			wgResult = WorldGenFromFile.generateMapFromInputStream(parent.getRoomList(), ServerUtil.getServerResource(UniverseParserUtil.class, "/universe/map-new.txt"), mappings);
 		} catch (IOException e1) {
 			throw new RuntimeException(e1);
 		}
@@ -140,7 +144,7 @@ public class WorldGeneration {
 		
 		posOfShrubsToAdd.forEach( e -> {
 			
-			// Find the grass tile type that is already at that tyile
+			// Find the grass tile type that is already at that tile
 			TileType grassTileType = Arrays.asList(map.getTile(e).getTileTypeLayers()).stream().filter(g -> grassTileNumbers.contains(g)).findFirst().orElse(TileTypeList.GRASS_75);
 			
 			TileType newTileType = shrubTiles[(int)(Math.random()*shrubTiles.length)];
@@ -148,15 +152,12 @@ public class WorldGeneration {
 			List<ITerrain> terrainList = new ArrayList<>();
 			terrainList.add(new ImmutablePassableTerrain(newTileType));
 			terrainList.add(new ImmutablePassableTerrain(grassTileType));
-//				terrainList.addAll(oldTile.)
 			
 			Tile newTile = new Tile(true, terrainList); 
 			
 			map.putTile(e, newTile);
 			
 		});
-		
-		// TODO: CURR - Verify that all map tiles have terrain in their terrain list
 		
 		System.out.println("* Verifying map integrity.");
 		{
@@ -169,6 +170,7 @@ public class WorldGeneration {
 				}
 			}
 			
+			// Pick a random position on the map, and then breadth-first search outward to find all reachable areas
 			Position pq = AIUtils.findRandomPositionOnMap(0, 0, map.getXSize(), map.getYSize(), false, map);
 			List<Position> posList = new ArrayList<>();
 			posList.add(pq);
@@ -195,6 +197,7 @@ public class WorldGeneration {
 				
 			}
 			
+			// If any area is not reachable, but is accessible, then that's a map bug.
 			for(int y = 0; y < map.getYSize(); y++) {
 				for(int x = 0; x < map.getXSize(); x++) {
 					Tile realMapTile = map.getTile(x, y);
@@ -206,13 +209,7 @@ public class WorldGeneration {
 				}
 			}
 
-			
-//				String dump = accessMap.dumpMap(e -> {
-//					return e != null ? (e.booleanValue() ? "t" : "f") : "f";
-//				});
-//				
-//				System.out.println(dump);
-			
+			// Debug: You can dump the accessMap.dumpMap(...)			
 		}
 		
 		return new GenerateWorldResult(map, goList, monsters, wgResult.getSpawns(), aiContextList);

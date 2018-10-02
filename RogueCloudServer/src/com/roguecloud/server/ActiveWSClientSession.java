@@ -217,7 +217,7 @@ public class ActiveWSClientSession {
 					
 					synchronized(stringsToSend_synch) {
 						
-						stringsToSend_synch.wait(10000); // TODO: Uhh?
+						stringsToSend_synch.wait(10000); // TODO: CURR - Uhh?
 						
 						localStringsToSend.addAll(stringsToSend_synch);
 						stringsToSend_synch.clear();

@@ -29,6 +29,7 @@ import java.util.List;
  */
 public interface IDatabase {
 	
+	// Note: This specific call will, at present, block on the backing database. 
 	public long getAndIncrementNextRoundId();
 	
 	// Users

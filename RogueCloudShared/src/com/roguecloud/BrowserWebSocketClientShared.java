@@ -311,7 +311,7 @@ public class BrowserWebSocketClientShared {
 		
 		// When there are multiple creatures on the same tile, alternate between them every 500 msecs.
 		TileType[] ttArr = t.getTileTypeLayersForBrowserPresentation((int)(ticks/5));
-		// TODO: LOWER - I have hardcoded an assumption of a tick rate of 100 msecs per frame for the above line.
+		// TODO: LOW - I have hardcoded an assumption of a tick rate of 100 msecs per frame for the above line.
 		
 //		// [
 		

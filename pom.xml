@@ -21,6 +21,7 @@
 		<module>RogueCloudServer</module>
 		<module>RogueCloudResources</module>
 		<module>RogueCloudShared</module>
+		<module>RogueCloudUtilitiesCLI</module>
 	</modules>
 
 	<build>

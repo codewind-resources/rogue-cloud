@@ -60,7 +60,7 @@ public final class MonsterMachine {
 	/** Whether or not the specific creature has work already running on another thread (a monster's AI logic must only ever 
 	 * be called by one thread at a time) */
 	private final Map<Long /* creature id*/, Boolean /*is thread active*/> hasActiveThread_synch_lock = new HashMap<>();
-	// TODO: The thread contention on the hasActiveThread_synch_lock map could be easily improved.
+	// TODO: CURR - The thread contention on the hasActiveThread_synch_lock map could be easily improved.
 	
 	private final LogContext lc;
 	
