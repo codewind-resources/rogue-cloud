@@ -69,7 +69,15 @@ public class MemoryDatabase implements IDatabase {
 			backend = new CloudantDbBackend();
 		} else {
 			System.out.println("* Using local file system persistence backend.");
-			File dir = new File(System.getProperty("user.home"), ".roguecloud");
+			String dirPath = "";
+
+			if (System.getenv("roguecloud")!=null && !System.getenv("roguecloud").equals("") ) {
+				dirPath = System.getenv("roguecloud");
+			}
+			else {
+				dirPath = new File(System.getProperty("user.home"), ".roguecloud").getPath();
+			}
+			File dir = new File(dirPath);
 			if(!dir.exists() && !dir.mkdirs()) {
 				String msg = "Unable to create directory: "+dir.getPath();
 				log.severe(msg, null);
