@@ -2,9 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/RogueCloudShared"/>
-	<classpathentry kind="lib" path="lib/jackson-annotations-2.9.0.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-core-2.9.0.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-databind-2.9.0.jar"/>
 	<classpathentry kind="src" path=".apt_generated">
 		<attributes>
 			<attribute name="optional" value="true"/>
@@ -22,5 +19,8 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/jackson-annotations-2.9.7.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-core-2.9.7.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-databind-2.9.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
