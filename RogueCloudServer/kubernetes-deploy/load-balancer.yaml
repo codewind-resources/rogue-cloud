@@ -10,5 +10,3 @@ spec:
    - protocol: TCP
      port: 29080
   loadBalancerIP: 169.61.75.181
-
-
