@@ -277,4 +277,33 @@ public class FileDbBackend implements IDBBackend {
 			this.entries = entries;
 		}		
 	}
+	
+	public static void mainMigrateUtil(String[] args) {
+		
+		FileDbBackend fdb = new FileDbBackend(new File("C:\\roguecloud"));
+		
+		List<DbLeaderboardEntry> l = fdb.getAllLeaderboardEntries();
+		
+		l.forEach( e -> {
+			
+//			if(e.getRoundId() % 1000 == 0) {
+//				System.out.println(e.getRoundId());
+//			}
+			
+			File f = new File("C:\\roguecloud\\rounds\\round-"+e.getRoundId()+".txt");
+						
+//			if(!f.exists()) {
+//				System.out.println(f.getPath());
+//			}
+			
+//			System.out.println(f.getPath()+"   "+new Date(f.lastModified()));
+			
+//			e.dateTime = f.lastModified();
+		});
+
+//		fdb.writeNewOrExistingLeaderboardEntries(l);
+				
+	}
+	
+
 }

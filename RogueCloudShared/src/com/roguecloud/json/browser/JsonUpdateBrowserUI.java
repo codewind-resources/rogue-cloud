@@ -48,6 +48,8 @@ public class JsonUpdateBrowserUI extends JsonAbstractTypedMessage {
 	/** Instance of either JsonActiveRoundInfo or JsonInactiveRoundInfo */
 	private Object roundState = null;
 	
+	private long gameTicks = -1;
+	
 	// private List<CombatEvent>
 	
 	public Object getRoundState() {
@@ -105,7 +107,14 @@ public class JsonUpdateBrowserUI extends JsonAbstractTypedMessage {
 	public void setCombatEvents(List<JsonBrowserCombatEvent> combatEvents) {
 		this.combatEvents = combatEvents;
 	}
+
+	public void setGameTicks(long gameTicks) {
+		this.gameTicks = gameTicks;
+	}
 	
+	public long getGameTicks() {
+		return gameTicks;
+	}
 
 	@JsonIgnore
 	public boolean utilContainsAnyData() {
