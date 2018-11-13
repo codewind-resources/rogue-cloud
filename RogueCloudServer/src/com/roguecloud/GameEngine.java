@@ -1219,6 +1219,7 @@ public final class GameEngine {
 		}
 
 		JsonUpdateBrowserUI result = new JsonUpdateBrowserUI();
+		result.setGameTicks(gc.getTicks());
 		
 		// Update the round info field
 		RoundScope rs = gc.roundScope;
