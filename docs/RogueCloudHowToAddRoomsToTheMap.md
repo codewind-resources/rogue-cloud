@@ -24,7 +24,7 @@ mvn clean package
 
 - The `rooms.txt` file can be found in `(path to git repository root)/RogueCloudServer/WebContent/universe/rooms.txt`
 
-The format of the rooms.txt is described here: https://github.com/jgwest/rogue-cloud/blob/master/docs/RogueCloudRoomsFileFormat.md
+The format of the rooms.txt is described here: https://github.com/microclimate-dev2ops/rogue-cloud/blob/master/docs/RogueCloudRoomsFileFormat.md
 
 ### 3) Once you have created a room, add it to the room mappings file.
 
