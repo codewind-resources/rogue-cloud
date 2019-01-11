@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class WeaponList {
 		final List<Weapon> parsedWeapons = new ArrayList<>();
 
 		UniverseParserUtil.parseItemFile( (currType, commaSepArr, line) -> {
-			if(commaSepArr.size() != 6) {
+			if(commaSepArr.size() != 7) {
 				log.severe("Unable to parse weapon line, due to not enough values: "+line, lc);
 				return;
 			}
@@ -58,6 +58,7 @@ public class WeaponList {
 						Integer.parseInt(commaSepArr.get(2).trim()), // size
 						Integer.parseInt(commaSepArr.get(3).trim()), // plus
 						Integer.parseInt(commaSepArr.get(4).trim()), // hit
+						Integer.parseInt(commaSepArr.get(6).trim()), // attackRange
 						Weapon.WeaponType.getByName(currType), 
 						new TileType(Integer.parseInt(commaSepArr.get(5).trim()))
 				);

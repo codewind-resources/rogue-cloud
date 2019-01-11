@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,8 @@ public class Weapon implements IObject {
 	private final int attackPlus;
 	
 	private final int hitRating;
+	private final int attackRange;
+
 	
 	private final WeaponType type;
 	
@@ -61,13 +63,14 @@ public class Weapon implements IObject {
 
 	private final long id;
 	
-	public Weapon(long id, String name, int numAttackDice, int attackDiceSize, int attackPlus, int hitRating, WeaponType type, TileType tileType) {
+	public Weapon(long id, String name, int numAttackDice, int attackDiceSize, int attackPlus, int hitRating, int attackRange, WeaponType type, TileType tileType) {
 		this.id = id;
 		this.name = name;
 		this.numAttackDice = numAttackDice;
 		this.attackDiceSize = attackDiceSize;
 		this.hitRating = hitRating;
 		this.attackPlus = attackPlus;
+		this.attackRange = attackRange;
 		this.type = type;
 		this.tileType = tileType;
 	}
@@ -79,6 +82,7 @@ public class Weapon implements IObject {
 		this.attackDiceSize = json.getAttackDiceSize();
 		this.hitRating = json.getHitRating();
 		this.attackPlus = json.getAttackPlus();
+		this.attackRange = json.getAttackRange();
 		this.type = WeaponType.getByName(json.getType());
 		this.tileType = new TileType(json.getTile());
 	}
@@ -91,6 +95,11 @@ public class Weapon implements IObject {
 	@Override
 	public String getName() {
 		return name;
+	}
+	
+	/** The number of tiles away a weapon can hit */
+	public int getAttackRange() {
+		return attackRange;
 	}
 
 	/** The number of rolls of the attack dice (see class description for details.) */
@@ -181,6 +190,7 @@ public class Weapon implements IObject {
 		jw.setAttackDiceSize(attackDiceSize);
 		jw.setAttackPlus(attackPlus);
 		jw.setHitRating(hitRating);
+		jw.setAttackRange(attackRange);
 		jw.setType(type.getName());
 		jw.setId(id);
 		jw.setTile(tileType.getNumber());

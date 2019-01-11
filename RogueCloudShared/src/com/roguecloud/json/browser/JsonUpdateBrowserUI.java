@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,10 @@ public class JsonUpdateBrowserUI extends JsonAbstractTypedMessage {
 	private List<JsonServiceStatEntry> stats = null;
 
 	private List<JsonBrowserCombatEvent> combatEvents = null;
+	
+	private List<JsonItem> inventoryItems = null;
+	
+	private List<JsonItem> equipment = null;
 
 	/** Instance of either JsonActiveRoundInfo or JsonInactiveRoundInfo */
 	private Object roundState = null;
@@ -300,4 +304,52 @@ public class JsonUpdateBrowserUI extends JsonAbstractTypedMessage {
 		}
 
 	}
+	
+	public static class JsonItem {
+		String name;
+		int quantity;
+		
+		public int getQuantity() {
+			return quantity;
+		}
+
+		public void setQuantity(int quantity) {
+			this.quantity = quantity;
+		}
+
+		public JsonItem() {
+		}
+		
+		public JsonItem(String name, int quantity) {
+			this.name = name;
+			this.quantity = quantity;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+		
+		
+	}
+	
+	public List<JsonItem> getInventory() {
+		return inventoryItems;
+	}
+
+	public void setInventory(List<JsonItem> inventory) {
+		this.inventoryItems = inventory;
+	}
+	
+	public List<JsonItem> getEquipment() {
+		return equipment;
+	}
+
+	public void setEquipment(List<JsonItem> inventory) {
+		this.equipment = inventory;
+	}
+	
 }

@@ -111,6 +111,7 @@ import com.roguecloud.json.browser.JsonActiveRoundInfo;
 import com.roguecloud.json.browser.JsonInactiveRoundInfo;
 import com.roguecloud.json.browser.JsonUpdateBrowserUI;
 import com.roguecloud.json.browser.JsonUpdateBrowserUI.JsonBrowserCombatEvent;
+import com.roguecloud.json.browser.JsonUpdateBrowserUI.JsonItem;
 import com.roguecloud.json.browser.JsonUpdateBrowserUI.JsonScore;
 import com.roguecloud.json.browser.JsonUpdateBrowserUI.JsonServiceStatEntry;
 import com.roguecloud.json.client.JsonHealthCheck;
@@ -1259,6 +1260,36 @@ public final class GameEngine {
 				}
 			}
 		}
+
+		// Add inventory to browser UI object
+		if(ews.getPlayerCreature() != null){
+			IMutableCreature player = ews.getPlayerCreature();
+			ArrayList<JsonItem> equipment = new ArrayList<JsonItem>();
+			
+			List<OwnableObject> inventory = player.getInventory();
+			if(inventory != null && inventory.size() > 0) {
+				
+				HashMap<Long, JsonItem> inventoryMap = new HashMap<Long, JsonItem>();
+				for(OwnableObject item : inventory) {
+					JsonItem jsonItem = inventoryMap.get(item.getContainedObject().getId());
+					if(jsonItem == null) {
+						inventoryMap.put(item.getContainedObject().getId(), new JsonItem(item.getContainedObject().getName(), 1));
+					} else {
+						jsonItem.setQuantity(jsonItem.getQuantity() + 1);
+						inventoryMap.put(item.getContainedObject().getId(), jsonItem);
+					}
+				}
+				
+				result.setInventory(new ArrayList<JsonItem>(inventoryMap.values()));
+			}
+			
+			for(Armour armour : player.getArmour().getAll()) {
+				equipment.add(new JsonItem(armour.getName(), 1));
+			}
+			
+			equipment.add(new JsonItem(player.getWeapon().getName(), 1));
+			result.setEquipment(equipment);
+		}
 		
 		if(statsList != null && statsList.size() > 0) {
 			result.setStats(statsList);
@@ -1719,7 +1750,7 @@ public final class GameEngine {
 			// - attacker can reach defender
 			// - defender is not already dead
 			// - attacker is not trying to attack themselves
-			if(targetC != null && AIUtils.canReach(m.getPosition(), targetC.getPosition(), map) && !targetC.isDead() && targetC.getId() != m.getId()) {
+			if(targetC != null && AIUtils.canAttack(m.getPosition(), targetC.getPosition(), map, m.getWeapon() ) && !targetC.isDead() && targetC.getId() != m.getId()) {
 				int damageDealt = 0;
 				
 				CombatResult combat = Combat.doCombat(m, (IMutableCreature) targetC, lc);
@@ -1757,7 +1788,7 @@ public final class GameEngine {
 			if(destTile == null) {
 				log.err("Invalid destination step action position:"+stepAction.getDestPosition(), lc);
 				return new StepActionResponse(StepActionFailReason.OTHER);
-			} else if(destTile.isPresentlyPassable() && AIUtils.canReach(m.getPosition(), stepAction.getDestPosition(), map)) {
+			} else if(destTile.isPresentlyPassable() && AIUtils.isAdjacent(m.getPosition(), stepAction.getDestPosition(), map)) {
 				Tile srcTile = map.getTileForWrite(m.getPosition());
 				boolean removed = srcTile.getCreaturesForModification().remove(m);
 				
@@ -1830,7 +1861,7 @@ public final class GameEngine {
 					return new MoveInventoryItemActionResponse(puia.getObjectId(), false, puia.isDropItem());
 				}
 				
-				if(!AIUtils.canReach(m.getPosition(), go.getPosition(), map)) {
+				if(!AIUtils.isAdjacent(m.getPosition(), go.getPosition(), map)) {
 					log.severe("The creature can't reach the object", lc);
 					return new MoveInventoryItemActionResponse(puia.getObjectId(), false, puia.isDropItem());
 				}

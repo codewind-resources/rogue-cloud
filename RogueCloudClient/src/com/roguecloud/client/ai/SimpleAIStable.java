@@ -52,7 +52,6 @@ import com.roguecloud.map.IMap;
 import com.roguecloud.map.Tile;
 import com.roguecloud.utils.AIUtils;
 import com.roguecloud.utils.AStarSearch;
-import com.roguecloud.utils.FastPathSearch;
 
 /** 
  * Each turn, the simple agent implementation code asks your implementation code the following, to determine the next action to perform:
@@ -412,7 +411,7 @@ public class SimpleAIStable extends RemoteClient {
 			}
 		}
 		
-		if(AIUtils.canReach(me.getPosition(), go.getPosition(), map)) {
+		if(AIUtils.isAdjacent(me.getPosition(), go.getPosition(), map)) {
 			currentState = State.WANDERING;
 			pickUpItemData = null;
 			return new MoveInventoryItemAction(go.getId(), Type.PICK_UP_ITEM );
@@ -425,7 +424,7 @@ public class SimpleAIStable extends RemoteClient {
 		
 		if(pickUpItemData.ourCurrentRoute == null) {
 			// Find a new route to the ground object
-			List<Position> routeToDestination = FastPathSearch.doSearchWithAStar(selfState.getPlayer().getPosition(), go.getPosition(), worldState.getMap());
+			List<Position> routeToDestination = AStarSearch.findPath(selfState.getPlayer().getPosition(), go.getPosition(), worldState.getMap());
 
 			if(routeToDestination.size() > 1) {
 				// Remove the first item, which is our current position
@@ -485,7 +484,7 @@ public class SimpleAIStable extends RemoteClient {
 			}
 		}
 		
-		if(AIUtils.canReach(selfState.getPlayer().getPosition(), creatureToAttack.getPosition(), map)) {
+		if(AIUtils.canAttack(selfState.getPlayer().getPosition(), creatureToAttack.getPosition(), map, selfState.getPlayer().getWeapon())) {
 			// If we can attack the creature from where we are standing, then do it!
 			return new CombatAction(creatureToAttack);
 		}
@@ -597,7 +596,7 @@ public class SimpleAIStable extends RemoteClient {
 			Position destination = whereShouldIGo();
 			if(destination == null) { return NullAction.INSTANCE; }
 			
-			List<Position> routeToDestination = FastPathSearch.doSearchWithAStar(me.getPosition(), destination, worldState.getMap());
+			List<Position> routeToDestination = AStarSearch.findPath(me.getPosition(), destination, worldState.getMap());
 			if(routeToDestination.size() > 1) {
 				// Success!
 				

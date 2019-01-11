@@ -177,7 +177,7 @@ public class StationaryGuardAndChaseAI extends MonsterClient {
 			return NullAction.INSTANCE;
 		}
 		
-		if(AIUtils.canReach(me.getPosition(), data.creatureToAttack.getPosition(), map)) {
+		if(AIUtils.canAttack(me.getPosition(), data.creatureToAttack.getPosition(), map, selfState.getPlayer().getWeapon() )) {
 			data.nextSteps = null;
 			return new CombatAction(data.creatureToAttack);
 		}

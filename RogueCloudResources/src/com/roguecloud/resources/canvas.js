@@ -16,7 +16,7 @@
 
 'use strict';
 
-function canvasJs(spriteSize, myCanvas, consoleDomElement, leaderboardDomElement, metricsDomElement, viewType, optionalUuid) {
+function canvasJs(spriteSize, myCanvas, consoleDomElement, leaderboardDomElement, metricsDomElement, inventoryDomElement, equipmentDomElement, viewType, optionalUuid) {
 
 // If adjusting this, then you will need to adjust the 'minimumElapsed' algorithm too
 var LERP_CONSTANT = 5;
@@ -60,7 +60,10 @@ var globalState;
 		//(after the current interpolation has completed)
 		globalState.lerpViewCurrPosX_pixels = -1;
 		globalState.lerpViewCurrPosY_pixels = -1;
-
+		
+		globalState.playerCurrHp = -1;
+		globalState.playerMaxHp = -1;
+		
 		// globalState.dirtyRedraw = null;
 		
 		// True if he have drawn at least one frame to the screen, false otherwise. (Used for misc init) 
@@ -278,6 +281,14 @@ function processUpdateJsonBrowserUI(json) {
 		updateLeaderboardUI(leaderboardDomElement, json, globalState.leaderboardData);
 	}
 	
+	if(inventoryDomElement != null) {
+		updateInventoryUI(inventoryDomElement, json);
+	}
+	
+	if(equipmentDomElement != null) {
+		updateEquipmentUI(equipmentDomElement, json);
+	}
+	
 	if(json.combatEvents != null && json.combatEvents.length > 0) {
 			
 		// Add all the combat events to a list
@@ -385,6 +396,28 @@ globalState.interval = setInterval( function() {
 		ctx.font = '15px sans-serif';
 		ctx.fillText(globalState.nextFrameId - 1, 40, 40);
 
+		
+		// Draw player health at bottom of canvas
+		if(globalState.playerCurrHp != -1 && globalState.playerMaxHp != -1){
+			let percent = Math.max(0, globalState.playerCurrHp) / globalState.playerMaxHp;
+			let percentIndex = Math.max( 0, Math.min(99, 100*percent));
+			
+			// Draw colour part of damage bar
+			let offset = (myCanvas.width/5);
+			ctx.fillStyle=globalState.damageGradient[Math.floor(percentIndex)]; 
+			ctx.fillRect(offset, myCanvas.height-50, (myCanvas.width-(2*offset))*percent, 24);
+			
+			// Draw grey part of damage bar
+			ctx.fillStyle="#666666";
+			ctx.fillRect((myCanvas.width-(2*offset))*percent+offset, myCanvas.height-50, (myCanvas.width-(2*offset))*(1-percent), 24);
+			ctx.font = "20px Arial";
+			ctx.fillStyle = "white";
+			ctx.textAlign = "center";
+			let displayHealth = Math.max(0, globalState.playerCurrHp)+" / "+globalState.playerMaxHp;
+			ctx.fillText(displayHealth.trim(),myCanvas.width/2,myCanvas.height-30);
+			ctx.restore();
+			
+		}
 		
 		return;
 	}
@@ -836,7 +869,7 @@ function drawFrameForLerp(actualWidth, actualHeight, startX, startY, param, skip
 			
 			let redraw = currRedrawManager.getByPixel(x*spriteSize, y*spriteSize);
 			
-			if(redraw) {
+			if(true || redraw) {
 				let cachedTile = getFromDataMap(startX+x, startY+y, param.currViewWidth, param.currViewHeight);
 				
 				if(cachedTile != null) {
@@ -869,15 +902,41 @@ function drawFrameForLerp(actualWidth, actualHeight, startX, startY, param, skip
 		
 		let percentIndex = Math.max( 0, Math.min(99, 100*percent));
 		
-		// Draw colour part of damage bar
-		ctx.fillStyle=globalState.damageGradient[Math.floor(percentIndex)]; 
-		ctx.fillRect(posX*spriteSize,(posY+1)*spriteSize+5,spriteSize*percent,4);
-		// globalState.dirtyRedraw.flagPixelRect(posX*spriteSize,(posY+1)*spriteSize+5,spriteSize*percent,4);
+		if(creature.username == GLOBAL_USERNAME){
+			globalState.playerCurrHp = creature.hp;
+			globalState.playerMaxHp = creature.maxHp;
+		}
 		
-		// Draw grey part of damage bar
-		ctx.fillStyle="#666666";
-		ctx.fillRect(posX*spriteSize+spriteSize*percent,(posY+1)*spriteSize+5,spriteSize*(1-percent),4);
-		// globalState.dirtyRedraw.flagPixelRect(posX*spriteSize+spriteSize*percent,(posY+1)*spriteSize+5,spriteSize*(1-percent),4);
+//		if(false && creature.username == GLOBAL_USERNAME){
+//			// Draw colour part of damage bar
+//			var offset = (myCanvas.width/5);
+//			ctx.fillStyle=globalState.damageGradient[Math.floor(percentIndex)]; 
+//			ctx.fillRect(offset, myCanvas.height-50, (myCanvas.width-(2*offset))*percent, 24);
+//			
+//			// Draw grey part of damage bar
+//			ctx.fillStyle="#666666";
+//			ctx.fillRect((myCanvas.width-(2*offset))*percent+offset, myCanvas.height-50, (myCanvas.width-(2*offset))*(1-percent), 24);
+//			ctx.font = "20px Arial";
+//			ctx.fillStyle = "white";
+//			ctx.textAlign = "center";
+//			var displayHealth = Math.max(0, creature.hp)+" / "+creature.maxHp;
+//			ctx.fillText(displayHealth.trim(),myCanvas.width/2,myCanvas.height-30);
+//			ctx.restore();
+//			
+//		} else {
+			
+			// Draw colour part of damage bar
+			ctx.fillStyle=globalState.damageGradient[Math.floor(percentIndex)]; 
+			ctx.fillRect(posX*spriteSize,(posY+1)*spriteSize+5,spriteSize*percent,4);
+			// globalState.dirtyRedraw.flagPixelRect(posX*spriteSize,(posY+1)*spriteSize+5,spriteSize*percent,4);
+			
+			// Draw grey part of damage bar
+			ctx.fillStyle="#666666";
+			ctx.fillRect(posX*spriteSize+spriteSize*percent,(posY+1)*spriteSize+5,spriteSize*(1-percent),4);
+			// globalState.dirtyRedraw.flagPixelRect(posX*spriteSize+spriteSize*percent,(posY+1)*spriteSize+5,spriteSize*(1-percent),4);
+			
+//		}
+		
 		
 		// Draw username as white on black text
 		if(creature.username != null /*&& (globalState.viewType == "SERVER_VIEW_FOLLOW" || globalState.viewType == "CLIENT_VIEW")*/ ) {
@@ -1441,6 +1500,27 @@ function updateConsoleUI(console, consoleDomElement) {
 	
 	consoleDomElement.innerHTML = "<span id='console_span'><b>Event Log</b>:<br/><br/>"+str+"</span>"; 
 
+}
+
+function updateInventoryUI(inventoryDomElement, json) {
+	var invStr = "<b>Inventory</b>: <br/></br>";
+	if(json.inventory) {
+		for(var x = 0; x < json.inventory.length; x++) {
+			invStr += "<span>" + json.inventory[x].name + (json.inventory[x].quantity > 1 ? " x" +json.inventory[x].quantity : "") + "</span><br/>";
+		}
+	}
+	
+	inventoryDomElement.innerHTML = "<span id='items_span'>" + invStr + "</span>";
+}
+
+function updateEquipmentUI(equipmentDomElement, json) {
+	var equipStr = "<b>Equipment</b>: <br/></br>";
+	if(json.equipment) {
+		for(var x = 0; x < json.equipment.length; x++) {
+			equipStr += "<span>" + json.equipment[x].name + "</span><br/>";
+		}
+	}
+	equipmentDomElement.innerHTML = "<span id='items_span'>" + equipStr + "</span>";
 }
 
 function formatScore(score) {
