@@ -51,6 +51,11 @@ addCanvasListeners();
 
 var globalState;
 
+////Start game theme sound
+//var gameSound = new sound("resources/game-theme.mp3");
+//gameSound.play();
+
+
 // Create and define globalState object.
 {
 	{
@@ -490,19 +495,28 @@ globalState.interval = setInterval( function() {
 function moveEntitiesForFrame(currFrameTicks) {
 			
 	var elements = globalState.waitingCombatEvents;
-					
+	
+	let matchFound = false;
+	
 	for(var i = elements.length -1; i >= 0 ; i--){
 						
 		if(elements[i].ticks == currFrameTicks ){
 							
 			elements[i].entityList.forEach( function(x) {
 				globalState.entityList.push(x);
+				matchFound = true;
 			});
 		} 
 						
 		if(elements[i].ticks <= currFrameTicks ){
 	        elements.splice(i, 1);
 	    }
+	}
+	
+	if(matchFound) {
+		// play combat sound
+		// var combatSound = new sound("resources/spawn.mp3");
+		// combatSound.play();
 	}
 					
 }
@@ -1620,6 +1634,22 @@ function addCanvasListeners() {
 
 }
 
+
+// A function to play game sounds
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
+}
 
 
 }
