@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,13 @@ import com.roguecloud.Position;
  * A simple implementation of IMap that is backed by a HashMap. While it is not thread safe, it can be fully cloned 
  * by calling cloneMap(...); the returned object will be a clone of the map (with a shallow clone of the tile contents) 
  * 
- *  For internal use only - see IMap for the public API of map. */
-public class RCCloneMap implements IMap {
+ *  For internal use only - see IMap for the public API of map. 
+ *  
+ * This class implements IMutableMap, but only supports a small subset of the IMutableMap methods. For 
+ * unsupported methods, an UnsupportedOperationException will be thrown.
+ *  
+ **/
+public class RCCloneMap implements IMutableMap {
 
 	private final int xSize, ySize;
 	
@@ -112,5 +117,28 @@ public class RCCloneMap implements IMap {
 			
 		}
 		
+	}
+
+	@Override
+	public IMap cloneForRead() {
+		throw new UnsupportedOperationException();
+	}
+
+
+	@Override
+	public Tile getTileForWrite(int x, int y) {
+		throw new UnsupportedOperationException();
+	}
+
+
+	@Override
+	public Tile getTileForWrite(Position p) {
+		throw new UnsupportedOperationException();
+	}
+
+
+	@Override
+	public Tile getTileForWriteUnchecked(Position p) {
+		throw new UnsupportedOperationException();
 	}
 }

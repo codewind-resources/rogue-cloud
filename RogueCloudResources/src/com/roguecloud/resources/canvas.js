@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ var LERP_CONSTANT = 5;
 
 var viewTypeParam = viewType;
 	
-console.log("View type is "+viewType);
+console.log("View type is "+viewType+" optionalUuid is "+optionalUuid);
 
 // secondaryCanvas/secondaryCtx are a copy of the last frame that was drawn to the screen BEFORE
 // the damage values, HP indicators, and usernames were drawn. This copy can then be used to refresh the 
@@ -152,11 +152,11 @@ var globalState;
 
 	}
 
-	createWebSocketAndSetInGlobalState();
+	createWebSocketAndSetInGlobalState(optionalUuid);
 	
 }
 
-function createWebSocketAndSetInGlobalState() {
+function createWebSocketAndSetInGlobalState(optionalUuid) {
 	console.log("pre?");
 	try {
 		
@@ -264,7 +264,8 @@ function reestablishConnection() {
 	disposeGlobalState();
 	console.log("reestablishConnection - setting timeout.");
 	setTimeout(function() {
-		canvasJs(spriteSize, myCanvas, consoleDomElement, leaderboardDomElement, metricsDomElement, viewTypeLocal, optionalUuid);
+		canvasJs(spriteSize, myCanvas, consoleDomElement, leaderboardDomElement, metricsDomElement, inventoryDomElement, equipmentDomElement, viewTypeLocal, optionalUuid);
+		// canvasJs(spriteSize, myCanvas, consoleDomElement, leaderboardDomElement, metricsDomElement, viewTypeLocal, optionalUuid);
 	}, 200);
 	if(globalState.gameSocket != null) {
 		globalState.gameSocket.close();

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018, 2019 IBM Corporation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. 
+*/
+
 package com.roguecloud;
 
 import java.awt.Graphics;
@@ -33,17 +49,17 @@ public class StandaloneWorldRender {
 		int widthParam  = Integer.parseInt(args[3]);
 		int heightParam  = Integer.parseInt(args[4]);
 		
+
 		// Generate the map.txt from the PNG
 		PngMain.main(args);
 		
 		
 		File outputFolder = new File(args[0]);
-			
 		
 	    File outputfile = new File(outputFolder, "preview.png");
 	    		
 		UniqueIdGenerator uig = new UniqueIdGenerator();
-		ServerInstance si = new ServerInstance();
+		ServerInstance si = new ServerInstance(false);
 		
 		GenerateWorldResult  gwr = WorldGeneration.generateDefaultWorld(si, uig, null);
 		

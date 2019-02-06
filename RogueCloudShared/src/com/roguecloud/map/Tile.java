@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.roguecloud.map;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -297,7 +298,15 @@ public final class Tile {
 		this.lastTickUpdated = lastTickUpdated;
 	}
 	
-	
+
+	public String debugGetTileTypeLayersAsString() {
+		StringBuilder sb = new StringBuilder();
+		Arrays.asList(getTileTypeLayers()).forEach( e -> {
+			sb.append(e.getNumber()+" ");
+		});
+
+		return sb.toString();
+	}
 
 	// TODO: LOW - Create a player-only interface for tile, BUT only use it in the client code
 	

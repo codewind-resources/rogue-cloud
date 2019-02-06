@@ -60,11 +60,13 @@ public class WorldGenerationUtil {
 
 
 	public static DrawRoomResult drawRoom(Room r, int destX, int destY, int rotationInDegrees, IMutableMap map, boolean validate) {
+		
 		DrawRoomResult result = new DrawRoomResult();
 		result.setX(destX);
 		result.setY(destY);
 		result.setHeight(r.getHeight());
 		result.setWidth(r.getWidth());
+		result.setName(r.getName());
 		
 		if(validate) {
 			// Validate that the room can be placed.
@@ -332,6 +334,8 @@ public class WorldGenerationUtil {
 		int width;
 		int height;
 		
+		String name;
+		
 		public DrawRoomResult() {
 		}
 
@@ -383,6 +387,13 @@ public class WorldGenerationUtil {
 			this.height = height;
 		}
 
+		public String getName() {
+			return name;
+		}
+		
+		public void setName(String name) {
+			this.name = name;
+		}
 		
 	}
 }

@@ -718,6 +718,8 @@ public final class GameEngine {
 				};
 			}.start();
 			
+			// Start the world generation thread for the next round.
+			parent.getWorldGenerationThread().ensureThreadIsRunning();
 			
 			IDatabase db = DatabaseInstance.get();
 			

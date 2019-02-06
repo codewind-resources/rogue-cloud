@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018, 2019 IBM Corporation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. 
+*/
+
 package com.roguecloud.utils;
 
 import java.io.BufferedReader;
@@ -7,8 +23,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
-/** See github documentation for a description of mappings, their purpose, and the 
+/** See GitHub documentation for a description of mappings, their purpose, and the 
  * file format. */
 public class WorldGenFileMappings {
 	
@@ -34,13 +51,25 @@ public class WorldGenFileMappings {
 			String colour = tokens.get(1);
 			String name = tokens.size() > 2 ? tokens.get(2) : null;
 			
+			List<String> names = new ArrayList<>();
+			
 			if(name != null && !name.trim().isEmpty() && !name.trim().startsWith("#")) {
+				
+				if(!name.contains("/")) {
+					names.add(name);
+				} else {
+					String[] splitByForwardSlash = name.split(Pattern.quote("/"));
+					for(String curr : splitByForwardSlash) {
+						names.add(curr.trim());
+					}
+				}
+				
 				// valid name
 			} else {
 				name = null; 
 			}
 
-			localMappings.add(new WorldGenFileMappingEntry(letter, colour, name));
+			localMappings.add(new WorldGenFileMappingEntry(letter, colour, names));
 			
 		}
 		
@@ -59,8 +88,20 @@ public class WorldGenFileMappings {
 		return mappings.stream().filter( e -> e.getLetter().equals(letter)).findFirst().orElse(null);
 	}
 	
-	public WorldGenFileMappingEntry getByRoomName(String roomName) {
-		return mappings.stream().filter( e -> e.getRoomName().equals(roomName)).findFirst().orElse(null);
+	public WorldGenFileMappingEntry getByRoomName(String roomNameParam) {
+		
+		for(WorldGenFileMappingEntry curr : mappings) {
+			
+			for(String entryName : curr.getRoomNames()) {
+				if(entryName.equals(roomNameParam)) {
+					return curr;
+				}
+			}
+		}
+		
+		return null;
+		
+//		return mappings.stream().filter( e -> e.getRoomName().equals(roomName)).findFirst().orElse(null);
 	}
 	
 //	public static void main(String[] args) {
@@ -112,12 +153,12 @@ public class WorldGenFileMappings {
 	public static class WorldGenFileMappingEntry {
 		private String letter;
 		private String colour;
-		private String roomName;
+		private List<String> roomNames;
 		
-		public WorldGenFileMappingEntry(String letter, String colour, String roomName) {
+		public WorldGenFileMappingEntry(String letter, String colour, List<String> roomName) {
 			this.letter = letter;
 			this.colour = colour;
-			this.roomName = roomName;
+			this.roomNames = roomName;
 		}
 
 		public String getLetter() {
@@ -128,11 +169,10 @@ public class WorldGenFileMappings {
 			return colour;
 		}
 
-		public String getRoomName() {
-			return roomName;
+		public List<String> getRoomNames() {
+			return roomNames;
 		}
 		
 	}
-	
 	
 }
