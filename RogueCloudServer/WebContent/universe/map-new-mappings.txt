@@ -2,13 +2,22 @@
 # letter	colour		name
 
 r 	916f21 	# road
-a 	4d08ff 	New House SE
-b 	00ff90 	New House NW
+
+# a 	4d08ff 	New House SE
+a 	4d08ff 	Brown Brick House SE / New House SE
+
+# b 	00ff90 	New House NW
+b 	00ff90 	Brown Brick House NW / New House NW
+
 #. 	fdfdff	
-c 	ff2100	New House SE
-d 	cf60ff	New House NW
-e 	ffb459	Basketball Court
+c 	ff2100	Brown Brick House SE / New House SE
+d 	cf60ff	Brown Brick House NW / New House NW
+#e 	ffb459	Basketball Court
 f 	c55bff	Library
 g 	a0a0a0	Graveyard
-h 	00ff43	Gas Station
+#h 	00ff43	Gas Station
 w 	2014ff	# water
+
+
+#i   404040  Bridge
+o	007F0E	# Forest

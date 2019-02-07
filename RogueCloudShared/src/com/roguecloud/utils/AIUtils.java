@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.roguecloud.client.SelfState;
 import com.roguecloud.client.WorldState;
 import com.roguecloud.creatures.ICreature;
 import com.roguecloud.items.IGroundObject;
+import com.roguecloud.items.Weapon;
 import com.roguecloud.map.IMap;
 import com.roguecloud.map.Tile;
 
@@ -140,25 +141,53 @@ public class AIUtils {
 	 * NOTE: Reach means that the two positions are within 0 or 1 tiles of each other (and they are not diagonal)
 	 * 
 	 * A creature can only attack another creature if they can reach.
-	 * A creature can only move to a tile that they can reach.
-	 * 
 	 * A creature can reach a tile that is at most one tile up, down, left, or right of them (no diagonals).
 	 * A creature may reach her or his own tile.
 	 * 
 	 * Reach does NOT refer to whether or not there is a valid path between the two positions. For this, see AStarSearchJob.
 	 **/
-	public static boolean canReach(Position src, Position dest, IMap map) {
+	public static boolean canAttack(Position src, Position dest, IMap map, Weapon w) {
+		if(!src.isValid(map) || !dest.isValid(map)) {
+			return false;
+		}
+		
+//		int deltaX = Math.abs(dest.getX() - src.getX());
+//		int deltaY = Math.abs(dest.getY() - src.getY());
+//		
+//		if(deltaX + deltaY == 1 || deltaX + deltaY == 0) {
+//			return true;
+//		}
+		
+		int distance = src.manhattanDistanceBetween(dest);
+		
+		if(distance >= 0 && distance <= w.getAttackRange()) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/** Returns true if a creature at position 'src' can "reach" a player at position 'dest', and false otherwise.
+	 * NOTE: Reach means that the two positions are within 0 or 1 tiles of each other (and they are not diagonal)
+	 * 
+	 * A creature can only move to a tile that they are adjacent to.
+	 * A creature can move to a tile that is at most one tile up, down, left, or right of them (no diagonals).
+	 * A creature may reach her or his own tile.
+	 * 
+	 * Reach does NOT refer to whether or not there is a valid path between the two positions. For this, see AStarSearchJob.
+	 **/
+	public static boolean isAdjacent(Position src, Position dest, IMap map) {
 		if(!src.isValid(map) || !dest.isValid(map)) {
 			return false;
 		}
 		
 		int deltaX = Math.abs(dest.getX() - src.getX());
 		int deltaY = Math.abs(dest.getY() - src.getY());
-		
+
 		if(deltaX + deltaY == 1 || deltaX + deltaY == 0) {
+//		if(deltaX <= 1 && deltaY <= 1) { // Use this for diagonal movement
 			return true;
 		}
-		
 		return false;
 	}
 

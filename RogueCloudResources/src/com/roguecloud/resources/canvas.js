@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 'use strict';
 
-function canvasJs(spriteSize, myCanvas, consoleDomElement, leaderboardDomElement, metricsDomElement, viewType, optionalUuid) {
+function canvasJs(spriteSize, myCanvas, consoleDomElement, leaderboardDomElement, metricsDomElement, inventoryDomElement, equipmentDomElement, viewType, optionalUuid) {
 
 // If adjusting this, then you will need to adjust the 'minimumElapsed' algorithm too
 var LERP_CONSTANT = 5;
 
 var viewTypeParam = viewType;
 	
-console.log("View type is "+viewType);
+console.log("View type is "+viewType+" optionalUuid is "+optionalUuid);
 
 // secondaryCanvas/secondaryCtx are a copy of the last frame that was drawn to the screen BEFORE
 // the damage values, HP indicators, and usernames were drawn. This copy can then be used to refresh the 
@@ -51,6 +51,11 @@ addCanvasListeners();
 
 var globalState;
 
+////Start game theme sound
+//var gameSound = new sound("resources/game-theme.mp3");
+//gameSound.play();
+
+
 // Create and define globalState object.
 {
 	{
@@ -60,7 +65,10 @@ var globalState;
 		//(after the current interpolation has completed)
 		globalState.lerpViewCurrPosX_pixels = -1;
 		globalState.lerpViewCurrPosY_pixels = -1;
-
+		
+		globalState.playerCurrHp = -1;
+		globalState.playerMaxHp = -1;
+		
 		// globalState.dirtyRedraw = null;
 		
 		// True if he have drawn at least one frame to the screen, false otherwise. (Used for misc init) 
@@ -144,11 +152,11 @@ var globalState;
 
 	}
 
-	createWebSocketAndSetInGlobalState();
+	createWebSocketAndSetInGlobalState(optionalUuid);
 	
 }
 
-function createWebSocketAndSetInGlobalState() {
+function createWebSocketAndSetInGlobalState(optionalUuid) {
 	console.log("pre?");
 	try {
 		
@@ -256,7 +264,8 @@ function reestablishConnection() {
 	disposeGlobalState();
 	console.log("reestablishConnection - setting timeout.");
 	setTimeout(function() {
-		canvasJs(spriteSize, myCanvas, consoleDomElement, leaderboardDomElement, metricsDomElement, viewTypeLocal, optionalUuid);
+		canvasJs(spriteSize, myCanvas, consoleDomElement, leaderboardDomElement, metricsDomElement, inventoryDomElement, equipmentDomElement, viewTypeLocal, optionalUuid);
+		// canvasJs(spriteSize, myCanvas, consoleDomElement, leaderboardDomElement, metricsDomElement, viewTypeLocal, optionalUuid);
 	}, 200);
 	if(globalState.gameSocket != null) {
 		globalState.gameSocket.close();
@@ -276,6 +285,14 @@ function processUpdateJsonBrowserUI(json) {
 	
 	if(leaderboardDomElement != null) {
 		updateLeaderboardUI(leaderboardDomElement, json, globalState.leaderboardData);
+	}
+	
+	if(inventoryDomElement != null) {
+		updateInventoryUI(inventoryDomElement, json);
+	}
+	
+	if(equipmentDomElement != null) {
+		updateEquipmentUI(equipmentDomElement, json);
 	}
 	
 	if(json.combatEvents != null && json.combatEvents.length > 0) {
@@ -386,6 +403,28 @@ globalState.interval = setInterval( function() {
 		ctx.fillText(globalState.nextFrameId - 1, 40, 40);
 
 		
+		// Draw player health at bottom of canvas
+		if(globalState.playerCurrHp != -1 && globalState.playerMaxHp != -1){
+			let percent = Math.max(0, globalState.playerCurrHp) / globalState.playerMaxHp;
+			let percentIndex = Math.max( 0, Math.min(99, 100*percent));
+			
+			// Draw colour part of damage bar
+			let offset = (myCanvas.width/5);
+			ctx.fillStyle=globalState.damageGradient[Math.floor(percentIndex)]; 
+			ctx.fillRect(offset, myCanvas.height-50, (myCanvas.width-(2*offset))*percent, 24);
+			
+			// Draw grey part of damage bar
+			ctx.fillStyle="#666666";
+			ctx.fillRect((myCanvas.width-(2*offset))*percent+offset, myCanvas.height-50, (myCanvas.width-(2*offset))*(1-percent), 24);
+			ctx.font = "20px Arial";
+			ctx.fillStyle = "white";
+			ctx.textAlign = "center";
+			let displayHealth = Math.max(0, globalState.playerCurrHp)+" / "+globalState.playerMaxHp;
+			ctx.fillText(displayHealth.trim(),myCanvas.width/2,myCanvas.height-30);
+			ctx.restore();
+			
+		}
+		
 		return;
 	}
 
@@ -457,19 +496,28 @@ globalState.interval = setInterval( function() {
 function moveEntitiesForFrame(currFrameTicks) {
 			
 	var elements = globalState.waitingCombatEvents;
-					
+	
+	let matchFound = false;
+	
 	for(var i = elements.length -1; i >= 0 ; i--){
 						
 		if(elements[i].ticks == currFrameTicks ){
 							
 			elements[i].entityList.forEach( function(x) {
 				globalState.entityList.push(x);
+				matchFound = true;
 			});
 		} 
 						
 		if(elements[i].ticks <= currFrameTicks ){
 	        elements.splice(i, 1);
 	    }
+	}
+	
+	if(matchFound) {
+		// play combat sound
+		// var combatSound = new sound("resources/spawn.mp3");
+		// combatSound.play();
 	}
 					
 }
@@ -836,7 +884,7 @@ function drawFrameForLerp(actualWidth, actualHeight, startX, startY, param, skip
 			
 			let redraw = currRedrawManager.getByPixel(x*spriteSize, y*spriteSize);
 			
-			if(redraw) {
+			if(true || redraw) {
 				let cachedTile = getFromDataMap(startX+x, startY+y, param.currViewWidth, param.currViewHeight);
 				
 				if(cachedTile != null) {
@@ -869,15 +917,41 @@ function drawFrameForLerp(actualWidth, actualHeight, startX, startY, param, skip
 		
 		let percentIndex = Math.max( 0, Math.min(99, 100*percent));
 		
-		// Draw colour part of damage bar
-		ctx.fillStyle=globalState.damageGradient[Math.floor(percentIndex)]; 
-		ctx.fillRect(posX*spriteSize,(posY+1)*spriteSize+5,spriteSize*percent,4);
-		// globalState.dirtyRedraw.flagPixelRect(posX*spriteSize,(posY+1)*spriteSize+5,spriteSize*percent,4);
+		if(creature.username == GLOBAL_USERNAME){
+			globalState.playerCurrHp = creature.hp;
+			globalState.playerMaxHp = creature.maxHp;
+		}
 		
-		// Draw grey part of damage bar
-		ctx.fillStyle="#666666";
-		ctx.fillRect(posX*spriteSize+spriteSize*percent,(posY+1)*spriteSize+5,spriteSize*(1-percent),4);
-		// globalState.dirtyRedraw.flagPixelRect(posX*spriteSize+spriteSize*percent,(posY+1)*spriteSize+5,spriteSize*(1-percent),4);
+//		if(false && creature.username == GLOBAL_USERNAME){
+//			// Draw colour part of damage bar
+//			var offset = (myCanvas.width/5);
+//			ctx.fillStyle=globalState.damageGradient[Math.floor(percentIndex)]; 
+//			ctx.fillRect(offset, myCanvas.height-50, (myCanvas.width-(2*offset))*percent, 24);
+//			
+//			// Draw grey part of damage bar
+//			ctx.fillStyle="#666666";
+//			ctx.fillRect((myCanvas.width-(2*offset))*percent+offset, myCanvas.height-50, (myCanvas.width-(2*offset))*(1-percent), 24);
+//			ctx.font = "20px Arial";
+//			ctx.fillStyle = "white";
+//			ctx.textAlign = "center";
+//			var displayHealth = Math.max(0, creature.hp)+" / "+creature.maxHp;
+//			ctx.fillText(displayHealth.trim(),myCanvas.width/2,myCanvas.height-30);
+//			ctx.restore();
+//			
+//		} else {
+			
+			// Draw colour part of damage bar
+			ctx.fillStyle=globalState.damageGradient[Math.floor(percentIndex)]; 
+			ctx.fillRect(posX*spriteSize,(posY+1)*spriteSize+5,spriteSize*percent,4);
+			// globalState.dirtyRedraw.flagPixelRect(posX*spriteSize,(posY+1)*spriteSize+5,spriteSize*percent,4);
+			
+			// Draw grey part of damage bar
+			ctx.fillStyle="#666666";
+			ctx.fillRect(posX*spriteSize+spriteSize*percent,(posY+1)*spriteSize+5,spriteSize*(1-percent),4);
+			// globalState.dirtyRedraw.flagPixelRect(posX*spriteSize+spriteSize*percent,(posY+1)*spriteSize+5,spriteSize*(1-percent),4);
+			
+//		}
+		
 		
 		// Draw username as white on black text
 		if(creature.username != null /*&& (globalState.viewType == "SERVER_VIEW_FOLLOW" || globalState.viewType == "CLIENT_VIEW")*/ ) {
@@ -1443,6 +1517,27 @@ function updateConsoleUI(console, consoleDomElement) {
 
 }
 
+function updateInventoryUI(inventoryDomElement, json) {
+	var invStr = "<b>Inventory</b>: <br/></br>";
+	if(json.inventory) {
+		for(var x = 0; x < json.inventory.length; x++) {
+			invStr += "<span>" + json.inventory[x].name + (json.inventory[x].quantity > 1 ? " x" +json.inventory[x].quantity : "") + "</span><br/>";
+		}
+	}
+	
+	inventoryDomElement.innerHTML = "<span id='items_span'>" + invStr + "</span>";
+}
+
+function updateEquipmentUI(equipmentDomElement, json) {
+	var equipStr = "<b>Equipment</b>: <br/></br>";
+	if(json.equipment) {
+		for(var x = 0; x < json.equipment.length; x++) {
+			equipStr += "<span>" + json.equipment[x].name + "</span><br/>";
+		}
+	}
+	equipmentDomElement.innerHTML = "<span id='items_span'>" + equipStr + "</span>";
+}
+
 function formatScore(score) {
 	return score.toLocaleString();
 }
@@ -1540,6 +1635,22 @@ function addCanvasListeners() {
 
 }
 
+
+// A function to play game sounds
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
+}
 
 
 }

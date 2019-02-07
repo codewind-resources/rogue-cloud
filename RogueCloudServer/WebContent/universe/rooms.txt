@@ -1,124 +1,3 @@
-
-Big House:
-F = 1152 Fridge
-V = 1114 Oven
-P = 1133 Oven 2
-E = 1115 Bed
-T = 2315 Table
-S = 2335 Safe
-W = 1154 Washer
-I = 1148 Toilet
-A = 1141, 0 Table 1
-B = 1141, 90 Table 2
-G = 1141, 270 Table 3
-D = 1141, 180 Table 4
-M = 1285 Microwave
-C = 1962 Carpet  @Passable  @Bg
-# = 3320 Wall
-. = 3320 Wall
-_ = 3320 Wall
-- = 3320 Wall
-| = 3320 Wall
-O = 3916 Door   @Door
-N = 1053 Window Closed Window Curtain 
-K = 1051 Bookshelf
-* = 1145 Floor  @Passable
-{ 
-####################
-#  FF  V  P        #
-#                  #
-#              CCCCO
-#    AB     M  CCCC#
-#    GD        CCC #
-O              CCC #
-#           CCCCCC #
-#______.-----O-----#
-# I    |    CCC    #
-#      |    CCC    #
-#---O---    CCC    #
-#W     |    CCC    #
-#      O    CCC    #
-#___O__|    CCC    #
-#      |_______O___#
-#      |           #
-#     T|           #
-#      |          T#
-# E    |S    E     #
-####################
-}
-
-Small House:
-V = 1114 Oven
-E = 1115 Bed
-I = 1148 Toilet
-F = 1152 Fridge
-T = 2315 Table
-* = 1145 Floor  @Passable
-O = 3916 Door   @Door
-# = 3320 Wall
-. = 3320 Wall
-_ = 3320 Wall
-- = 3320 Wall
-| = 3320 Wall
-{
-########
-#E | VF#
-#  O   #
-#__| @ O
-#I O   #
-#--| ! #
-#E O  T#
-########
-}
-
-Logo:
-R = 2315 Table
-O = 1135 Floor 
-G = 3916 Door
-U = 1114 Oven
-E = 1115 Bed 
-C = 3320 Wall
-L = 1148 Toilet
-D = 1285 Microwave
-* = 1038 Grass
-{
-RRRR   OOOO  GGGG  U  U  EEEE    CCCC  L     OOOO  U  U  DDD 
-R  R   O  O  G     U  U  E       C     L     O  O  U  U  D  D
-RRRR   O  O  G GG  U  U  EEEE    C     L     O  O  U  U  D  D
-R R    O  O  G  G  U  U  E       C     L     O  O  U  U  D  D
-R  R   OOOO  GGGG  UUUU  EEEE    CCCC  LLLL  OOOO  UUUU  DDD 
-}
-
-Basketball Court:
-H = 1954, 270 Basketball Hoop
-I = 1954, 90 Basketball Hoop
-. = 1963  @Passable
-* = 1963 @Passable
-E = 1967, 90 / -1 Fence
-W = 1967, 270 / -1 Fence
-N = 1967, 180 / -1  Fence
-A = 1966, 0 / -1 Fence
-B = 1966, 90 / -1 Fence
-C = 1966, 180 / -1 Fence
-D = 1966, 270 / -1 Fence
-L = 2012 Court Line @Passable
-O = 1174 Basketball @Passable
-% = -1	@Passable
-{
-AEEEEE%%%EEEEEB
-N%%%%%%%%%%%%%N
-N%.....L.....%N
-N%.....L.....%N
-N%.....L.....%N
-N%.H...L...I.%N
-N%.....L.....%N
-N%.....L.O...%N
-N%.....L.....%N
-N%%%%%%%%%%%%%N
-DWWWWW%%%WWWWWC
-}
-
-
 Library:
 N = 2990 Library Brick Wall
 S = 2990, 180 Library Brick Wall
@@ -155,66 +34,6 @@ W LMMMMMR           E
 W           effffff E
 W LMMMR     f i     E
 DSSSSSSSSFSSSSSSSSSSC
-}
-
-Gas Station:
-G = 33 / 1043  Gas Pump
-. = 1043	 @Passable
-% = 172	 @Passable
-* = 1038	 @Passable
-A = 1088
-B = 1087
-C = 1088, 90
-D = 1087, 90
-E = 1087, 270
-F = 1087, 180
-H = 1039, 0 
-I = 1039, 90
-J = 1039, 270
-K = 1039, 180
-L = 1088, 270
-h = 1042 @Passable
-i = 1042, 90 @Passable
-j = 1042, 180 @Passable
-k = 1042, 270 @Passable
-l = 2335 / 1043  Machine 
-r = 660 / 1043	@Passable
-o = 2904 @Passable @Door
-m = 1024 / 1043 Gas Can
-n = 1023 / 1043 Gas Can
-p = 2790 Peanut Butter @Passable 
-q = 2791 Potato Chips @Passable
-s = 2792 Snack Food @Passable
-t = 2794 Popcorn @Passable
-u = 2796 Cereal @Passable 
-v = 2797 Noodles @Passable
-w = 2812 Big Bag of Chips @Passable
-x = 1040 @Passable
-y = 1040, 180 @Passable
-{
-rrrrrrrrrrrrrrrrrrrr
-rrrrrrrrrrrrrrrrrrrr
-rrrrrrrrrrBCCCCCCCDr
-rxGlyrrlG.A%pqrst%Ar
-rrrrrrrrrrA%%%%%%%Ar
-rrrrrrrrrro%uvwpr%Ar
-rrrrrrrrrro%%%%%%%Ar
-rxGlyrrlG.A%qvwst%Ar
-rrrrrrrrrrA%%%%%%%Ar
-rrrrrrrrrrELLLLLLLFr
-rrrrrrrrrrrrrrrrrrrr
-rxGlyrrxlG....lG.yrr
-rrrrrrrrrrrrrrrrrrrr
-rrrrrrrrrrrrrrrrrrrr
-rrrrrrrrrrrrrrrrrrrr
-rxGlyrrxlG.m.nlG.yrr
-rrrrrrrrrrrrrrrrrrrr
-rrrrrrrrrrrrrrrrrrrr
-rrrrrrrrrrrrrrrrrrrr
-rxGlyrrxlG....lG.yrr
-rrrrrrrrrrrrrrrrrrrr
-rrrrrrrrrrrrrrrrrrrr
-rrrrrrrrrrrrrrrrrrrr
 }
 
 Graveyard:
@@ -294,47 +113,6 @@ uuuuuuuu
 }
 
 
-New House2:
-a = 104 
-b = 112 / 314 
-c = 113 / 316 
-d = 102
-e = 103
-. = 300 	@Passable
-g = 114 
-h = 104 
-i = 104 
-j = 114 / 104
-k = 112 / 104 
-l = 113 / 104 
-m = 2058
-n = 116 
-o = 117 
-p = 107		Door 	@Door
-q = 108 / 316 	Door 	@Door
-r = 105	/ 122	@Passable
-s = 120 / 314		
-t = 119 / 300		@Passable
-u = 119 / -1	@Passable
-v = 121 / 113 / 316
-w = 114 / 119
-* = 300		@Passable
-
-A = 318 	@Passable
-B = 314		@Passable
-{
-daaahaae
-sttttttv
-b.!.g..c
-kirijiil
-stttwttv
-b.@.n..q
-bAAAAAAc
-aaaapaaa
-uuuuuuuu
-}
-
-
 New House SE:
 a = 104 
 b = 112 / 314 
@@ -354,7 +132,7 @@ o = 117
 p = 107		Door 	@Door
 q = 108 / 316 	Door 	@Door
 r = 105	/ 122	@Passable
-s = 120 / 314		
+s = 112 / 120 / 314		
 t = 119 / 300		@Passable
 u = 119 / -1	@Passable
 v = 121 / 113 / 316
@@ -394,11 +172,95 @@ o = 117
 p = 107		Door 	@Door
 q = 106 / 314 	Door 	@Door
 r = 105	/ 122	@Passable
-s = 120 / 314		
+s = 112 / 120 / 314				
 t = 119 / 300		@Passable
 u = 119 / -1	@Passable
 v = 121 / 113 / 316
 w = 114 / 119
+* = 300		@Passable
+
+A = 318 	@Passable
+B = 314		@Passable
+{
+dapahaae
+sttttttv
+b.!.g..c
+kirijiil
+stttwttv
+q.@.n..c
+bAAAAAAc
+aaaaaaaa
+uuuuuuuu
+}
+
+
+
+
+Brown Brick House SE:
+a = 144 
+b = 152 / 314 
+c = 153 / 316 
+d = 142
+e = 143
+. = 300 	@Passable
+g = 154 
+h = 144 
+i = 144 
+j = 154 / 144
+k = 152 / 144 
+l = 153 / 144 
+m = 2058
+n = 156 
+o = 157 
+p = 147		Door 	@Door
+q = 148 / 316 	Door 	@Door
+r = 145	/ 162	@Passable
+s = 152 / 160 / 314		
+t = 159 / 300		@Passable
+u = 159 / -1	@Passable
+v = 161 / 153 / 316
+w = 154 / 159
+* = 300		@Passable
+
+A = 318 	@Passable
+B = 314		@Passable
+{
+daaahaae
+sttttttv
+b.!.g..c
+kirijiil
+stttwttv
+b.@.n..q
+bAAAAAAc
+aaaapaaa
+uuuuuuuu
+}
+
+
+Brown Brick House NW:
+a = 144 
+b = 152 / 314 
+c = 153 / 316 
+d = 142
+e = 143
+. = 300 	@Passable
+g = 154 
+h = 144 
+i = 144 
+j = 154 / 144
+k = 152 / 144 
+l = 153 / 144 
+m = 2058
+n = 156 
+o = 157 
+p = 147 / 144		Door 	@Door
+q = 146 / 316 	Door 	@Door
+r = 145	/ 162	@Passable
+s = 152 / 160 / 314		
+t = 159 / 300		@Passable
+u = 159 / -1	@Passable
+v = 161 / 153 / 316
+w = 154 / 159
 * = 300		@Passable
 
 A = 318 	@Passable

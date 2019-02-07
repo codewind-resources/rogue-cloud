@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,23 +41,30 @@ public class PngMain {
 				return;
 			}
 			
-			System.out.println("* Generating from "+args[0]);
-			
 			File serverDir = new File(args[0]);
-			
-			File pngFile = new File(serverDir, "map-new.png");
-			
-			File outputFile = new File(serverDir, "map-new.txt");
 
-			WorldGenFileMappings mappings = new WorldGenFileMappings(new FileInputStream(new File(serverDir, "map-new-mappings.txt"))); 
+			doThing(serverDir);
 			
-			PngState state = new PngState(outputFile, pngFile, mappings);
-			
-			doInner(state);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
+	}
+
+	
+	public static void doThing(File serverDir) throws IOException {
+		
+		System.out.println("* Generating from "+serverDir.getPath());
+		
+		File pngFile = new File(serverDir, "map-new-forest.png");
+		
+		File outputFile = new File(serverDir, "map-new.txt");
+
+		WorldGenFileMappings mappings = new WorldGenFileMappings(new FileInputStream(new File(serverDir, "map-new-mappings.txt"))); 
+		
+		PngState state = new PngState(outputFile, pngFile, mappings);
+		
+		doInner(state);
 	}
 	
 	private static void doInner(PngState state) throws IOException {

@@ -22,6 +22,8 @@ public class JsonDbLeaderboardEntry {
 	long roundId;
 	long score;
 	
+	// TODO: CURR - Is this no longer used?
+	
 	public JsonDbLeaderboardEntry(long userId, long roundId, long score) {
 		this.userId = userId;
 		this.roundId = roundId;

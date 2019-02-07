@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package com.roguecloud;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.roguecloud.UniqueIdGenerator.IdType;
@@ -54,13 +54,10 @@ import com.roguecloud.utils.AIUtils;
 import com.roguecloud.utils.LogContext;
 import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.MonsterFactory;
+import com.roguecloud.utils.MonsterFactory.MonsterFactoryResult;
 import com.roguecloud.utils.RoadGenerationAlgorithm;
 import com.roguecloud.utils.RoomList;
-import com.roguecloud.utils.ServerUtil;
 import com.roguecloud.utils.SimpleMap;
-import com.roguecloud.utils.UniverseParserUtil;
-import com.roguecloud.utils.WorldGenFileMappings;
-import com.roguecloud.utils.MonsterFactory.MonsterFactoryResult;
 
 /** Utility methods for various aspects of world generation. */
 public class WorldGeneration {
@@ -73,13 +70,13 @@ public class WorldGeneration {
 				
 		WorldGenFromFileResult wgResult;
 		
-		try {
-			WorldGenFileMappings mappings = new WorldGenFileMappings(ServerUtil.getServerResource(UniverseParserUtil.class, "/universe/map-new-mappings.txt"));
+		long startTimeInNanos = System.nanoTime();
+		// WorldGenFileMappings mappings = new WorldGenFileMappings(ServerUtil.getServerResource(UniverseParserUtil.class, "/universe/map-new-mappings.txt"));
+		// wgResult = WorldGenFromFile.generateMapFromInputStream(parent.getRoomList(), ServerUtil.getServerResource(UniverseParserUtil.class, "/universe/map-new.txt"), mappings);
+
+		wgResult = parent.getWorldGenerationThread().getOrWaitForResult();
 			
-			wgResult = WorldGenFromFile.generateMapFromInputStream(parent.getRoomList(), ServerUtil.getServerResource(UniverseParserUtil.class, "/universe/map-new.txt"), mappings);
-		} catch (IOException e1) {
-			throw new RuntimeException(e1);
-		}
+		System.out.println("* World generation time (msecs): "+ (TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTimeInNanos, TimeUnit.NANOSECONDS)));
 		RCArrayMap map = wgResult.getMap();
 		
 		List<GroundObject> goList = new ArrayList<>();
@@ -133,14 +130,7 @@ public class WorldGeneration {
 			}
 		}
 		
-		TileType[] shrubTiles = new TileType[] {
-				TileTypeList.SHRUB_1,
-				TileTypeList.SHRUB_2,
-				TileTypeList.SHRUB_3,
-				TileTypeList.SHRUB_4,
-				TileTypeList.SHRUB_5,
-				TileTypeList.SHRUB_6
-		};
+		TileType[] shrubTiles = TileTypeList.SHRUB_TILES;
 		
 		posOfShrubsToAdd.forEach( e -> {
 			

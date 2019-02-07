@@ -144,7 +144,7 @@ public class WanderingAttackAllAI extends MonsterClient {
 		}
 		
 		// If we can attack the target, then do it!
-		if(AIUtils.canReach(us.getPosition(), toAttacker.getPosition(), worldState.getMap())) {
+		if(AIUtils.canAttack(us.getPosition(), toAttacker.getPosition(), worldState.getMap(), selfState.getPlayer().getWeapon())) {
 			
 			CombatAction ca = new CombatAction(toAttacker);
 			log("Attacking: "+toAttacker+" [we are: "+us+"]");

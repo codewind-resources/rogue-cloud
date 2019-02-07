@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,8 +48,7 @@ public final class Position {
 		return 32768*x + y;
 	}
 	
-	/** Whether the position is within the bounds of the world. */
-	public final boolean isValid(IMap m) {
+	public static final boolean isValid(int x, int y, IMap m) {
 		if(x < 0) { return false; }
 		if(y < 0) { return false; } 
 		
@@ -63,6 +62,24 @@ public final class Position {
 		
 		
 		return true;
+	}
+	
+	/** Whether the position is within the bounds of the world. */
+	public final boolean isValid(IMap m) {
+		return Position.isValid(this.x, this.y, m);
+//		if(x < 0) { return false; }
+//		if(y < 0) { return false; } 
+//		
+//		if(x > m.getXSize()-1) {
+//			return false;
+//		}
+//		
+//		if(y > m.getYSize()-1) {
+//			return false;
+//		}
+//		
+//		
+//		return true;
 	}
 	
 	
@@ -80,6 +97,11 @@ public final class Position {
 	@Override
 	public final String toString() {
 		return "("+x+", "+y+")";
+	}
+
+	/** Returns the Manhattan distance between two points: this is the distance without traveling diagonally. */
+	public static final int manhattanDistanceBetween(int x1, int y1, int x2, int y2) {
+		return Math.abs(x2 - x1) + Math.abs(y2 - y1);
 	}
 	
 	/** Returns the Manhattan distance between two points: this is the distance without traveling diagonally. */

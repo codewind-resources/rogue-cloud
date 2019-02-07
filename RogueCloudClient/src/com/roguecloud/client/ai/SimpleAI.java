@@ -53,7 +53,6 @@ import com.roguecloud.map.IMap;
 import com.roguecloud.map.Tile;
 import com.roguecloud.utils.AIUtils;
 import com.roguecloud.utils.AStarSearch;
-import com.roguecloud.utils.FastPathSearch;
 
 /** 
  * Each turn, the simple agent implementation code asks your implementation code the following, to determine the next action to perform:
@@ -471,7 +470,7 @@ public class SimpleAI extends RemoteClient {
 			}
 		}
 		
-		if(AIUtils.canReach(ourPosition, go.getPosition(), map)) {
+		if(AIUtils.isAdjacent(ourPosition, go.getPosition(), map)) {
 			currentState = State.WANDERING;
 			pickUpItemData = null;
 			return new MoveInventoryItemAction(go.getId(), Type.PICK_UP_ITEM );
@@ -484,7 +483,8 @@ public class SimpleAI extends RemoteClient {
 		
 		if(pickUpItemData.ourCurrentRoute == null) {
 			// Find a new route to the ground object
-			List<Position> routeToDestination = FastPathSearch.doSearchWithAStar(ourPosition, go.getPosition(), worldState.getMap());
+			
+			List<Position> routeToDestination = AStarSearch.findPath(ourPosition, go.getPosition(), worldState.getMap());
 
 			if(routeToDestination.size() > 1) {
 				// Remove the first item, which is our current position
@@ -545,7 +545,7 @@ public class SimpleAI extends RemoteClient {
 			}
 		}
 		
-		if(AIUtils.canReach(ourPosition, creatureToAttack.getPosition(), map)) {
+		if(AIUtils.canAttack(ourPosition, creatureToAttack.getPosition(), map, selfState.getPlayer().getWeapon())) {
 			// If we can attack the creature from where we are standing, then do it!
 			return new CombatAction(creatureToAttack);
 		}
@@ -597,15 +597,17 @@ public class SimpleAI extends RemoteClient {
 			}
 			
 		}
+
 		
-		List<Position> fastPathSearchResult = AStarSearch.findPath(ourPosition, creatureToAttack.getPosition(), worldState.getMap());
-		if(fastPathSearchResult.size() > 1) {
-			fastPathSearchResult.remove(0);
-			attackingStateData.ourCurrentRoute = fastPathSearchResult;
-			attackingStateData.creatureToAttackLastPosition = creatureToAttack.getPosition();
-			if(SYNC_DEBUG) { System.err.println("setting current route in fast path: "+fastPathSearchResult+" ["+worldState.getCurrentGameTick()+"]"); }
-		
-		} else if(attackingStateData.ourCurrentRoute == null || distance < 15) {
+//		List<Position> fastPathSearchResult = AStarSearch.findPath(ourPosition, creatureToAttack.getPosition(), worldState.getMap());
+//		if(fastPathSearchResult.size() > 1) {
+//			fastPathSearchResult.remove(0);
+//			attackingStateData.ourCurrentRoute = fastPathSearchResult;
+//			attackingStateData.creatureToAttackLastPosition = creatureToAttack.getPosition();
+//			if(SYNC_DEBUG) { System.err.println("setting current route in fast path: "+fastPathSearchResult+" ["+worldState.getCurrentGameTick()+"]"); }
+//		
+//		} else 
+		if(attackingStateData.ourCurrentRoute == null || distance < 15) {
 			// Find a new route to the creature
 			List<Position> routeToDestination = AStarSearch.findPath(ourPosition, creatureToAttack.getPosition(), worldState.getMap());
 			if(routeToDestination.size() > 1) {
@@ -701,7 +703,7 @@ public class SimpleAI extends RemoteClient {
 			Position destination = whereShouldIGo();
 			if(destination == null) { return NullAction.INSTANCE; }
 			
-			List<Position> routeToDestination = FastPathSearch.doSearchWithAStar(ourPosition, destination, worldState.getMap());
+			List<Position> routeToDestination = AStarSearch.findPath(ourPosition, destination, worldState.getMap());
 			if(routeToDestination.size() > 1) {
 				// Success!
 				

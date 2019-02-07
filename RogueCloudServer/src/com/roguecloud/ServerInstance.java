@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
 */
-
 package com.roguecloud;
 
 import java.io.IOException;
@@ -58,8 +57,14 @@ public final class ServerInstance {
 	
 	private RoundScope currentRound_synch_lock;
 	
+	private final BgThreadWorldGeneration worldGenerationThread;
+	
 	
 	public ServerInstance() throws IOException {
+		this(true);
+	}
+	
+	public ServerInstance(boolean startNewRound) throws IOException {
 		try {
 				
 			LogContext lc = LogContext.serverInstance(getId());
@@ -72,9 +77,15 @@ public final class ServerInstance {
 			
 			roomList = new RoomList(lc);
 			
+			// Create a new world generation thread, and kick off the first generation.
+			worldGenerationThread = new BgThreadWorldGeneration(roomList);
+			worldGenerationThread.ensureThreadIsRunning();
+			
 			this.tileListJson = generateTileListJson();
 			
-			startNewRound();
+			if(startNewRound) {
+				startNewRound();
+			}
 		} catch(Throwable e) {
 			e.printStackTrace();
 			throw e;
@@ -139,6 +150,10 @@ public final class ServerInstance {
 		synchronized(lock) {
 			return currentRound_synch_lock;
 		}
+	}
+	
+	public BgThreadWorldGeneration getWorldGenerationThread() {
+		return worldGenerationThread;
 	}
 
 	/** The browser client needs a list of all the available .PNG images that the server may send. This method 

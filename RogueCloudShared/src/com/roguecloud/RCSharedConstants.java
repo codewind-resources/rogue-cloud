@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * This class is an internal class, for server use only. */
 public class RCSharedConstants {
 
-	public static final String CLIENT_API_VERSION = "18.5";
+	public static final String CLIENT_API_VERSION = "19.2";
 	
 	public static final long MAX_ROUND_LENGTH_IN_NANOS = TimeUnit.NANOSECONDS.convert(10, TimeUnit.MINUTES);
 	

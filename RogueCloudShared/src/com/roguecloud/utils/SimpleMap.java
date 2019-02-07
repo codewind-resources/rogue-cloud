@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,6 +69,28 @@ public final class SimpleMap<T> {
 				return letter;
 			}
 		});
+	}
+	
+	/** Return true if the rectangle (x, y) to (x + width-1, y+height-1) all contain the same object */
+	public boolean rectangleMatchesParam(int xParam, int yParam, int width, int height, T object) {
+		for (int x = xParam; x < xParam+width; x++) {
+			for(int y = yParam; y < yParam+height; y++) {
+				T objAtCoord = getTile(x, y);
+				if(!objAtCoord.equals(object)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	/** Put the same object to the rectangle from (x, y) to (x + width - 1, y + height - 1) */
+	public void putParamToRectangle(int xParam, int yParam, int width, int height, T object) {
+		for (int x = xParam; x < xParam+width; x++) {
+			for(int y = yParam; y < yParam+height; y++) {
+				putTile(x, y, object);
+			}
+		}
 	}
 	
 	public String dumpMap(SimpleMapPrettyPrint<T> pp) {
