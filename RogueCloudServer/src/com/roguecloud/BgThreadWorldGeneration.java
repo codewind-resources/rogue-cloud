@@ -84,7 +84,7 @@ public class BgThreadWorldGeneration {
 		while(true) {
 			
 			// Reset the expire time counter 
-			long expireTimeInNanos = System.nanoTime() + TimeUnit.NANOSECONDS.convert(30 * 1000, TimeUnit.MILLISECONDS); 
+			long expireTimeInNanos = System.nanoTime() + TimeUnit.NANOSECONDS.convert(60 * 1000, TimeUnit.MILLISECONDS); 
 			
 			inner_while: while(true) {
 				
