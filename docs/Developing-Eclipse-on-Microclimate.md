@@ -66,6 +66,12 @@ public static final String PASSWORD = "(specify a password here!)";
 * These values are to ensure that *only you* can access and control your character. 
 * The username and password you specify are automatically registered when your code first begins controlling a character on the game map, and they do not have to correspond to an existing email address or account.
 
+3) Hit ``CTRL-S`` (``Command-S`` on Mac) in order to save your changes
+
+4) Hit ``CTRL-SHIFT-R`` (on Mac, use ``Command-Shift-R``) and type ``SimpleAI.java`` and select ``SimpleAI.java``.
+
+5) This class is the main AI class. Changes made to this class are reflected in your AI running on the Liberty Server.
+
 
 ### G) Next steps: watch your agent go, and start coding
 
