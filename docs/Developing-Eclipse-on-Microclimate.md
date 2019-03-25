@@ -22,8 +22,7 @@ See the Microclimate documentation for more information [on installing Microclim
 
 ### C) Install and start Microclimate, if not already done.
 
-See section.
-
+Next, visit the [Installing Microclimate](Installing-Microclimate.md) page to install and start Microclimate. Return to this page when done.
 
 ### D) Clone the Rogue Cloud Client Git Repo from the Microclimate browser UI
 
