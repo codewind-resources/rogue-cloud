@@ -9,8 +9,7 @@
 
 ### B) Install and start Microclimate, if not already done.
 
-See section.
-
+Next, visit the [Installing Microclimate](Installing-Microclimate.md) page to install and start Microclimate. Return to this page when done.
 
 ### C)  Installing Microclimate Developer Tools into Visual Studio Code
 
