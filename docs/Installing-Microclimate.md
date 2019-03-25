@@ -2,8 +2,8 @@
 
 ### A) Download Microclimate
 
-1) Visit https://microclimate-dev2ops.github.io/gettingstarted
-2) Click 'Download' and download ``microclimate.zip``
+1) Visit https://microclimate-dev2ops.github.io/installlocally
+2) Click 'Download' and download ``microclimate-(version number).zip``
 3) Install the prerequisites:
 * Install Docker 17.06 and up (if not already installed)
 * **Windows**
