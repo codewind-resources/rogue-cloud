@@ -1,4 +1,4 @@
-## Play Rogue Cloud from Visual Studio Code
+## Play Rogue Cloud using Microclimate Visual Studio Code Tools
 
 ### A) Install Visual Studio Code
 - If you already have Visual Studio Code installed, skip to the next scction
