@@ -1,4 +1,4 @@
-## Play Rogue Cloud from Eclipse
+## Play Rogue Cloud using Microclimate Eclipse Tools
 
 ### A) Install Eclipse
 - If you already have Eclipse installed, skip to the next section. Microclimate Developer Tools for Eclipse requires either Eclipse Photon, Eclipse 2018-09, or newer.
