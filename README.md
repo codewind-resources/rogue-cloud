@@ -5,8 +5,8 @@ Rogue Cloud is an open-world top-down 2D multiplayer game, but unlike a traditio
 ## Getting Started
 
 Start playing the game by visiting our docs:
-* [Introduction and Concepts](docs)
 * [Getting Started](docs/GettingStarted.md)
+* [Introduction and Concepts](docs)
 
 Developer documentation for folks interested in how it's implemented, or adding new features to the game:
 * [Introduction to Rogue Cloud Development](docs/RogueCloudDevelopment.md)
