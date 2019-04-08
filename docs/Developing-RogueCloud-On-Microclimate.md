@@ -34,7 +34,7 @@ public static final String PASSWORD = "(specify a password here!)";
 
 5) This class is the main AI class. Changes made to this class are reflected in your AI running on the Liberty Server.
 
-### E) Next steps: watch your agent go, and start coding
+### D) Next steps: watch your agent go, and start coding
 
 To watch your agent as it interacts with the game world, switch to the ``Open app`` tab. You see a URL at the top of the page:
 
