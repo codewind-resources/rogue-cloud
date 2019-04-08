@@ -156,8 +156,6 @@ public final class Tile {
 		
 		List<TileType> result = new ArrayList<>();
 		
-//		TileType fg = null;
-		
 		if(creatures.size() > 0) {
 			int index = (0+creatureArrayOffset) % creatures.size();
 			
@@ -170,7 +168,12 @@ public final class Tile {
 				}
 				
 				result.add(creatureFg);
-//				fg = creatureFg; 
+
+				// Add a shadow behind a non-dead non-player creature 
+				if(!creature.isDead() && !creature.isPlayerCreature()) {
+					result.add(new TileType(10, 0));
+				}
+				
 			}
 
 		} else if(groundObjects.size() > 0) {
@@ -181,30 +184,6 @@ public final class Tile {
 		terrain.stream().map(e -> e.getTileType()).forEach( e -> {  result.add(e);  });
 		
 		return result.toArray(new TileType[result.size()]);
-		
-//		else {
-//			
-//			if(terrain != null) {
-//				fg = terrain.get(0).getTileType();
-//			}
-//		}
-//		
-//		if(bgTerrain != null) {
-//			if(fg != null) {
-//				// bg yes, fg yes
-//				return new TileType[] { fg, bgTerrain.getTileType()};
-//			} else {
-//				// bg yes, fg no
-//				return new TileType[] { bgTerrain.getTileType()};
-//			}
-//			
-//		} else if(fg != null) {
-//			// bg no, fg yes
-//			return new TileType[] { fg};			
-//		} else {
-//			// bg no, fg no
-//			return new TileType[] {};
-//		}
 		
 	}
 	

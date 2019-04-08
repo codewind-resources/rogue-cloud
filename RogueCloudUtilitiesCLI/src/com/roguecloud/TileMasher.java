@@ -39,7 +39,7 @@ public class TileMasher {
 	
 	private static void innerRun() throws IOException {
 		
-		File inputDir = new File("C:\\Hackathon\\tiles");
+		File inputDir = new File("C:\\Rogue-Cloud\\tiles");
 		
 		File outputDir = new File("C:/Rogue-Cloud/Git/RogueCloudResources/src/com/roguecloud/resources/tiles");
 		

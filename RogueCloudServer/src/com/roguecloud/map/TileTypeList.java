@@ -83,6 +83,48 @@ public class TileTypeList {
 
 	public static final TileType CYBER_KNIGHT = new TileType(1733);
 	
+	public static final TileType KNIGHT_CYAN = new TileType(1810);
+	public static final TileType KNIGHT_GREEN = new TileType(1811);
+	public static final TileType KNIGHT_NATURAL = new TileType(1812);
+	public static final TileType KNIGHT_PURPLE = new TileType(1813);
+	public static final TileType KNIGHT_RED = new TileType(1814);
+	public static final TileType KNIGHT_YELLOW = new TileType(1815);
+	public static final TileType NINJA_CYAN = new TileType(1816);
+	public static final TileType NINJA_GREEN = new TileType(1817);
+	public static final TileType NINJA_NATURAL = new TileType(1818);
+	public static final TileType NINJA_PURPLE = new TileType(1819);
+	public static final TileType NINJA_RED = new TileType(1820);
+	public static final TileType NINJA_YELLOW = new TileType(1821);
+	public static final TileType ROGUE_CYAN = new TileType(1822);
+	public static final TileType ROGUE_GREEN = new TileType(1823);
+	public static final TileType ROGUE_NATURAL = new TileType(1824);
+	public static final TileType ROGUE_PURPLE = new TileType(1825);
+	public static final TileType ROGUE_RED = new TileType(1826);
+	public static final TileType ROGUE_YELLOW = new TileType(1827);
+	
+	public static final TileType SHADOW = new TileType(10);
+
+	public static TileType[] CHARACTER_TILES = new TileType[] {
+		KNIGHT_CYAN,
+		KNIGHT_GREEN,
+		KNIGHT_NATURAL,
+		KNIGHT_PURPLE,
+		KNIGHT_RED,
+		KNIGHT_YELLOW,
+		NINJA_CYAN,
+		NINJA_GREEN,
+		NINJA_NATURAL,
+		NINJA_PURPLE,
+		NINJA_RED,
+		NINJA_YELLOW,
+		ROGUE_CYAN,
+		ROGUE_GREEN,
+		ROGUE_NATURAL,
+		ROGUE_PURPLE,
+		ROGUE_RED,
+		ROGUE_YELLOW
+	};
+		
 	public static final TileType LARGE_FLAG = new TileType(2155);
 	
 	public static final TileType LARGE_BOTTLE = new TileType(1008);
