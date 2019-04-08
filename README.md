@@ -27,5 +27,5 @@ Rogue Cloud is designed to showcase the capabilities of our Kubernetes-based **I
 
 Have we piqued your interest? Learn more about the game and then get started playing! See [Getting Started](docs/GettingStarted.md) to begin.
 
-![Screenshot](docs/resources/screenshot-june-2018.png "Screenshot")
+![Screenshot](docs/resources/screenshot-april-2019.png "Screenshot")
 
