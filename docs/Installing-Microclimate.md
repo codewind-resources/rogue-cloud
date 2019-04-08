@@ -14,9 +14,10 @@
   - Install [Docker Compose](https://docs.docker.com/compose/install/) (if not already installed)
   - Supported architecture: x86-64 only
   - **Linux**: Follow [post-installation steps to run docker as a non-root user](https://docs.docker.com/engine/installation/linux/linux-postinstall/).
-4) Note: you can either follow the instructions on the Microclimate 'Getting Started' page under the 'Local microclimate deployment', or follow these setup instructions:
+4) Follow these setup instructions depending on which operating system you are installing from.
+  - More information on installing Microclimate is available from our [Getting Started page](https://microclimate-dev2ops.github.io/installlocally).
   * **On Linux and MAC OS**:
-    - *Linux only*: you may need to install the unzip tool, for example: ``sudo apt-get install unzip``
+      - *Linux only*: you may need to install the unzip tool, for example: ``sudo apt-get install unzip``
     - Unzip the ZIP file and run the install script:
     ```
     unzip microclimate.zip
