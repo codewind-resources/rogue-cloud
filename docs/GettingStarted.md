@@ -10,6 +10,8 @@ You may also play using a programmer's text editor (such as VS Code or Atom), or
 - *Recommended*: [Play Rogue Cloud from **Eclipse**, using **Microclimate**](Developing-Eclipse-on-Microclimate.md)
 - *Recommended*: [Play Rogue Cloud from **Visual Studio Code**, using **Microclimate**](Developing-VisualStudioCode-on-Microclimate.md)
 - *Recommended*: [Playing Rogue Cloud from your **Web browser**, using **Microclimate**](Developing-Microclimate.md)
+
+Other options:
 - [Playing Rogue Cloud using a Text Editor (Sublime, VSCode) and Maven](Developing-Text-Editor.md)
 - [Playing Rogue Cloud using Eclipse and IBM Liberty Developer Tools](Developing-LibertyDevTools.md)
 
