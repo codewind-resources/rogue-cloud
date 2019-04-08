@@ -1,7 +1,7 @@
 
 ## Developing Rogue Cloud: How Rogue Cloud is implemented, and adding new features to the game
 
-This page is for developers who are interested in how Rogue Cloud is implemented, and/or want to add new features to the game (or, perhaps, even fix bugs!).
+**Note**: This page is for developers who are interested in how Rogue Cloud is implemented, and/or want to add new features to the game (or, perhaps, even fix bugs!).
 
 If you only wish to play the game (which involves writing your own Rogue Cloud agent code), see [Getting Started](GettingStarted.md).
 

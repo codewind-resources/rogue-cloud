@@ -6,7 +6,12 @@ First, select the development environment that you will be playing the game in. 
 You may also play using a programmer's text editor (such as VS Code or Atom), or using Eclipse and the IBM Liberty Development Tools.
 
 ### A) Install the development environment of your choice.
-- **Recommended**: [Playing Rogue Cloud using Microclimate](Developing-Microclimate.md)
+
+- *Recommended*: [Play Rogue Cloud from **Eclipse**, using **Microclimate**](Developing-Eclipse-on-Microclimate.md)
+- *Recommended*: [Play Rogue Cloud from **Visual Studio Code**, using **Microclimate**](Developing-VisualStudioCode-on-Microclimate.md)
+- *Recommended*: [Playing Rogue Cloud from your **Web browser**, using **Microclimate**](Developing-RogueCloud-On-Microclimate.md)
+
+Other options:
 - [Playing Rogue Cloud using a Text Editor (Sublime, VSCode) and Maven](Developing-Text-Editor.md)
 - [Playing Rogue Cloud using Eclipse and IBM Liberty Developer Tools](Developing-LibertyDevTools.md)
 

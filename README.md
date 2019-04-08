@@ -5,8 +5,8 @@ Rogue Cloud is an open-world top-down 2D multiplayer game, but unlike a traditio
 ## Getting Started
 
 Start playing the game by visiting our docs:
-* [Introduction and Concepts](docs)
 * [Getting Started](docs/GettingStarted.md)
+* [Introduction and Concepts](docs)
 
 Developer documentation for folks interested in how it's implemented, or adding new features to the game:
 * [Introduction to Rogue Cloud Development](docs/RogueCloudDevelopment.md)
@@ -15,7 +15,7 @@ Developer documentation for folks interested in how it's implemented, or adding 
 ## <a name="tech"></a> The Technology Behind the Game
 
 Building microservices and cloud-native applications requires tools that lets developers rapidly develop and deploy applications to the cloud.
-  * Learn more about **Microclimate**, our [container-based development tools driving end-to-end delivery and rapid iteration of Node/Java/Swift application development](https://microclimate-dev2ops.github.io/).
+  * Learn more about **Microclimate**, our [container-based development tools driving end-to-end delivery and rapid iteration of Node/Java/Swift/Go/Python/Docker application development](https://microclimate-dev2ops.github.io/).
 
 Rogue Cloud is built on **Open Liberty**, the premier platform for building Java cloud-native applications and microservices.
   * Learn more about our latest and greatest [open source enterprise application server](https://openliberty.io/).
@@ -27,5 +27,5 @@ Rogue Cloud is designed to showcase the capabilities of our Kubernetes-based **I
 
 Have we piqued your interest? Learn more about the game and then get started playing! See [Getting Started](docs/GettingStarted.md) to begin.
 
-![Screenshot](docs/resources/screenshot-june-2018.png "Screenshot")
+![Screenshot](docs/resources/screenshot-april-2019.png "Screenshot")
 
