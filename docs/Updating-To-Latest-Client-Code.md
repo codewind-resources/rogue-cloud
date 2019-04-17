@@ -19,7 +19,7 @@ Once the latest changes are pulled, Microclimate will detect the change and you 
 
 For users that are familiar with the git command line tool, you can use this method to pull from the in-browser terminal:
 1. In the code editor view, select `File` > `New Terminal`, which will open a new command line terminal inside the code editor.
-2. You should already be in the `/home/microclimate-workspace` directory. If not, type `cd /home/microclimate-workspace`
+2. You should already be in the `microclimate-workspace` directory. If not, type `cd /microclimate-workspace`
 3. Pull the latest changes from the remote repository by running the following commands:
 ```
 cd roguecloudclient
