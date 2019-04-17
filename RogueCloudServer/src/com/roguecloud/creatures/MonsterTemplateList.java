@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.roguecloud.map.TileType;
 import com.roguecloud.resources.Resources;
@@ -36,28 +37,43 @@ public class MonsterTemplateList {
 	
 	private final List<MonsterTemplate> list;	 
 	
+	private final int totalRandomnessWeight;
+	
 	public MonsterTemplateList(LogContext lc) throws IOException {
 		
 		final List<MonsterTemplate> parsedMonsterTemplates = new ArrayList<>();
 
+		final AtomicInteger totalRandomnessWeight = new AtomicInteger(0);
+		
 		UniverseParserUtil.parseItemFile( (currType, commaSepArr, line) -> {
 			
-			if(commaSepArr.size() != 4) {
+			if(commaSepArr.size() != 5) {
 				log.severe("Unable to parse MonsterTemplate line, due to not enough values: "+line, lc);
 				return;
 			}
 			
 			try {
-								
+				
+				int randomnessWeight = Integer.parseInt(commaSepArr.get(4).trim());
+				
+				if(randomnessWeight > 200) { 
+					// Sanity check on randomness weight
+					System.err.println("Warning: Randomness weight greater than 200 -  "+line);
+				}
+				
 				MonsterTemplate mt = new MonsterTemplate(
 						commaSepArr.get(0).trim(),
 						Integer.parseInt(commaSepArr.get(1).trim()),
 						Integer.parseInt(commaSepArr.get(2).trim()), 
-						new TileType(Integer.parseInt(commaSepArr.get(3).trim()))
+						new TileType(Integer.parseInt(commaSepArr.get(3).trim())),
+						randomnessWeight
 						);
 				
 				if(Resources.getInstance().isValidTile(mt.getTileType().getNumber())) {
-					parsedMonsterTemplates.add(mt);					
+					parsedMonsterTemplates.add(mt);
+					
+					totalRandomnessWeight.addAndGet(randomnessWeight);
+					
 				} else {
 					log.severe("Unable to find tile for monster "+mt.getTileType().getNumber(), null);
 				}
@@ -69,6 +85,8 @@ public class MonsterTemplateList {
 			
 		}, "/universe/monsters.txt");
 
+		this.totalRandomnessWeight = totalRandomnessWeight.get();
+		
 		log.interesting("Parsed "+parsedMonsterTemplates.size()+" monsters.", lc);
 
 		this.list = Collections.unmodifiableList(parsedMonsterTemplates);
@@ -77,6 +95,10 @@ public class MonsterTemplateList {
 
 	public List<MonsterTemplate> getList() {
 		return list;
+	}
+	
+	public int getTotalRandomnessWeight() {
+		return totalRandomnessWeight;
 	}
 	
 	public MonsterTemplate getByName(String str) {

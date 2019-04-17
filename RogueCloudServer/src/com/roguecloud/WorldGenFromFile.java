@@ -40,6 +40,7 @@ import com.roguecloud.utils.Logger;
 import com.roguecloud.utils.RCUtils;
 import com.roguecloud.utils.RoomList;
 import com.roguecloud.utils.RoomList.Room;
+import com.roguecloud.utils.ServerUtil.PerfData;
 import com.roguecloud.utils.SimpleMap;
 import com.roguecloud.utils.WorldGenFileMappings;
 import com.roguecloud.utils.WorldGenFileMappings.WorldGenFileMappingEntry;
@@ -138,6 +139,7 @@ public class WorldGenFromFile {
 		}
 		
 
+		
 		// Draw rooms, roads, grass.
 		// - Create the result map from the entries 
 		RCArrayMap aMap = new RCArrayMap(charMap.getXSize(), charMap.getYSize());
@@ -229,7 +231,6 @@ public class WorldGenFromFile {
 					}
 				}
 			} // end for
-			
 		}
 		
 		
@@ -307,7 +308,6 @@ public class WorldGenFromFile {
 					
 				}
 			}
-			
 		}
 		
 		
@@ -401,8 +401,12 @@ public class WorldGenFromFile {
 			}
 		}
 		
+		PerfData perf = new PerfData();
+
+		
 		// Add tree tiles to random empty spots across the map
 		{
+			perf.reset();
 			List<TileTypeGroup> forestGroups = new ArrayList<>();
 			forestGroups.addAll(Arrays.asList( new TileTypeGroup[] {
 					TileTypeList.WILLOW_TREE_GROUP,
@@ -439,6 +443,8 @@ public class WorldGenFromFile {
 				if(attempts >= 100) { break; }
 				
 			}
+			
+			perf.output("Add tree tiles to random empty spots across the map");
 		}
 
 		List<DrawRoomResult> houses = new ArrayList<>();
@@ -452,6 +458,7 @@ public class WorldGenFromFile {
 		
 		// Draw table and chairs
 		{
+			perf.reset();
 			
 			if(houses.size() > 0) {
 
@@ -504,10 +511,14 @@ public class WorldGenFromFile {
 					if(count % 20 == 0) { assertNotInterrupted(); }					
 				}			
 			}
+			
+			perf.output("Draw table and chairs");
 		}
 		
 		// Draw torches on back walls of houses
 		if(houses.size() > 0) {
+			
+			perf.reset();
 			
 			TileType[] validTorchSurfaces = new TileType[] { TileTypeList.GREY_BRICK_WALL, TileTypeList.BROWN_BRICK_WALL } ;
 			
@@ -601,11 +612,13 @@ public class WorldGenFromFile {
 
 			// Draw Candlesticks throughout the houses
 			addCandleSticks(houses, aMap);
+			
+			perf.output("Draw torches and furnaces");
 		}
 		
 		// Draw forests on map tiles marked with 'o'
 		{
-			
+			perf.reset();
 			SparseCoordinateUtil scu = new SparseCoordinateUtil(eMap, "o");
 			Random rand = new Random();
 			
@@ -646,7 +659,7 @@ public class WorldGenFromFile {
 				stampOntoMap(p.getX(), p.getY(), newGroup, aMap);
 			});
 
-			
+			perf.output("Draw forests on map tiles marked with 'o'");
 		}
 		
 		return new WorldGenFromFileResult(aMap, spawns);

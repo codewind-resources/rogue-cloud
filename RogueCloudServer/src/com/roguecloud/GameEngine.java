@@ -511,7 +511,6 @@ public final class GameEngine {
 						}
 						ews.setCurrClientWorldX(-1 /*clientPosX*/);
 						ews.setCurrClientWorldY(-1 /*clientPosY*/ );
-		//				ews.setNextFrame(0);
 						activeClient.setGameEngineInfo(ews);
 					}  
 										
@@ -538,7 +537,6 @@ public final class GameEngine {
 						log.severe("Unrecognized view type: "+activeClient.getViewType(), lc);
 						continue;
 					}
-					
 					
 					String str = BrowserWebSocketClientShared.generateBrowserJson(ews.getCurrClientWorldX(), ews.getCurrClientWorldY(), 
 							innerClientPosX /*clientPosX*/, innerClientPosY /*clientPosY*/, ews.getWidth(), ews.getHeight(), map, changedTiles, creatures, gc.ticks, factory);
@@ -1432,7 +1430,9 @@ public final class GameEngine {
 				}
 			}
 			
-			PlayerCreature pc = new PlayerCreature(client.getUsername(), gc.generator.getNextUniqueId(IdType.CREATURE), new Position(posX, posY), TileTypeList.CYBER_KNIGHT, new ArmourSet());
+			TileType characterTile = TileTypeList.CHARACTER_TILES[(int)(TileTypeList.CHARACTER_TILES.length * Math.random())];
+			
+			PlayerCreature pc = new PlayerCreature(client.getUsername(), gc.generator.getNextUniqueId(IdType.CREATURE), new Position(posX, posY), characterTile, new ArmourSet());
 			pc.setWeapon(bareHands);
 			pc.setMaxHp(250);
 			pc.setCurrHp(pc.getMaxHp());
@@ -1713,19 +1713,6 @@ public final class GameEngine {
 		return result;
 
 	}
-	
-//	private static void increaseScore( Long userId, int scoreIncrease, GameContext gc) {
-//		if(userId == null) { return; }
-//
-//		long newScore = gc.scoreMap.getOrDefault(userId, 0l) + scoreIncrease;
-//
-//		if(scoreIncrease > 5) {
-//			log.info("Player "+userId+" had score increased by "+scoreIncrease+" to "+newScore, gc.lc);
-//		}
-//		
-//		gc.scoreMap.put(userId, newScore);
-//		
-//	}
 	
 	private static IActionResponse doAction(IAction action, RCArrayMap map, IMutableCreature m, List<Position> changedTiles, GameContext gc) {
 		IActionResponse response = NullActionResponse.INSTANCE;

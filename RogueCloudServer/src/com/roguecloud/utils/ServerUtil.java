@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.concurrent.TimeUnit;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -181,5 +182,35 @@ public class ServerUtil {
 		}
 
 		return inputStream;
+	}
+	
+	
+	/** 
+	 * To track performance data of a block of code:
+	 * 
+	 * PerfData start = new PerfData();
+	 * {
+	 * 		start.reset();
+	 *		// Some code
+	 * }
+	 * start.output("Performance for this code block");
+	 **/
+	public static class PerfData {
+		
+		private long startTimeInNanos;
+		
+		public PerfData() {
+			this.startTimeInNanos = System.nanoTime();
+		}
+		
+		
+		public void reset() {
+			this.startTimeInNanos = System.nanoTime();
+		}
+		
+		public void output(String type) {
+			System.out.println("Elapsed time for '" + type + "': " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTimeInNanos, TimeUnit.NANOSECONDS));
+		}
+		
 	}
 }

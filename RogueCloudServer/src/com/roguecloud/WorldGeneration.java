@@ -351,7 +351,28 @@ public class WorldGeneration {
 				.orElseThrow( () -> new IllegalArgumentException("Bare Hands not found.") ); 
 
 
-		MonsterTemplate mt = monsterTemplateList.getList().get((int)(monsterTemplateList.getList().size() * Math.random())    ); 
+		// Randomize which monster to pick, based on the weightings in the monsters.txt file
+		MonsterTemplate mt = null;
+		{
+			int randomItem = (int)(monsterTemplateList.getTotalRandomnessWeight() * Math.random());
+			
+			for(MonsterTemplate entry : monsterTemplateList.getList()) {
+				
+				if(randomItem - entry.getRandomnessWeight() < 0) {
+					mt = entry;
+					break;
+				} else {
+					randomItem -= entry.getRandomnessWeight();
+				}
+			}
+			
+			// If for some reason mt is null, then go back to simple randomness
+			if(mt == null) {
+				mt = monsterTemplateList.getList().get((int)(monsterTemplateList.getList().size() * Math.random())    );
+				System.err.println("Null monster in 'generateSingleMonsterAtPosition'");
+			}
+		}
+		
 		MonsterClient ai = null;
 		{
 			
@@ -383,13 +404,6 @@ public class WorldGeneration {
 		int level = mfr.getLevel();
 		
 		int maxHp = 15+level*2;
-//		if(level >= 0 && level <= 6) {
-//			maxHp = 20;
-//		} else if(level >= 7 && level <= 11) {
-//			maxHp = 30;
-//		} else if(level > 11) {
-//			maxHp = 40;
-//		}
 
 		Monster m = new Monster(mt.getName(), idGen.getNextUniqueId(IdType.CREATURE),
 				position,
@@ -404,7 +418,6 @@ public class WorldGeneration {
 			ai.setAIContext(context);
 			aiContextList.add(context);
 
-//			m.setWeapon(weaponList.getList().get(0)); 
 			m.setMaxHp(maxHp);
 			m.setCurrHp(m.getMaxHp());
 			
