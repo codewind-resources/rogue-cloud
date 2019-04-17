@@ -34,4 +34,4 @@ git pull
 1. Read and heed the above warning :smile:.
 2. Select `Projects`, to bring you to the Microclimate Projects view.
 3. Click the `roguecloudclient` context icon (3 vertical dots), and select `Delete project`.
-4. Follow the **Add Rogue Cloud to Microclimate** steps of the installation page (https://github.com/microclimate-dev2ops/rogue-cloud/blob/master/docs/Developing-Microclimate.md). This will a fresh copy of the rogue-cloud-client repository.
+4. Follow the **Add Rogue Cloud to Microclimate** steps of the installation page (https://github.com/microclimate-dev2ops/rogue-cloud/blob/master/docs/GettingStarted.md). This will a fresh copy of the rogue-cloud-client repository.
