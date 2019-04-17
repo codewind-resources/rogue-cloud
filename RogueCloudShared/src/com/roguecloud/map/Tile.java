@@ -170,10 +170,15 @@ public final class Tile {
 				result.add(creatureFg);
 
 				// Add a shadow behind a non-dead non-player creature 
-				if(!creature.isDead() && !creature.isPlayerCreature()) {
+				if(!creature.isDead() && !creature.isPlayerCreature() && creature.getTileType() != null &&
+						!(creature.getTileType().getNumber() >= 1810 && creature.getTileType().getNumber() <= 1870) ) {
+				
+					// Some characters already include shadows in their transparent .PNG, so we don't need to add one. 
+					// 1810 to 1870 is the range of tiles (by number) that already have shadows, so we exclude them here.
+
 					result.add(new TileType(10, 0));
 				}
-				
+
 			}
 
 		} else if(groundObjects.size() > 0) {

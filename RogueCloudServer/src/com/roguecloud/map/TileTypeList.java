@@ -82,7 +82,9 @@ public class TileTypeList {
 	public static final TileType BRICK_FENCE_STRAIGHT_HORIZ_BOT = new TileType(2118, 0);
 
 	public static final TileType CYBER_KNIGHT = new TileType(1733);
-	
+
+	public static final TileType SHADOW = new TileType(10);
+
 	public static final TileType KNIGHT_CYAN = new TileType(1810);
 	public static final TileType KNIGHT_GREEN = new TileType(1811);
 	public static final TileType KNIGHT_NATURAL = new TileType(1812);
@@ -101,9 +103,8 @@ public class TileTypeList {
 	public static final TileType ROGUE_PURPLE = new TileType(1825);
 	public static final TileType ROGUE_RED = new TileType(1826);
 	public static final TileType ROGUE_YELLOW = new TileType(1827);
-	
-	public static final TileType SHADOW = new TileType(10);
 
+	
 	public static TileType[] CHARACTER_TILES = new TileType[] {
 		KNIGHT_CYAN,
 		KNIGHT_GREEN,
@@ -124,7 +125,32 @@ public class TileTypeList {
 		ROGUE_RED,
 		ROGUE_YELLOW
 	};
-		
+	
+	public static final TileType GOBLIN_YELLOW =  new TileType(1830, 0, "Goblin");
+	public static final TileType GOBLIN_BLUE =  new TileType(1831, 0, "Goblin");
+	public static final TileType GOBLIN_GREEN =  new TileType(1832, 0, "Goblin");
+	public static final TileType GOBLIN_PURPLE =  new TileType(1833, 0, "Goblin");
+	public static final TileType GOBLIN_RED =  new TileType(1834, 0, "Goblin");
+	
+	public static TileType[] GOBLINS = new TileType[] {
+		GOBLIN_YELLOW, GOBLIN_BLUE, GOBLIN_GREEN, GOBLIN_PURPLE, GOBLIN_RED
+	};
+	
+	
+	public static final TileType OOZE_BLUE = new TileType(1835, 0, "Blue Ooze");
+	public static final TileType OOZE_DARK_BLUE = new TileType(1836, 0, "Dark Blue Ooze");
+	public static final TileType OOZE_GREEN = new TileType(1837, 0, "Green Ooze");
+	public static final TileType OOZE_PURPLE = new TileType(1838, 0, "Purple Ooze");
+	public static final TileType OOZE_RED = new TileType(1839, 0, "Red Ooze");
+	public static final TileType OOZE_YELLOW = new TileType(1840, 0, "Yellow Ooze");
+	
+	public static final TileType SPIDER_CYAN = new TileType(1841, 0, "Cyan Spider");
+	public static final TileType SPIDER_GREEN = new TileType(1842, 0, "Green Spider");
+	public static final TileType SPIDER_NATURAL = new TileType(1843, 0, "Spider");
+	public static final TileType SPIDER_PURPLE = new TileType(1844, 0, "Purple Spider");
+	public static final TileType SPIDER_RED = new TileType(1845, 0, "Red Spider");
+	public static final TileType SPIDER_YELLOW = new TileType(1846, 0, "Yellow Spider");
+	
 	public static final TileType LARGE_FLAG = new TileType(2155);
 	
 	public static final TileType LARGE_BOTTLE = new TileType(1008);
@@ -241,14 +267,14 @@ public class TileTypeList {
 //			COBBLESTONE_319
 	};
 
-	public static final TileType CHAIR_FACING_LEFT = new TileType(1054);
-	public static final TileType CHAIR_FACING_RIGHT = new TileType(1055);
-	public static final TileType WOOD_TABLE = new TileType(1056);
+	public static final TileType CHAIR_FACING_LEFT = new TileType(1054, 0, "Chair");
+	public static final TileType CHAIR_FACING_RIGHT = new TileType(1055, 0, "Chair");
+	public static final TileType WOOD_TABLE = new TileType(1056, 0, "Empty Table");
 	
-	public static final TileType WOOD_TABLE_SILVER_LEFT_BEERMUG = new TileType(1057);
-	public static final TileType WOOD_TABLE_SILVER_RIGHT_BERRMUG = new TileType(1058);
-	public static final TileType TABLE_SILVER_RIGHT = new TileType(1059);
-	public static final TileType TABLE_SILVER_FULL = new TileType(1060);
+	public static final TileType WOOD_TABLE_SILVER_LEFT_BEERMUG = new TileType(1057, 0, "Table");
+	public static final TileType WOOD_TABLE_SILVER_RIGHT_BERRMUG = new TileType(1058, 0, "Table");
+	public static final TileType TABLE_SILVER_RIGHT = new TileType(1059, 0, "Table with dishes");
+	public static final TileType TABLE_SILVER_FULL = new TileType(1060, 0, "Full Table");
 	
 	public static final TileType[] ALL_TABLES = new TileType[] {
 			WOOD_TABLE,
@@ -260,15 +286,15 @@ public class TileTypeList {
 	
 	public static final TileTypeGroup TABLE_AND_CHAIRS_GROUP = new TileTypeGroup(3, 1, CHAIR_FACING_RIGHT, WOOD_TABLE, CHAIR_FACING_LEFT);
 	
-	public static final TileType TORCH = new TileType(34);
+	public static final TileType TORCH = new TileType(34, 0, "Torch");
 	
-	public static final TileType CANDLE_STICK = new TileType(35);
+	public static final TileType CANDLE_STICK = new TileType(35, 0, "Candle stick");
 	public static final TileType TREASURE_CHEST = new TileType(36);
 	public static final TileType BOOKSHELF = new TileType(37);
 	public static final TileType BOOKSHELF_CANDLE = new TileType(38);
 	public static final TileType BOOKSHELF_EMPTY = new TileType(39);
 	
-	public static final TileType FURNACE_TOP = new TileType(1062);
+	public static final TileType FURNACE_TOP = new TileType(1062, 0, "Fireplace");
 	public static final TileType FURNACE_BOTTOM = new TileType(1063);
 	
 	

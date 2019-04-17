@@ -511,7 +511,6 @@ public final class GameEngine {
 						}
 						ews.setCurrClientWorldX(-1 /*clientPosX*/);
 						ews.setCurrClientWorldY(-1 /*clientPosY*/ );
-		//				ews.setNextFrame(0);
 						activeClient.setGameEngineInfo(ews);
 					}  
 										
@@ -538,7 +537,6 @@ public final class GameEngine {
 						log.severe("Unrecognized view type: "+activeClient.getViewType(), lc);
 						continue;
 					}
-					
 					
 					String str = BrowserWebSocketClientShared.generateBrowserJson(ews.getCurrClientWorldX(), ews.getCurrClientWorldY(), 
 							innerClientPosX /*clientPosX*/, innerClientPosY /*clientPosY*/, ews.getWidth(), ews.getHeight(), map, changedTiles, creatures, gc.ticks, factory);

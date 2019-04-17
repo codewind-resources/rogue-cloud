@@ -25,12 +25,14 @@ public class MonsterTemplate {
 	private final int minLevelRange;
 	private final int maxLevelRange;
 	private final TileType tileType;
+	private final int randomnessWeight;
 	
-	public MonsterTemplate(String name, int minLevelRange, int maxLevelRange, TileType tileType) {
+	public MonsterTemplate(String name, int minLevelRange, int maxLevelRange, TileType tileType, int randomnessWeight) {
 		this.name = name;
 		this.minLevelRange = minLevelRange;
 		this.maxLevelRange = maxLevelRange;
 		this.tileType = tileType;
+		this.randomnessWeight = randomnessWeight;
 	}
 
 	public String getName() {
@@ -47,5 +49,9 @@ public class MonsterTemplate {
 	
 	public TileType getTileType() {
 		return tileType;
+	}
+	
+	public int getRandomnessWeight() {
+		return randomnessWeight;
 	}
 }

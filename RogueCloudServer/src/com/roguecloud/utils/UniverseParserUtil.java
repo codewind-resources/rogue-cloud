@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,17 +34,22 @@ public class UniverseParserUtil {
 		
 		for(String line : arr) {
 			
-			line = line.trim();
-			
-			if(line.startsWith("#") || line.startsWith("//")) {
-				continue;
-			}  else if(line.endsWith(":")) {
-				currType = line.substring(0, line.length()-1);
+			try {
+				line = line.trim();
 				
-			} else if(line.contains(",")) {
-				
-				List<String> commaSepArr = splitByCommas(line);
-				handler.line(currType, commaSepArr, line);
+				if(line.startsWith("#") || line.startsWith("//")) {
+					continue;
+				}  else if(line.endsWith(":")) {
+					currType = line.substring(0, line.length()-1);
+					
+				} else if(line.contains(",")) {
+					
+					List<String> commaSepArr = splitByCommas(line);
+					handler.line(currType, commaSepArr, line);
+				}
+			} catch(RuntimeException e) {
+				System.err.println("Exception while processing line ["+line+"]");
+				throw e;
 			}
 			
 		}
