@@ -18,11 +18,11 @@
 4) Read and accept the licenses, then click `Finish`.
 5) After the install completes, you will be prompted to restart Eclipse, click Restart.
 
-See the Microclimate documentation for more information [on installing Microclimate Developer Tools](https://microclimate-dev2ops.github.io/mdteclipseinstall#doc).
+See the Microclimate documentation for more information [on Installing Microclimate Developer Tools](https://microclimate-dev2ops.github.io/mdteclipseinstall#doc).
 
-### C) Install and start Microclimate, if not already done.
+### C) Install and start Microclimate (if not completed)
 
-Next, visit the [Installing Microclimate](Installing-Microclimate.md) page to install and start Microclimate. Return to this page when done.
+Visit the [Installing Microclimate](Installing-Microclimate.md) page to install and start Microclimate. Return to this page when done.
 
 ### D) Clone the Rogue Cloud Client Git Repo from the Microclimate browser UI
 
@@ -31,19 +31,19 @@ Next, visit the [Installing Microclimate](Installing-Microclimate.md) page to in
 * `https://github.com/microclimate-dev2ops/rogue-cloud-client`
 3) Click ``Next``, then click the ``Import`` button.
 4) Once the code is imported, click the ``Edit Code`` button. You are now redirected to the code editor.
-5) Before the code starts building, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This can take up to 7-10 minutes depending on CPU and network connection (this initialization is only required the first time you using Microclimate). You can use ``docker logs -f microclimate-file-watcher`` to watch its progress.
+5) Before the code starts building, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This can take up to 7 to 10 minutes depending on CPU and network connection (this initialization is only required the first time you using Microclimate). You can use ``docker logs -f microclimate-file-watcher`` to watch its progress.
 6) Once the build has initialized and downloaded the required dependencies, the build icon displays a green circle notification, like so: ![Rogue Cloud project is built](resources/gameclient-microclimate-ready.png "Rogue Cloud project is built")
 
-Once the build completes, you can now return to the Eclipse window.
+Once the build completes, you can return to the Eclipse window.
 
 ### E) Create a dev connection to Microclimate from Eclipse
 
 You should now have both Eclipse and Microclimate installed. Next we need to configure the Eclipse Microclimate Developer Tools to connect to the Microclimate service.
 
-Ensure that Microclimate is up and running before proceeding with these steps. 
+Ensure that Microclimate is up and running before proceeding with these steps.
 
-1) In Eclipse, select `File` (menu item) > `New` > `Other`. This will bring up the `New` wizard dialog. 
-2) Under the `Microclimate` category, select `New Microclimate Connection`, then click `Next`. 
+1) In Eclipse, select `File` (menu item) > `New` > `Other`. This will bring up the `New` wizard dialog.
+2) Under the `Microclimate` category, select `New Microclimate Connection`, then click `Next`.
 3) Click `Test connection` to confirm that Eclipse can connect to your local Microclimate instance, then `Finish`.
 4) The `Microclimate Explorer` view should appear at the bottom of the screen, and should show the `roguecloudclient` application running inside Microclimate.
 5) Right-click on `roguecloudclient` and select `Import project`.
@@ -54,7 +54,7 @@ See the Microclimate documentation for more information [on connecting to Microc
 
 ### F) Register a user and then make changes to the SimpleAI class
 
-1) In the code editor, hit ``CTRL-SHIFT-R`` (``Command-Shift-R`` on Mac) and type ``StartAgentServlet.java``, and select ``StartAgentServlet.java``.
+1) In the code editor, press ``CTRL-SHIFT-R`` (``Command-Shift-R`` on Mac) and type ``StartAgentServlet.java``, and select ``StartAgentServlet.java``.
 * ``CTRL-SHIFT-R/Command-Shift-R`` is a great way to quickly find Java classes in Eclipse.
 
 2) Edit the following fields in `StartAgentServlet.java` to create a new user and password.
@@ -62,25 +62,24 @@ See the Microclimate documentation for more information [on connecting to Microc
 public static final String USERNAME = "(specify a username here!)";
 public static final String PASSWORD = "(specify a password here!)";
 ```
-* These values are to ensure that *only you* can access and control your character. 
+* These values are to ensure that *only you* can access and control your character.
 * The username and password you specify are automatically registered when your code first begins controlling a character on the game map, and they do not have to correspond to an existing email address or account.
 
-3) Hit ``CTRL-S`` (``Command-S`` on Mac) in order to save your changes
+3) Press ``CTRL-S`` (``Command-S`` on Mac) in order to save your changes.
 
-4) Hit ``CTRL-SHIFT-R`` (on Mac, use ``Command-Shift-R``) and type ``SimpleAI.java`` and select ``SimpleAI.java``.
+4) Press ``CTRL-SHIFT-R`` (``Command-Shift-R`` on Mac) and type ``SimpleAI.java`` and select ``SimpleAI.java``.
 
 5) This class is the main AI class. Changes made to this class are reflected in your AI running on the Liberty Server.
 
 
 ### G) Next steps: watch your agent go, and start coding
 
-To watch your agent as it interacts with the game world, right click on the `roguecloudclient` project in the `Microclimate Explorer` view and select `Open Application`.
+To watch your agent as it interacts with the game world, right-click on the `roguecloudclient` project in the `Microclimate Explorer` view and select `Open Application`.
 
 This will open a browser to the root of your application.
 
 Add ``gameclient/StartAgent`` to the end of the URL, such that it looks like:
-* ``http://localhost:(port)/gameclient/StartAgent``
-* where (port) is the randomly generated local port for the server.
+* ``http://localhost:(port)/gameclient/StartAgent``, where (port) is the randomly generated local port for the server.
 
 Congratulations, your character is now exploring and interacting with the game world, and earning you points on the leaderboard!
 
