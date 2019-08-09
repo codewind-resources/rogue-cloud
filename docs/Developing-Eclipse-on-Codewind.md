@@ -10,7 +10,7 @@
 
 
 ### B) Installing Microclimate Developer Tools into Eclipse
-- Requires: Eclipse Photon.0, Eclipse 2018-09, 2018-12, 2019-03, or newer.
+- Requires: Eclipse 2019-03, or newer.
 
 1) From within Eclipse, select `Help` (menu item) > `Eclipse Marketplace`.
 2) Type `Microclimate` in the search bar, then click `Go`.
