@@ -8,8 +8,17 @@
 3) Wait for the file to download, then extract it to the directory of your choice.
 4) Start Eclipse, specify a workspace directory (the default is fine), and wait for Eclipse to load.
 
+### B) Install the Codewind prerequisities: Docker, Docker Compose, and Git
 
-### B) Installing Codewind plugins into Eclipse
+Installation prerequisites:
+- *On Mac*: Install 'Docker Desktop for Mac' and Git (on this platform Docker Compose is bundled with Docker Desktop)
+- *On Windows*: Install 'Docker Desktop for Windows' and Git (on this platform Docker Compose is bundled with Docker Desktop)
+- *On Linux*: Install Docker, Docker Compose, and Git (on this platform, Docker Compose must be downloaded separately)
+
+Additional configuration steps for these platforms may be required. See the [Eclipse Codewind documentation for details](https://www.eclipse.org/codewind/installlocally.html).
+
+
+### C) Installing Codewind plugins into Eclipse
 - Requires: Eclipse 2019-03, or newer.
 
 1) From within Eclipse, select `Help` (menu item) > `Eclipse Marketplace`.
@@ -20,7 +29,7 @@
 
 See the Eclipse Codewind documentation for more information [on Installing Codewind into Eclipse](https://www.eclipse.org/codewind/mdteclipsegettingstarted.html).
 
-### C) Installing Codewind container images
+### D) Installing Codewind container images
 
 1) Open the Codewind view. Navigate to `Window` (menu item) > `Show View` > `Other...` > `Codewind` > `Codewind Explorer`
 2) Codewind requires the installation of additional Docker images to run. Double-click on the Codewind item in the Codewind Explorer view to complete the installation. The installation may take a few minutes to complete.
@@ -28,7 +37,7 @@ See the Eclipse Codewind documentation for more information [on Installing Codew
 
 You are now ready to use the tools. You can use the Codewind Explorer view to create new projects or add existing ones. Right-click an element in the Codewind Explorer to look at the features available.
 
-### D) Git clone the Rogue Cloud client into Codewind workspace directory.
+### E) Git clone the Rogue Cloud client into Codewind workspace directory.
 
 1) Determine the location of the Codewind workspace directory:
 - From Mac/Linux: `docker inspect codewind-pfe | grep "HOST_WORKSPACE_DIRECTORY="`
