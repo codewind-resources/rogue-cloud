@@ -28,4 +28,16 @@ See the Eclipse Codewind documentation for more information [on Installing Codew
 
 You are now ready to use the tools. You can use the Codewind Explorer view to create new projects or add existing ones. Right-click an element in the Codewind Explorer to look at the features available.
 
-#### D) Git clone the Rogue Cloud client into Codewind workspace directory.
+### D) Git clone the Rogue Cloud client into Codewind workspace directory.
+
+1) Determine the location of the Codewind workspace directory:
+- From Mac/Linux: `docker inspect codewind-pfe | grep "HOST_WORKSPACE_DIRECTORY="`
+  - Example: `"HOST_WORKSPACE_DIRECTORY=/home/user/codewind/codewind-workspace"` means your workspace can be found in `/home/user/codewind/codewind-workspace`
+- From Windows: `docker inspect codewind-pfe | find "HOST_WORKSPACE_DIRECTORY="`
+  - Example: `"HOST_WORKSPACE_DIRECTORY=C:\\codewind-workspace"` means the Codewind workspace is `c:\codewind-workspace`
+2) From within the `codewind-workspace` directory, clone the Rogue Cloud client repo
+  ```
+  cd (path to your codewind workspace from the previous step)
+  git clone https://github.com/microclimate-dev2ops/rogue-cloud-client
+  ```
+3) 
