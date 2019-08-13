@@ -14,7 +14,7 @@ Installation prerequisites:
 - *On Windows*: Install 'Docker Desktop for Windows' and Git (on this platform Docker Compose is bundled with Docker Desktop)
 - *On Linux*: Install Docker, Docker Compose, and Git (on this platform, Docker Compose must be downloaded separately)
 
-Additional configuration steps for these platforms may be required. See the [Eclipse Codewind documentation for details](https://www.eclipse.org/codewind/installlocally.html).
+Additional configuration steps for these platforms may be required. See the [Codewind local install documentation](https://www.eclipse.org/codewind/installlocally.html) for details.
 
 ### C) Installing Codewind Tools into Visual Studio Code
 
