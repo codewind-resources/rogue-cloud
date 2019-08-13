@@ -80,9 +80,6 @@ To watch your agent as it interacts with the game world, right-click on the `rog
 
 This will open a browser to the root of your application.
 
-Add ``gameclient/StartAgent`` to the end of the URL, such that it looks like:
-* ``http://localhost:(port)/gameclient/StartAgent``, where (port) is the randomly generated local port for the server.
-
 Congratulations, your character is now exploring and interacting with the game world, and earning you points on the leaderboard!
 
 Next, [visit the next steps page to learn more about coding an agent for Rogue Cloud.](Developing-CodingNextSteps.md)
