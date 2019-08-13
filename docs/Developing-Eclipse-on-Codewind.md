@@ -58,3 +58,33 @@ You are now ready to use the tools. You can use the Codewind Explorer view to cr
 
 Additional information about creating and [importing projects into Codewind is available our website.](https://www.eclipse.org/codewind/mdteclipsegettingstarted.html)
 
+
+### F) Register a user and then make changes to the SimpleAI class
+
+1) In the code editor, press ``CTRL-SHIFT-R`` (``Command-Shift-R`` on Mac) and type ``StartAgentServlet.java``, and select ``StartAgentServlet.java``.
+* ``CTRL-SHIFT-R/Command-Shift-R`` is a great way to quickly find Java classes in Eclipse.
+
+2) Edit the following fields in `StartAgentServlet.java` to create a new user and password.
+```
+public static final String USERNAME = "(specify a username here!)";
+public static final String PASSWORD = "(specify a password here!)";
+```
+* These values are to ensure that *only you* can access and control your character.
+* The username and password you specify are automatically registered when your code first begins controlling a character on the game map, and they do not have to correspond to an existing email address or account.
+
+3) Press ``CTRL-S`` (``Command-S`` on Mac) in order to save your changes.
+
+4) Press ``CTRL-SHIFT-R`` (``Command-Shift-R`` on Mac) and type ``SimpleAI.java`` and select ``SimpleAI.java``.
+
+5) This class is the main AI class. Changes made to this class are reflected in your AI running on the MicroProfile Liberty container.
+
+
+### G) Next steps: watch your agent go, and start coding
+
+To watch your agent as it interacts with the game world, right-click on the `roguecloudclient` project in the `Codewind Explorer` view and select `Open Application`.
+
+This will open a browser to the root of your application. **Note**: If you are on Windows, you will need to copy-paste the URL into an external browser (Chrome, Firefox, Edge) because Eclipse's internal browser uses IE11 (an unsupported browser).
+
+Congratulations, your character is now exploring and interacting with the game world, and earning you points on the leaderboard!
+
+Next, [visit the next steps page to learn more about coding an agent for Rogue Cloud.](Developing-CodingNextSteps.md)
