@@ -54,3 +54,7 @@ You are now ready to use the tools. You can use the Codewind Explorer view to cr
 5) Right-click on `Codewind` (in `Codewind Explorer` view) > `Local Projects` > 'Add Existing Project...'.
 6) `gameclient` should appear in the checkbox list, select it (if not already selected), then click `Next >`.
 7) Select `MicroProfile / Java EE` (if not already selected), then click `Finish`. 
+8) Before the code starts building, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This can take up to 7 to 10 minutes depending on CPU and network connection (this initialization is only required the first time you use the Codewind tools). 
+
+Additional information about creating and [importing projects into Codewind is available our website.](https://www.eclipse.org/codewind/mdteclipsegettingstarted.html)
+
