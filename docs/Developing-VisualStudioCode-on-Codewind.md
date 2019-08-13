@@ -19,5 +19,5 @@
 5)  You should see a status message `Pulling Codewind Docker images` on the bottom right hand corner of the screen. Wait for this to complete. After the images are downloaded, you should see `Starting Codewind`, then `Codewind installation is complete`. Click OK.
 
 
-6) Select View (menu item) > Explorer. On the bottom left hand corner of the explorer, you should see 'Codewind'. Expand this panel if not already expanded.
+6) Select `View` (menu item) > `Explorer`. On the bottom left hand corner of the explorer, you should see 'Codewind'. Expand this panel if not already expanded.
 
