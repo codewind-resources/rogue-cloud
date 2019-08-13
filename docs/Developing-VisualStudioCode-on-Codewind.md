@@ -52,3 +52,37 @@ More information on [installing Codewind into Visual Studio Code](https://www.ec
 6) Before the code starts building, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This can take up to 7 to 10 minutes depending on CPU and network connection (this initialization is only required the first time you use the Codewind tools).
 
 Additional information about [creating and importing projects into Codewind](https://www.eclipse.org/codewind/mdt-vsc-getting-started.html) is available our website.
+
+
+### F) Register a user and then make changes to the SimpleAI class
+
+1) In the code editor, press ``CTRL-P`` (``Command-P`` on Mac) and type ``StartAgentServlet.java``, and select ``StartAgentServlet.java``.
+* ``CTRL-P/Command-P`` is a great way to quickly find Java classes in the Visual Studio Code editor.
+
+2) Edit the following fields in `StartAgentServlet.java` to create a new user and password.
+```
+public static final String USERNAME = "(specify a username here!)";
+public static final String PASSWORD = "(specify a password here!)";
+```
+* These values are to ensure that *only you* can access and control your character.
+* The username and password you specify are automatically registered when your code first begins controlling a character on the game map, and they do not have to correspond to an existing email address or account.
+
+3) Press ``CTRL-S`` (``Command-S`` on Mac) in order to save your changes.
+
+4) Press ``CTRL-P`` (``Command-P`` on Mac) and type ``SimpleAI.java`` and select ``SimpleAI.java``.
+
+5) This class is the main AI class. Changes made to this class are reflected in your AI running on the Liberty Server.
+
+
+### G) Next steps: watch your agent go, and start coding
+
+To watch your agent as it interacts with the game world, right-click on the `roguecloudclient` project in the `MICROCLIMATE` view and select `Open in Browser`.
+
+This will open a browser to the root of your application.
+
+Add ``gameclient/StartAgent`` to the end of the URL, such that it looks like:
+* ``http://localhost:(port)/gameclient/StartAgent``, where (port) is the randomly generated local port for the server.
+
+Congratulations, your character is now exploring and interacting with the game world, and earning you points on the leaderboard!
+
+Next, [visit the next steps page to learn more about coding an agent for Rogue Cloud.](Developing-CodingNextSteps.md)
