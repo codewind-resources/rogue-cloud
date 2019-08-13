@@ -29,7 +29,7 @@ Additional configuration steps for these platforms may be required. See the [Cod
 
 6) Select `View` (menu bar) > `Explorer`. On the bottom left hand corner of the explorer, you should see 'Codewind'. Expand this panel if not already expanded.
 
-More information on [installing Codewind into Visual Studo Code](https://www.eclipse.org/codewind/mdt-vsc-getting-started.html) is available from our website.
+More information on [installing Codewind into Visual Studio Code](https://www.eclipse.org/codewind/mdt-vsc-getting-started.html) is available from our website.
 
 ### D) Git clone the Rogue Cloud client into Codewind workspace directory.
 
@@ -43,10 +43,10 @@ More information on [installing Codewind into Visual Studo Code](https://www.ecl
   cd (path to your codewind workspace from the previous step)
   git clone https://github.com/microclimate-dev2ops/rogue-cloud-client
   ```
-3) Back in Visual Studo Code, under the `Codewind` view, right-click on `Projects (Local)` and select `Add Existing Project`. Specify the path of `rogue-cloud-client` that you cloned from the previous step, then click `Add to Codewind`
-4) You will see a brief `Processing...` status message, followed by a `Please confirm the project type`
-- The Type should be: `liberty`
-- The Language should be: `Java`
+3) Back in Visual Studio Code, under the `Codewind` view, right-click on `Projects (Local)` and select `Add Existing Project`. Specify the path of `rogue-cloud-client` that you cloned from the previous step, then click `Add to Codewind`
+4) You will see a brief `Processing...` status message, followed by a `Please confirm the project type` message.
+- The Type field should be: `liberty`
+- The Language field should be: `Java`
 - If one or both of these are inaccurate, jump back to step 3 and ensure the correct path is selected.
 5) Presuming your the project is correctly identified, click `Yes`. 
 6) Before the code starts building, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This can take up to 7 to 10 minutes depending on CPU and network connection (this initialization is only required the first time you use the Codewind tools).
