@@ -38,9 +38,14 @@ More information on [installing Codewind into Visual Studo Code](https://www.ecl
   - Example: `"HOST_WORKSPACE_DIRECTORY=/home/user/codewind/codewind-workspace"` means your workspace can be found in `/home/user/codewind/codewind-workspace`
 - *Windows*: `docker inspect codewind-pfe | find "HOST_WORKSPACE_DIRECTORY="`
   - Example: `"HOST_WORKSPACE_DIRECTORY=C:\\codewind-workspace"` means the Codewind workspace is `c:\codewind-workspace`
-2) From within the `codewind-workspace` directory, clone the Rogue Cloud client repo
+2) From within the `codewind-workspace` directory, clone the Rogue Cloud client repo.
   ```
   cd (path to your codewind workspace from the previous step)
   git clone https://github.com/microclimate-dev2ops/rogue-cloud-client
   ```
-
+3) Back in Visual Studo Code, under the `Codewind` view, right-click on `Projects (Local)` and select `Add Existing Project`. Specify the path of `rogue-cloud-client` that you cloned from the previous step, then click `Add to Codewind`
+4) You will see a brief `Processing...` status message, followed by a `Please confirm the project type`
+- The Type should be: `liberty`
+- The Language should be: `Java`
+- If one or both of these are inaccurate, jump back to step 3 and ensure the correct path is selected.
+5) Presuming your the project is correctly identified, click `Yes`. 
