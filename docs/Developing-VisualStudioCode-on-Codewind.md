@@ -49,3 +49,6 @@ More information on [installing Codewind into Visual Studo Code](https://www.ecl
 - The Language should be: `Java`
 - If one or both of these are inaccurate, jump back to step 3 and ensure the correct path is selected.
 5) Presuming your the project is correctly identified, click `Yes`. 
+6) Before the code starts building, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This can take up to 7 to 10 minutes depending on CPU and network connection (this initialization is only required the first time you use the Codewind tools).
+
+Additional information about [creating and importing projects into Codewind](https://www.eclipse.org/codewind/mdt-vsc-getting-started.html) is available our website.
