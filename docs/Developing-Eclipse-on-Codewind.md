@@ -40,9 +40,9 @@ You are now ready to use the tools. You can use the Codewind Explorer view to cr
 ### E) Git clone the Rogue Cloud client into Codewind workspace directory.
 
 1) Determine the location of the Codewind workspace directory:
-- From Mac/Linux: `docker inspect codewind-pfe | grep "HOST_WORKSPACE_DIRECTORY="`
+- *Mac/Linux*: `docker inspect codewind-pfe | grep "HOST_WORKSPACE_DIRECTORY="`
   - Example: `"HOST_WORKSPACE_DIRECTORY=/home/user/codewind/codewind-workspace"` means your workspace can be found in `/home/user/codewind/codewind-workspace`
-- From Windows: `docker inspect codewind-pfe | find "HOST_WORKSPACE_DIRECTORY="`
+- *Windows*: `docker inspect codewind-pfe | find "HOST_WORKSPACE_DIRECTORY="`
   - Example: `"HOST_WORKSPACE_DIRECTORY=C:\\codewind-workspace"` means the Codewind workspace is `c:\codewind-workspace`
 2) From within the `codewind-workspace` directory, clone the Rogue Cloud client repo
   ```
