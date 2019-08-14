@@ -1,4 +1,4 @@
-## Play Rogue Cloud using Microclimate Visual Studio Code Tools
+## Play Rogue Cloud using Codewind Visual Studio Code Tools
 
 ### A) Install Visual Studio Code
 - If you already have Visual Studio Code installed, skip to the next section.
@@ -18,7 +18,7 @@ Additional configuration steps for these platforms may be required. See the [Cod
 
 ### C) Installing Codewind Tools into Visual Studio Code
 
-1) In Visual Studio Code, select `View` (menu bar) > `Extensions`. Under `Search Extensions in Marketplace`, enter `Microclimate`.
+1) In Visual Studio Code, select `View` (menu bar) > `Extensions`. Under `Search Extensions in Marketplace`, enter `Codewind`.
 2) Select `Codewind`, and click the `Install` button on the right-hand screen.
 
 3) If you are asked to restart Visual Studio Code, do so. Otherwise proceed to the next step.
@@ -76,7 +76,7 @@ public static final String PASSWORD = "(specify a password here!)";
 
 ### G) Next steps: watch your agent go, and start coding
 
-To watch your agent as it interacts with the game world, right-click on the `roguecloudclient` project in the `MICROCLIMATE` view and select `Open in Browser`.
+To watch your agent as it interacts with the game world, right-click on the `roguecloudclient` project in the `Codewind` view and select `Open in Browser`.
 
 This will open a browser to the root of your application.
 
