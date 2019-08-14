@@ -31,7 +31,7 @@ See the Eclipse Codewind documentation for more information [on Installing Codew
 
 ### D) Installing Codewind container images
 
-1) Open the Codewind view. Navigate to `Window` (menu item) > `Show View` > `Other...` > `Codewind` > `Codewind Explorer`
+1) Open the Codewind view. Navigate to `Window` (menu item) > `Show View` > `Other...`, then  `Codewind` > `Codewind Explorer`
 2) Codewind requires the installation of additional Docker images to run. Double-click on the Codewind item in the Codewind Explorer view to complete the installation. The installation may take a few minutes to complete.
 -  Codewind creates a folder called codewind-workspace within your home directory (C:\codewind-workspace on Windows) to contain your projects.
 
