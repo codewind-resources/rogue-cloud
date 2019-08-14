@@ -33,6 +33,8 @@ More information on [installing Codewind into Visual Studio Code](https://www.ec
 
 ### D) Git clone the Rogue Cloud client into Codewind workspace directory.
 
+Codewind creates a folder called `codewind-workspace` within your home directory to contain your projects. In this step we will locate that folder, and then `git clone` the Rogue Cloud client into that folder.
+
 1) Determine the location of the Codewind workspace directory:
 - *Mac/Linux*: `docker inspect codewind-pfe | grep "HOST_WORKSPACE_DIRECTORY="`
   - Example: `"HOST_WORKSPACE_DIRECTORY=/home/user/codewind/codewind-workspace"` means your workspace can be found in `/home/user/codewind/codewind-workspace`
@@ -43,21 +45,20 @@ More information on [installing Codewind into Visual Studio Code](https://www.ec
   cd (path to your codewind workspace from the previous step)
   git clone https://github.com/microclimate-dev2ops/rogue-cloud-client
   ```
-3) Back in Visual Studio Code, under the `Codewind` view, right-click on `Projects (Local)` and select `Add Existing Project`. Specify the path of `rogue-cloud-client` that you cloned from the previous step, then click `Add to Codewind`
+3) Back in Visual Studio Code, under the `Codewind` view, right-click on `Projects (Local)` and select `Add Existing Project`. Specify the path of the `rogue-cloud-client` folder that you cloned from the previous step, then click `Add to Codewind`.
 4) You will see a brief `Processing...` status message, followed by a `Please confirm the project type` message.
 - The Type field should be: `liberty`
 - The Language field should be: `Java`
 - If one or both of these are inaccurate, jump back to step 3 and ensure the correct path is selected.
-5) Presuming your the project is correctly identified, click `Yes`. 
-6) Before the code starts building, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This can take up to 7 to 10 minutes depending on CPU and network connection (this initialization is only required the first time you use the Codewind tools).
+5) Presuming your project is correctly identified, click `Yes`. 
+6) Before the code starts building, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This can take between 5 to 10 minutes depending on CPU and network connection (this initialization is only required the first time you use the Codewind tools).
 
 Additional information about [creating and importing projects into Codewind](https://www.eclipse.org/codewind/mdt-vsc-getting-started.html) is available our website.
 
-
-### F) Register a user and then make changes to the SimpleAI class
+### E) Register a user and then make changes to the SimpleAI class
 
 1) In the code editor, press ``CTRL-P`` (``Command-P`` on Mac) and type ``StartAgentServlet.java``, and select ``StartAgentServlet.java``.
-* ``CTRL-P/Command-P`` is a great way to quickly find Java classes in the Visual Studio Code editor.
+* ``CTRL-P/Command-P`` is a great way to quickly find Java classes in Visual Studio Code.
 
 2) Edit the following fields in `StartAgentServlet.java` to create a new user and password.
 ```
