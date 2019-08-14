@@ -84,7 +84,7 @@ To watch your agent as it interacts with the game world, look for following mess
 ```
 ***********************************************************************************************
 *                                                                                             *
-*    Agent has started. Watch at: http://localhost:9080/RogueCloudClientLiberty/StartAgent    *
+*    Agent has started. Watch at: http://localhost:9080    *
 *                                                                                             *
 ***********************************************************************************************
 ```
