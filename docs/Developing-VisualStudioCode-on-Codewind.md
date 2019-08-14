@@ -19,15 +19,15 @@ Additional configuration steps for these platforms may be required. See the [Cod
 ### C) Installing Codewind Tools into Visual Studio Code
 
 1) In Visual Studio Code, select `View` (menu bar) > `Extensions`. Under `Search Extensions in Marketplace`, enter `Codewind`.
-2) Select `Codewind`, and click the `Install` button on the right-hand screen.
+2) Select `Codewind`, and click the `Install` button on the right panel.
 
 3) If you are asked to restart Visual Studio Code, do so. Otherwise proceed to the next step.
 
-4) You will now be presented with a dialog: `"Codewind requires the installation of Docker container to run, which might take a few minutes to download. Do you want to complete the installation now?"`. Click `Install`.
+4) You will now be presented with a dialog: `"Codewind requires the installation of Docker containers to run, which might take a few minutes to download. Do you want to complete the installation now?"`. Click `Install`.
 
-5)  You should see a status message `Pulling Codewind Docker images` on the bottom right hand corner of the screen. Wait for this to complete. After the images are downloaded, you should see `Starting Codewind`, then `Codewind installation is complete`. Click OK.
+5)  You should see a status message `Pulling Codewind Docker images` on the bottom-right corner of the screen. Wait for this to complete. After the images are downloaded, you should see `Starting Codewind`, then `Codewind installation is complete`. Click `OK`.
 
-6) Select `View` (menu bar) > `Explorer`. On the bottom left hand corner of the explorer, you should see 'Codewind'. Expand this panel if not already expanded.
+6) Select `View` (menu bar) > `Explorer`. On the bottom-left corner of Explorer, you should now see a 'Codewind' view. Expand this panel if it is not already expanded.
 
 More information on [installing Codewind into Visual Studio Code](https://www.eclipse.org/codewind/mdt-vsc-getting-started.html) is available from our website.
 
