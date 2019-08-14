@@ -6,12 +6,19 @@ most recent version of the Rogue Cloud client code, you can follow these instruc
 
 ## Updating from Codewind
 
-### If you using Codewind Visual Studio Code Tools
+### If you are using Codewind Visual Studio Code Tools
 
-### If you using Codewind Eclipse Tools
+### If you are using Codewind Eclipse Tools
 
 1. Right-click
 
+### Or, if you prefer, call `git pull ` the command line
+
+1. Locate your project on disk:
+- In Visual Studio Code, right-click on your project in the `Codewind` view and select `Open Project Overview`, then look for the `Location on Disk` field.
+- In Eclipse, right-click on your project in the Project Explorer view and 
+2. `cd (path to project on disk)`
+3. `git pull`
 
 
 # Updating from Microclimate
