@@ -7,6 +7,8 @@
 2) After the download completes, run the installer (Windows) or install the package (Linux/MacOS).
 3) After the install is completed, run Visual Studio code.
 
+For Visual Studio Code, we recommend the 'Java Extension Pack', which includes tighter integration with the Java platform.
+ 
 ### B) Install the Codewind prerequisities: Docker, Docker Compose, and Git
 
 Installation prerequisites:
