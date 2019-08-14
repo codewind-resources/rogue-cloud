@@ -84,11 +84,11 @@ To watch your agent as it interacts with the game world, look for following mess
 ```
 ***********************************************************************************************
 *                                                                                             *
-*    Agent has started. Watch at: http://localhost:9080    *
+*    Agent has started. Watch at: http://localhost:9080                                       *
 *                                                                                             *
 ***********************************************************************************************
 ```
-Visit this URL in your browser to view your character. The traditional browser URL is: http://localhost:9080/RogueCloudClientLiberty/StartAgent . The port can be adjusted in RogueCloudClientLiberty pom.xml.
+Visit this URL in your browser to view your character. The traditional browser URL is: http://localhost:9080 . The port can be adjusted in RogueCloudClientLiberty pom.xml.
 
 Next, [visit the next steps page to learn more about coding an agent for Rogue Cloud.](Developing-CodingNextSteps.md)
 
