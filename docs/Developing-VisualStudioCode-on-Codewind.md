@@ -77,7 +77,7 @@ public static final String PASSWORD = "(specify a password here!)";
 5) This class is the main AI class. Changes made to this class are reflected in your AI running on the Liberty Server.
 
 
-### G) Next steps: watch your agent go, and start coding
+### F) Next steps: watch your agent go, and start coding
 
 To watch your agent as it interacts with the game world, right-click on the `roguecloudclient` project in the `Codewind` view and select `Open in Browser`.
 
