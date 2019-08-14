@@ -23,8 +23,9 @@ If you are using Codewind, then how you update depends on which IDE you are usin
 1. Locate your project on disk:
 - In **Visual Studio Code**, right-click on your project in the `Codewind` view and select `Open Project Overview`, then look for the `Location on Disk` field.
 - In **Eclipse**, right-click on your project in the `Codewind Explorer` view and select `Open Project Overview`, then look for the `Location on Disk` field.
-2. `cd (path to project on disk)`
-3. `git pull`
+2. From the terminal:
+- `cd (path to project on disk)`
+- `git pull`
 
 
 ## Updating from Microclimate
