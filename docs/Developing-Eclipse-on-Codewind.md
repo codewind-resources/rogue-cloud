@@ -33,13 +33,14 @@ See the Eclipse Codewind documentation for more information [on Installing Codew
 
 1) Open the Codewind view. Navigate to `Window` (menu item) > `Show View` > `Other...`, then  `Codewind` > `Codewind Explorer`
 2) Codewind requires the installation of additional Docker images to run. Double-click on the Codewind item in the Codewind Explorer view to complete the installation. The installation may take a few minutes to complete.
--  Codewind creates a folder called codewind-workspace within your home directory (C:\codewind-workspace on Windows) to contain your projects.
 
 You are now ready to use the tools. You can use the Codewind Explorer view to create new projects or add existing ones. Right-click an element in the Codewind Explorer to look at the features available.
 
 ### E) Git clone the Rogue Cloud client into Codewind workspace directory.
 
-1) Determine the location of the Codewind workspace directory:
+Codewind creates a folder called `codewind-workspace` within your home directory to contain your projects. In this step we will locate that folder, and then `git clone` the Rogue Cloud client into that folder.
+
+1) From the terminal, determine the location of the Codewind workspace folder:
 - *Mac/Linux*: `docker inspect codewind-pfe | grep "HOST_WORKSPACE_DIRECTORY="`
   - Example: `"HOST_WORKSPACE_DIRECTORY=/home/user/codewind/codewind-workspace"` means your workspace can be found in `/home/user/codewind/codewind-workspace`
 - *Windows*: `docker inspect codewind-pfe | find "HOST_WORKSPACE_DIRECTORY="`
@@ -49,12 +50,12 @@ You are now ready to use the tools. You can use the Codewind Explorer view to cr
   cd (path to your codewind workspace from the previous step)
   git clone https://github.com/microclimate-dev2ops/rogue-cloud-client
   ```
-3) Import the project into Eclipse: Select `File` (menu item) > `Import...`, then in the dialog select `General` (tree item) > `Existing Projects into Workspace` and click `Next >`.
-4) Select `Select root directory` and click `Browse...`, select `(codewind workspace path)/rogue-cloud-client`, then click `Select Folder`. Click `Finish`. Wait for the project to build.
-5) Right-click on `Codewind` (in `Codewind Explorer` view) > `Local Projects` > 'Add Existing Project...'.
+3) Now, import the project into Eclipse: Select `File` (menubar item) > `Import...`, then in the dialog select `General` (tree item) > `Existing Projects into Workspace` and click `Next >`.
+4) Select `Select root directory` and click `Browse...`, select `(codewind workspace path from above)/rogue-cloud-client`, then click `Select Folder`. Click `Finish`. Wait for the project to build.
+5) Right-click on `Codewind` (in `Codewind Explorer` view) > `Local Projects` > `Add Existing Project...`.
 6) `gameclient` should appear in the checkbox list, select it (if not already selected), then click `Next >`.
 7) Select `MicroProfile / Java EE` (if not already selected), then click `Finish`. 
-8) Before the code starts building, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This can take up to 7 to 10 minutes depending on CPU and network connection (this initialization is only required the first time you use the Codewind tools). 
+8) Before the code starts building, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This can take between 5 to 10 minutes depending on CPU and network connection (this initialization is only required the first time you use MicroProfile with the Codewind tools). 
 
 Additional information about creating and [importing projects into Codewind is available our website.](https://www.eclipse.org/codewind/mdteclipsegettingstarted.html)
 
@@ -76,7 +77,7 @@ public static final String PASSWORD = "(specify a password here!)";
 
 4) Press ``CTRL-SHIFT-R`` (``Command-Shift-R`` on Mac) and type ``SimpleAI.java`` and select ``SimpleAI.java``.
 
-5) This class is the main AI class. Changes made to this class are reflected in your AI running on the MicroProfile Liberty container.
+5) This class is the main AI class. Changes made to this class are reflected in your AI running in the MicroProfile Liberty container.
 
 
 ### G) Next steps: watch your agent go, and start coding
