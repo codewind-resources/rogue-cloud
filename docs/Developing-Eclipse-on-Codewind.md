@@ -1,7 +1,7 @@
 ## Play Rogue Cloud using Eclipse Codewind
 
 ### A) Install Eclipse
-- If you already have Eclipse installed, skip to the next section. Microclimate Developer Tools for Eclipse requires Eclipse 2019-03, or newer.
+- If you already have Eclipse installed, skip to the next section. Codewind requires Eclipse 2019-03, or newer.
 
 1) Visit the [Eclipse download page](https://www.eclipse.org/downloads/packages/).
 2) Locate the `Eclipse IDE for Enterprise Java Developers` section, select your operating system, then click `Download`.
