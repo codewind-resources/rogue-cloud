@@ -24,7 +24,7 @@ cd rogue-cloud
 2) Unzip the application and run Eclipse.
 3) In Eclipse, select Help (menu item) > Eclipse Marketplace
 4) Enter ***Liberty Developer Tools*** into the 'Find:' search box, and click Go.
-5) Find the ***IBM Liberty Developer Tools for Oxygen*** entry and click Install.
+5) Find the ***IBM Liberty Developer Tools*** entry and click Install.
 6) Click Confirm.
 7) Accept the licenses, then click Finish.
 8) IBM Liberty Developer Tools will now install. When prompted to restart, click Restart Now.
