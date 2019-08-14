@@ -1,9 +1,22 @@
-## Upgrading to the latest Rogue Cloud Client code using Microclimate
+## Upgrading to the latest Rogue Cloud Client code
 
 If you received an error message indicating that your Rogue Cloud client API version is no longer supported, or if just want to ensure you have the
 most recent version of the Rogue Cloud client code, you can follow these instructions to get up-to-date.
 
-There are three methods you may use to upgrade the Rogue Cloud client code.
+
+## Updating from Codewind
+
+### If you using Codewind Visual Studio Code Tools
+
+### If you using Codewind Eclipse Tools
+
+1. Right-click
+
+
+
+# Updating from Microclimate
+
+There are three methods you may use to upgrade the Rogue Cloud client code from Microclimate.
 
 ### Recommended - Method #1: Using the Microclimate Code Editor (Theia) Git UI
 With this method you can pull the latest changes from the official rogue-cloud-client (https://github.com/microclimate-dev2ops/rogue-cloud-client) repository entirely within the code editor UI.
