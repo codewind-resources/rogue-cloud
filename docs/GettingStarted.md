@@ -1,9 +1,9 @@
 
 # Getting Started: Playing Rogue Cloud
 
-First, select the development environment that you will be playing the game in. We highly recommend you play with **Eclipse Codewind**, which is our new container-based microservice-oriented development environment. 
+First, select the development environment that you will be playing the game in. We highly recommend you play with **Eclipse Codewind**, which is our new container-based microservice-oriented development environment, and use Codewind within either **Eclipse** or **Visual Studio Code**
 
-You may also play using a programmer's text editor (such as VS Code or Atom), or using Eclipse and the IBM Liberty Development Tools.
+You may also play using a programmer's text editor (such as Atom/Sublime), or using Eclipse and the IBM Liberty Development Tools.
 
 ### A) Install the development environment of your choice.
 
@@ -17,7 +17,7 @@ Other options:
   - [Playing Rogue Cloud from your **Web browser**, using **Microclimate**](Developing-RogueCloud-On-Microclimate.md)
 
 - Other tools:
-  - [Playing Rogue Cloud using a Text Editor (Sublime, VSCode) and Maven](Developing-Text-Editor.md)
+  - [Playing Rogue Cloud using a Text Editor (Sublime, Atom) and Maven](Developing-Text-Editor.md)
   - [Playing Rogue Cloud using Eclipse and IBM Liberty Developer Tools](Developing-LibertyDevTools.md)
 
 ### B) [Run the agent code, and watch it explore the game world directly from your browser.](Developing-CodingNextSteps.md)
