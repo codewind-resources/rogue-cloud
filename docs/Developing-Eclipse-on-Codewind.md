@@ -51,7 +51,7 @@ Codewind creates a folder called `codewind-workspace` within your home directory
   git clone https://github.com/microclimate-dev2ops/rogue-cloud-client-codewind
   ```
 3) Now, import the project into Eclipse: Select `File` (menubar item) > `Import...`, then in the dialog select `General` (tree item) > `Existing Projects into Workspace` and click `Next >`.
-4) Select `Select root directory` and click `Browse...`, select `(codewind workspace path from above)/rogue-cloud-client`, then click `Select Folder`. Click `Finish`. Wait for the project to build.
+4) Select `Select root directory` and click `Browse...`, select `(codewind workspace path from above)/rogue-cloud-client-codewind`, then click `Select Folder`. Click `Finish`. Wait for the project to build.
 5) Right-click on `Codewind` (in `Codewind Explorer` view) > `Local Projects` > `Add Existing Project...`.
 6) `gameclient` should appear in the checkbox list, select it (if not already selected), then click `Next >`.
 7) Select `MicroProfile / Java EE` (if not already selected), then click `Finish`. 
