@@ -48,7 +48,7 @@ Codewind creates a folder called `codewind-workspace` within your home directory
 2) From within the `codewind-workspace` directory, clone the Rogue Cloud client repo
   ```
   cd (path to your codewind workspace from the previous step)
-  git clone https://github.com/microclimate-dev2ops/rogue-cloud-client
+  git clone https://github.com/microclimate-dev2ops/rogue-cloud-client-codewind
   ```
 3) Now, import the project into Eclipse: Select `File` (menubar item) > `Import...`, then in the dialog select `General` (tree item) > `Existing Projects into Workspace` and click `Next >`.
 4) Select `Select root directory` and click `Browse...`, select `(codewind workspace path from above)/rogue-cloud-client`, then click `Select Folder`. Click `Finish`. Wait for the project to build.
