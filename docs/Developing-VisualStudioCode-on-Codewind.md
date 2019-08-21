@@ -47,7 +47,7 @@ Codewind creates a folder called `codewind-workspace` within your home directory
   cd (path to your codewind workspace from the previous step)
   git clone https://github.com/microclimate-dev2ops/rogue-cloud-client-codewind
   ```
-3) Back in Visual Studio Code, under the `Codewind` view, right-click on `Projects (Local)` and select `Add Existing Project`. Specify the path of the `rogue-cloud-client` folder that you cloned from the previous step, then click `Add to Codewind`.
+3) Back in Visual Studio Code, under the `Codewind` view, right-click on `Projects (Local)` and select `Add Existing Project`. Specify the path of the `rogue-cloud-client-codewind` folder that you cloned from the previous step, then click `Add to Codewind`.
 4) You will see a brief `Processing...` status message, followed by a `Please confirm the project type` message.
 - The Type field should be: `liberty`
 - The Language field should be: `Java`
