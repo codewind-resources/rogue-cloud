@@ -29,9 +29,9 @@ More [information on key concepts are available here](README.md).
 While hacking on your agent code, it is important to be able to learn about the agent API classes and their methods. The best way to do this is to open their source in the git repo.
 
 To locate the source and documentation for a Rogue Cloud class, use the 'Goto' key/shortcut for your development environment of choice.
-* **Microclimate**: CTRL-P  (Command-P on Mac)
 * **Eclipse**: CTRL-R
 * **Visual Studio Code**: CTRL-P
+* **Microclimate**: CTRL-P  (Command-P on Mac)
 * **Sublime Text**: CTRL-P
 * **Atom**: CTRL-P
 * *(Note: On Mac, some editors use the Command key rather than CTRL key)*.

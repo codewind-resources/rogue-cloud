@@ -1,7 +1,7 @@
 
 ## Playing Rogue Cloud using a Text Editor (Visual Studio Code, Atom, etc) and Maven
 
-This section assumes that you are familiar with an existing developer text editor such as Visual Studio Code, Atom, or Sublime Text. For Visual Studio code, we recommend the 'Java Extension Pack', which includes tighter integration with the Java platform.
+This section assumes that you are familiar with an existing developer editor such as Atom, or Sublime Text.
 
 ### A) Clone the Rogue Cloud repository and run a Maven build
 * Pre-requisite: Ensure that git is installed. Git is available for download from https://git-scm.com/.
