@@ -79,7 +79,7 @@ public static final String PASSWORD = "(specify a password here!)";
 
 ### F) Next steps: watch your agent go, and start coding
 
-To watch your agent as it interacts with the game world, right-click on the `roguecloudclient` project in the `Codewind` view and select `Open in Browser`.
+To watch your agent as it interacts with the game world, right-click on the `gameclient` project in the `Codewind` view and select `Open in Browser`.
 
 This will open a browser to the root of your application.
 
