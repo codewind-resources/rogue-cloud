@@ -84,7 +84,7 @@ However, dying is not zero cost. There is a steep price to be paid:
 
 ## How to improve your character over the sample agent
 
-The sample agent provides an API that can be used to implement a sophisticated and effective game character, howver, the default behaviours of the sample agent leave much to be desired.
+The sample agent provides an API that can be used to implement a sophisticated and effective game character, however, the default behaviours of the sample agent leave much to be desired.
 
 #### Here are a few good places to start:
 * The default ``shouldIPickUpItem`` implementation picks up the first thing it sees. A better idea is to only pick up items that are an improvement over what the character already has.
