@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 IBM Corporation
+ * Copyright 2018, 2019 IBM Corporation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ import com.roguecloud.utils.RegisterUser;
 import com.roguecloud.utils.RegisterUser.ClientApiVersionReturn;
 
 /** This class will both start the player AI code, and also serve the browser UI page to the player. */
-@WebServlet("/StartAgent")
+@WebServlet("/")
 public class StartAgentServlet extends HttpServlet {
 
 	private static final Logger log = Logger.getInstance();
@@ -94,6 +94,13 @@ public class StartAgentServlet extends HttpServlet {
 
 		String uuid = ClientUtil.getOrCreateClientUuid();
 
+		String userAgent = request.getHeader("User-Agent"); 
+		if(userAgent != null && userAgent.contains("Trident")) {
+			response.setStatus(200);
+			response.getWriter().println("<html>Rogue Cloud does not support Internet Explorer, or the integrated Eclipse browser (which is based on IE11). <br/>Open the above application URL in another browser.</html>");
+			return;
+		}
+		
 		atomicAgentStart(uuid);
 		
 		if(lastError != null) {
@@ -206,7 +213,7 @@ public class StartAgentServlet extends HttpServlet {
 		
 		System.out.println("***********************************************************************************************");
 		System.out.println("*                                                                                             *");
-		System.out.println("*    Agent has started. Watch at: http://localhost:"+val+"/RogueCloudClientLiberty/StartAgent   *");
+		System.out.println("*    Agent has started. Watch at: http://localhost:"+val+"                                           *");
 		System.out.println("*                                                                                             *");
 		System.out.println("***********************************************************************************************");
 		System.out.println();
