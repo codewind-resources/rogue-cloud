@@ -3,8 +3,8 @@ Use Eclipse and IBM Liberty Developer Tools to play Rogue Cloud.
 
 ### A) Clone the Rogue Cloud repository and run a Maven build.
 * Prerequisites:
-- [Install Git.](https://git-scm.com/)
-- Install the Java 8 JDK. The Java JDK is available from [Java SE Downloads](http://www.oracle.com/technetwork/java/javase/downloads/index.html). For more information, see [Installing the Java 8 JDK](Installing-Java.md).
+  - [Install Git.](https://git-scm.com/)
+  - Install the Java 8 JDK. The Java JDK is available from [Java SE Downloads](http://www.oracle.com/technetwork/java/javase/downloads/index.html). For more information, see [Installing the Java 8 JDK](Installing-Java.md).
 
 1) Create a directory to contain your Rogue Cloud Git repository. Make a note of this directory because you will use it later. Enter the following commands into your command line:
 ```
