@@ -51,8 +51,7 @@ git pull
 
 **WARNING**: This method deletes all the Rogue Cloud code including any changes you made to your AI code. Make sure you have backed up any important changes to your AI code, if applicable. Don't forget to note your **username** and **password**!
 
-**Steps**:
-1. Read and heed the warning :smile:.
+1. Read and heed the warning. :smile:
 2. Select `Projects` to go to the Microclimate Projects view.
 3. Click the `roguecloudclient` context icon. Then, select `Delete project`.
 4. Follow the **Add Rogue Cloud to Microclimate** steps on the installation page (https://github.com/microclimate-dev2ops/rogue-cloud/blob/master/docs/GettingStarted.md). Now, you have a fresh copy of the `rogue-cloud-client` repository.
