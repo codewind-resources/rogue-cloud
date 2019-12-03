@@ -32,13 +32,12 @@ You are now ready to use the tools. You can use the Codewind Explorer view to cr
   cd <folder where you want to clone the Rogue Cloud client>
   git clone https://github.com/microclimate-dev2ops/rogue-cloud-client-codewind
   ```
-2) Back in Eclipse, from the **Codewind** view, right-click **Projects (Local)** and select **Add Existing Project**. Specify the path of the `rogue-cloud-client-codewind` folder that you cloned and click **Add to Codewind**.
-3) A `Processing...` status message appears, followed by a `Please confirm the project type` message. Check to see that the following information is correct:
-   - The **Type** field is `liberty`.
-   - The **Language** field is `Java`.
-4) If one or both of these fields are inaccurate, ensure that the correct path is selected.
-5) If your project is correctly identified, click **Yes**.
-6) Before the code starts building, wait for the container to initialize and download the Java and Maven dependencies for the underlying build system. This process can take between five to ten minutes depending on the CPU and network connection. This initialization is required only before the first time you use Codewind Eclipse Tools.
+2) Import the project into Eclipse. Select **File** from the menu and **Import...**. Then, in the dialog, select **General** and **Existing Projects into Workspace**. Click **Next >**.
+3) Select **Select root directory** and click **Browse...**. Select **(codewind workspace path from above)/rogue-cloud-client-codewind**. Then, click **Select Folder** and **Finish**. Wait for the project to build.
+4) Right-click **Codewind** in the **Codewind Explorer** view. Then, click **Local Projects**>**Add Existing Project...**. The **gameclient** appears in the checkbox list.
+5) Select **gameclient** if it is not already selected. Then, click **Next >**.
+6) Select **MicroProfile / Java EE** if it is not already selected. Then, click **Finish**. 
+7) Before the code starts to build, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This process can take between five to ten minutes depending on the CPU and network connection. This initialization is required only before the first time you use MicroProfile with the Codewind tools. 
 
 ### F) Register a user and then make changes to the SimpleAI class.
 1) In the code editor, press `CTRL-SHIFT-R` on Windows and `Command-Shift-R` on Mac. Then, type `StartAgentServlet.java` and select `StartAgentServlet.java`.
