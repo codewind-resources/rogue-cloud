@@ -1,15 +1,13 @@
-## Play Rogue Cloud using Eclipse Codewind
+# Playing Rogue Cloud with Eclipse Codewind
 
-### A) Install Eclipse
-- If you already have Eclipse installed, skip to the next section. Codewind requires Eclipse 2019-03, or newer.
-
+### A) Install Eclipse.
+- If Eclipse is already installed, skip to the next section. Codewind requires Eclipse 2019-03 or later.
 1) Visit the [Eclipse download page](https://www.eclipse.org/downloads/packages/).
-2) Locate the `Eclipse IDE for Enterprise Java Developers` section, select your operating system, then click `Download`.
-3) Wait for the file to download, then extract it to the directory of your choice.
-4) Start Eclipse, specify a workspace directory (the default is fine), and wait for Eclipse to load.
+2) Locate the `Eclipse IDE for Enterprise Java Developers` section, select your operating system, and click **Download**.
+3) Wait for the file to download. Then, extract it to the directory of your choice.
+4) Start Eclipse and specify a workspace directory. The default is fine to use. Wait for Eclipse to load.
 
-### B) Install the Codewind prerequisities: Docker, Docker Compose, and Git
-
+### B) Install the Codewind prerequisites: Docker, Docker Compose, and Git.
 Installation prerequisites:
 - *On Mac*: Install 'Docker Desktop for Mac' and Git (on this platform Docker Compose is bundled with Docker Desktop)
 - *On Windows*: Install 'Docker Desktop for Windows' and Git (on this platform Docker Compose is bundled with Docker Desktop)
