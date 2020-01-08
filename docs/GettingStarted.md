@@ -1,23 +1,22 @@
+# Getting started: Playing Rogue Cloud
 
-# Getting Started: Playing Rogue Cloud
+First, select the development environment that you want to play the game in. If you're unsure which environment to try, use **Eclipse Codewind**, a container-based microservice-oriented development environment. You can use Codewind with **Eclipse** or **Visual Studio Code (VS Code)**.
 
-First, select the development environment that you will be playing the game in. We highly recommend you play with **Eclipse Codewind**, which is our new container-based microservice-oriented development environment, and use Codewind within either **Eclipse** or **Visual Studio Code**
-
-You may also play using a programmer's text editor (such as Atom/Sublime), or using Eclipse and the IBM Liberty Development Tools.
+You can also play by using a programmer's text editor, such as Atom or Sublime, or by using Eclipse and the IBM Liberty Development Tools.
 
 ### A) Install the development environment of your choice.
 
-- *Recommended*: [Play Rogue Cloud from **Eclipse**, using **Codewind**](Developing-Eclipse-on-Codewind.md)
-- *Recommended*: [Play Rogue Cloud from **Visual Studio Code**, using **Codewind**](Developing-VisualStudioCode-on-Codewind.md)
+- [Play Rogue Cloud from **Eclipse** by using **Codewind**.](Developing-Eclipse-on-Codewind.md)
+- [Play Rogue Cloud from **VS Code** by using **Codewind**.](Developing-VisualStudioCode-on-Codewind.md)
 
 Other options:
 - Microclimate:
-  - [Play Rogue Cloud from **Eclipse**, using **Microclimate**](Developing-Eclipse-on-Microclimate.md)
-  - [Play Rogue Cloud from **Visual Studio Code**, using **Microclimate**](Developing-VisualStudioCode-on-Microclimate.md)
-  - [Playing Rogue Cloud from your **Web browser**, using **Microclimate**](Developing-RogueCloud-On-Microclimate.md)
+  - [Play Rogue Cloud from **Eclipse** by using **Microclimate**.](Developing-Eclipse-on-Microclimate.md)
+  - [Play Rogue Cloud from **VS Code** by using **Microclimate**.](Developing-VisualStudioCode-on-Microclimate.md)
+  - [Play Rogue Cloud from your **web browser** by using **Microclimate**.](Developing-RogueCloud-On-Microclimate.md)
 
 - Other tools:
-  - [Playing Rogue Cloud using a Text Editor (Sublime, Atom) and Maven](Developing-Text-Editor.md)
-  - [Playing Rogue Cloud using Eclipse and IBM Liberty Developer Tools](Developing-LibertyDevTools.md)
+  - [Play Rogue Cloud by using a text editor, such as Sublime or Atom, and Maven.](Developing-Text-Editor.md)
+  - [Play Rogue Cloud by using Eclipse and IBM Liberty Developer Tools.](Developing-LibertyDevTools.md)
 
-### B) [Run the agent code, and watch it explore the game world directly from your browser.](Developing-CodingNextSteps.md)
+### B) [Run the agent code and watch it explore the game world directly from your browser.](Developing-CodingNextSteps.md)
