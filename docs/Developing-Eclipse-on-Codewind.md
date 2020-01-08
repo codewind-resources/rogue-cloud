@@ -1,91 +1,63 @@
-## Play Rogue Cloud using Eclipse Codewind
+# Playing Rogue Cloud with Eclipse Codewind
 
-### A) Install Eclipse
-- If you already have Eclipse installed, skip to the next section. Codewind requires Eclipse 2019-03, or newer.
+### A) Install Eclipse.
+1) Visit the [Eclipse download page](https://www.eclipse.org/downloads/packages/). Codewind requires Eclipse 2019-03 or later.
+2) Locate the **Eclipse IDE for Enterprise Java Developers** section, select your operating system, and click **Download**.
+3) Wait for the file to download. Then, extract it to the directory of your choice.
+4) Start Eclipse and specify a workspace directory. You can use the default. Wait for Eclipse to load.
 
-1) Visit the [Eclipse download page](https://www.eclipse.org/downloads/packages/).
-2) Locate the `Eclipse IDE for Enterprise Java Developers` section, select your operating system, then click `Download`.
-3) Wait for the file to download, then extract it to the directory of your choice.
-4) Start Eclipse, specify a workspace directory (the default is fine), and wait for Eclipse to load.
+### B) Install the Codewind prerequisites: Docker, Docker Compose, and Git.
+- **On Mac:** Install **Docker Desktop for Mac** and Git. On this platform, Docker Compose is bundled with Docker Desktop.
+- **On Windows:** Install **Docker Desktop for Windows** and Git. On this platform, Docker Compose is bundled with Docker Desktop.
+- **On Linux:** Install Docker, Docker Compose, and Git. On this platform, you need to download Docker Compose separately.
 
-### B) Install the Codewind prerequisities: Docker, Docker Compose, and Git
+### C) Install Codewind plug-ins into Eclipse.
+1) From within Eclipse, select **Help** from the menu and then **Eclipse Marketplace**.
+2) Type `Codewind` in the search bar. Then, click **Go**. **Codewind** appears in the search listings.
+3) Click **Install**.
+4) Read and accept the licenses. Then, click **Finish**.
+5) After the installation completes, you are prompted to restart Eclipse. Click **Restart**.
 
-Installation prerequisites:
-- *On Mac*: Install 'Docker Desktop for Mac' and Git (on this platform Docker Compose is bundled with Docker Desktop)
-- *On Windows*: Install 'Docker Desktop for Windows' and Git (on this platform Docker Compose is bundled with Docker Desktop)
-- *On Linux*: Install Docker, Docker Compose, and Git (on this platform, Docker Compose must be downloaded separately)
+For more information about installing Codewind into Eclipse, see [Getting started with Codewind for Eclipse](https://www.eclipse.org/codewind/mdteclipsegettingstarted.html).
 
-Additional configuration steps for these platforms may be required. See the [Eclipse Codewind documentation for details](https://www.eclipse.org/codewind/installlocally.html).
-
-
-### C) Installing Codewind plugins into Eclipse
-- Requires: Eclipse 2019-03, or newer.
-
-1) From within Eclipse, select `Help` (menu item) > `Eclipse Marketplace`.
-2) Type `Codewind` in the search bar, then click `Go`.
-3) You should now see `Codewind` in the search listings. Click the `Install` button next to these tools.
-4) Read and accept the licenses, then click `Finish`.
-5) After the install completes, you will be prompted to restart Eclipse, click Restart.
-
-See the Eclipse Codewind documentation for more information [on Installing Codewind into Eclipse](https://www.eclipse.org/codewind/mdteclipsegettingstarted.html).
-
-### D) Installing Codewind container images
-
-1) Open the Codewind view. Navigate to `Window` (menu item) > `Show View` > `Other...`, then  `Codewind` > `Codewind Explorer`
-2) Codewind requires the installation of additional Docker images to run. Double-click on the Codewind item in the Codewind Explorer view to complete the installation. The installation may take a few minutes to complete.
+### D) Install Codewind container images.
+1) Open the Codewind view. Navigate to **Window** in the menu followed by **Show View**>**Other...** and **Codewind**>**Codewind Explorer**.
+2) Codewind requires the installation of more Docker images to run. Double-click the Codewind item in the Codewind Explorer view to complete the installation. The installation might take a few minutes to complete.
 
 You are now ready to use the tools. You can use the Codewind Explorer view to create new projects or add existing ones. Right-click an element in the Codewind Explorer to look at the features available.
 
-### E) Git clone the Rogue Cloud client into Codewind workspace directory.
-
-Codewind creates a folder called `codewind-workspace` within your home directory to contain your projects. In this step we will locate that folder, and then `git clone` the Rogue Cloud client into that folder.
-
-1) From the terminal, determine the location of the Codewind workspace folder:
-- *Mac/Linux*: `docker inspect codewind-pfe | grep "HOST_WORKSPACE_DIRECTORY="`
-  - Example: `"HOST_WORKSPACE_DIRECTORY=/home/user/codewind/codewind-workspace"` means your workspace can be found in `/home/user/codewind/codewind-workspace`
-- *Windows*: `docker inspect codewind-pfe | find "HOST_WORKSPACE_DIRECTORY="`
-  - Example: `"HOST_WORKSPACE_DIRECTORY=C:\\codewind-workspace"` means the Codewind workspace is `c:\codewind-workspace`
-2) From within the `codewind-workspace` directory, clone the Rogue Cloud client repo
+### E) Git clone the Rogue Cloud client into a Codewind directory.
+1) Choose a folder in which you want to clone the Rogue Cloud client repository. Do not create projects in the `~/codewind-data/` or `C:\codewind-data` directories.
   ```
-  cd (path to your codewind workspace from the previous step)
+  cd <folder where you want to clone the Rogue Cloud client>
   git clone https://github.com/microclimate-dev2ops/rogue-cloud-client-codewind
   ```
-3) Now, import the project into Eclipse: Select `File` (menubar item) > `Import...`, then in the dialog select `General` (tree item) > `Existing Projects into Workspace` and click `Next >`.
-4) Select `Select root directory` and click `Browse...`, select `(codewind workspace path from above)/rogue-cloud-client-codewind`, then click `Select Folder`. Click `Finish`. Wait for the project to build.
-5) Right-click on `Codewind` (in `Codewind Explorer` view) > `Local Projects` > `Add Existing Project...`.
-6) `gameclient` should appear in the checkbox list, select it (if not already selected), then click `Next >`.
-7) Select `MicroProfile / Java EE` (if not already selected), then click `Finish`. 
-8) Before the code starts building, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This can take between 5 to 10 minutes depending on CPU and network connection (this initialization is only required the first time you use MicroProfile with the Codewind tools). 
+2) Import the project into Eclipse. Select **File** from the menu and **Import...**. Then, in the dialog, select **General** and **Existing Projects into Workspace**. Click **Next >**.
+3) Select **Select root directory** and click **Browse...**. Select **(codewind workspace path from above)/rogue-cloud-client-codewind**. Then, click **Select Folder** and **Finish**. Wait for the project to build.
+4) Right-click **Codewind** in the **Codewind Explorer** view. Then, click **Local Projects**>**Add Existing Project...**. The **gameclient** appears in the checkbox list.
+5) Select **gameclient** if it is not already selected. Then, click **Next >**.
+6) Select **MicroProfile / Java EE** if it is not already selected. Then, click **Finish**. 
+7) Before the code starts to build, the container needs to initialize and download the Java and Maven dependencies for the underlying build system. This process can take between five to ten minutes depending on the CPU and network connection. This initialization is required only before the first time you use MicroProfile with the Codewind tools. 
 
-Additional information about creating and [importing projects into Codewind is available our website.](https://www.eclipse.org/codewind/mdteclipsegettingstarted.html)
-
-
-### F) Register a user and then make changes to the SimpleAI class
-
-1) In the code editor, press ``CTRL-SHIFT-R`` (``Command-Shift-R`` on Mac) and type ``StartAgentServlet.java``, and select ``StartAgentServlet.java``.
-* ``CTRL-SHIFT-R/Command-Shift-R`` is a great way to quickly find Java classes in Eclipse.
-
-2) Edit the following fields in `StartAgentServlet.java` to create a new user and password.
+### F) Register a user and then make changes to the SimpleAI class.
+1) In the code editor, press `CTRL-SHIFT-R` on Windows and `Command-Shift-R` on Mac. Then, type `StartAgentServlet.java` and select `StartAgentServlet.java`.
+   * **Note:** Use `CTRL-SHIFT-R` or `Command-Shift-R` to quickly find Java classes in Eclipse.
+2) Edit the following fields in `StartAgentServlet.java` to create a new user and password:
 ```
 public static final String USERNAME = "(specify a username here!)";
 public static final String PASSWORD = "(specify a password here!)";
 ```
-* These values are to ensure that *only you* can access and control your character.
-* The username and password you specify are automatically registered when your code first begins controlling a character on the game map, and they do not have to correspond to an existing email address or account.
-
-3) Press ``CTRL-S`` (``Command-S`` on Mac) in order to save your changes.
-
-4) Press ``CTRL-SHIFT-R`` (``Command-Shift-R`` on Mac) and type ``SimpleAI.java`` and select ``SimpleAI.java``.
-
+   * These values ensure that only you can access and control your character.
+   * The user name and password you specify are automatically registered when your code first begins controlling a character on the game map, and they do not have to correspond to an existing email address or account.
+3) Press `CTRL-S` on Windows or `Command-S` on Mac to save your changes.
+4) Press `CTRL-SHIFT-R` on Windows or `Command-Shift-R` on Mac. Type `SimpleAI.java` and select `SimpleAI.java`.
 5) This class is the main AI class. Changes made to this class are reflected in your AI running in the MicroProfile Liberty container.
 
+### G) Watch your agent go and start coding
+To watch your agent as it interacts with the game world, right-click the `gameclient` project in the **Codewind Explorer** view and select **Open Application** to open a browser to the root of your application.
 
-### G) Next steps: watch your agent go, and start coding
+**Note**: If you are on Windows, copy and paste the URL into an external browser, such as Chrome, Firefox, or Edge, because the internal browser in Eclipse uses IE11, which is an unsupported browser.
 
-To watch your agent as it interacts with the game world, right-click on the `gameclient` project in the `Codewind Explorer` view and select `Open Application`.
+Congratulations! Your character is now exploring and interacting with the game world and earning you points on the leaderboard.
 
-This will open a browser to the root of your application. **Note**: If you are on Windows, you will need to copy-paste the URL into an external browser (Chrome, Firefox, Edge) because Eclipse's internal browser uses IE11 (an unsupported browser).
-
-Congratulations, your character is now exploring and interacting with the game world, and earning you points on the leaderboard!
-
-Next, [visit the next steps page to learn more about coding an agent for Rogue Cloud.](Developing-CodingNextSteps.md)
+Next, [learn more about coding an agent for Rogue Cloud.](Developing-CodingNextSteps.md)
