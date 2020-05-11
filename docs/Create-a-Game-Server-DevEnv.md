@@ -25,7 +25,7 @@ Here is how you setup Eclipse to allow you to develop the Rogue Cloud Client and
 
 #### C) Clone the Rogue Cloud repository
 1. Create a github.com account, if you don't already have one. Note that this is _Github.com_, not _Github.ibm.com_, which uses a different user id and password..
-2. Log-in and visit: https://github.com/microclimate-dev2ops/rogue-cloud
+2. Log-in and visit: https://github.com/codewind-resources/rogue-cloud
 3. Click 'Fork', then specify that you want to fork to your local environment (which will be https://github.com/your-username/rogue-cloud)
 4. In Eclipse, select Window > Perspective > Open Perspective > Other...
 5. Select 'Git' and click Open.

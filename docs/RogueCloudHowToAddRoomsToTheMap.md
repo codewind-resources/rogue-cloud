@@ -15,7 +15,7 @@ The Rogue Cloud map is defined in `(path to git repository root)/RogueCloudServe
 ### 1) Git clone the repository and run the following commands
 
 ```
-git clone https://github.com/microclimate-dev2ops/rogue-cloud
+git clone https://github.com/codewind-resources/rogue-cloud
 cd rogue-cloud
 mvn clean package
 ```
@@ -24,7 +24,7 @@ mvn clean package
 
 - The `rooms.txt` file can be found in `(path to git repository root)/RogueCloudServer/WebContent/universe/rooms.txt`
 
-The format of the rooms.txt is described here: https://github.com/microclimate-dev2ops/rogue-cloud/blob/master/docs/RogueCloudRoomsFileFormat.md
+The format of the rooms.txt is described here: https://github.com/codewind-resources/rogue-cloud/blob/master/docs/RogueCloudRoomsFileFormat.md
 
 ### 3) Once you have created a room, add it to the room mappings file.
 

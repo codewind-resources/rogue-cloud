@@ -10,7 +10,7 @@ This section assumes that you are familiar with an existing developer editor, su
 ```
 mkdir (new repo directory)
 cd (your new repo directory)
-git clone https://github.com/microclimate-dev2ops/rogue-cloud.git
+git clone https://github.com/codewind-resources/rogue-cloud
 cd rogue-cloud
 ```
 2) Verify the installation by building with Maven:

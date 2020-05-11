@@ -172,7 +172,7 @@ public class StartAgentServlet extends HttpServlet {
 			lastError = "\nError: This version of the Rogue Cloud client is deprecated, and thus is no longer supported by the newer version running on the Rogue Cloud game server.\n";
 			lastError += "\n";
 			lastError += "Instructions on how to upgrade to the latest client are available from the Rogue Cloud git repo:\n";
-			lastError += "https://github.com/microclimate-dev2ops/rogue-cloud/blob/master/docs/Updating-To-Latest-Client-Code.md";
+			lastError += "https://github.com/codewind-resources/rogue-cloud/blob/master/docs/Updating-To-Latest-Client-Code.md";
 			
 			ClientContainerUtil.loudlyInformUser(lastError);
 			return;
@@ -182,7 +182,7 @@ public class StartAgentServlet extends HttpServlet {
 			lastError += RCUtils.convertThrowableToString(v.getException())+"\n";
 			lastError += "\n";
 			lastError += "More information on troubleshooting Rogue Cloud issues is available from the git repo:\n";
-			lastError += "https://github.com/microclimate-dev2ops/rogue-cloud/blob/master/docs/Troubleshooting.md";
+			lastError += "https://github.com/codewind-resources/rogue-cloud/blob/master/docs/Troubleshooting.md";
 			
 			ClientContainerUtil.loudlyInformUser(lastError);
 			return;

@@ -10,7 +10,7 @@ Use Eclipse and IBM Liberty Developer Tools to play Rogue Cloud.
 ```
 mkdir <new repo directory>
 cd <your new repo directory>
-git clone https://github.com/microclimate-dev2ops/rogue-cloud.git
+git clone https://github.com/codewind-resources/rogue-cloud.git
 cd rogue-cloud
 ```
 2) Verify the installation by building with Maven:
