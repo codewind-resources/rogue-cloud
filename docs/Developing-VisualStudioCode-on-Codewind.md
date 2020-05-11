@@ -25,7 +25,7 @@ For more information, see [Getting started with Codewind for VS Code](https://ww
 1) Choose a folder in which you want to clone the Rogue Cloud client repository. Do not create projects in the `~/codewind-data/` or `C:\codewind-data` directories.
   ```
   cd <folder where you want to clone the Rogue Cloud client>
-  git clone https://github.com/microclimate-dev2ops/rogue-cloud-client-codewind
+  git clone https://github.com/codewind-resources/rogue-cloud-client-codewind
   ```
 2) Back in VS Code, from the **Codewind** view, right-click **Projects (Local)** and select **Add Existing Project**. Specify the path of the `rogue-cloud-client-codewind` folder that you cloned and click **Add to Codewind**.
 3) A `Processing...` status message appears, followed by a `Please confirm the project type` message. Check to see that the following information is correct:

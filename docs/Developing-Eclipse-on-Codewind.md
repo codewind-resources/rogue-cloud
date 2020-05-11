@@ -30,7 +30,7 @@ You are now ready to use the tools. You can use the Codewind Explorer view to cr
 1) Choose a folder in which you want to clone the Rogue Cloud client repository. Do not create projects in the `~/codewind-data/` or `C:\codewind-data` directories.
   ```
   cd <folder where you want to clone the Rogue Cloud client>
-  git clone https://github.com/microclimate-dev2ops/rogue-cloud-client-codewind
+  git clone https://github.com/codewind-resources/rogue-cloud-client-codewind
   ```
 2) Import the project into Eclipse. Select **File** from the menu and **Import...**. Then, in the dialog, select **General** and **Existing Projects into Workspace**. Click **Next >**.
 3) Select **Select root directory** and click **Browse...**. Select **(codewind workspace path from above)/rogue-cloud-client-codewind**. Then, click **Select Folder** and **Finish**. Wait for the project to build.
