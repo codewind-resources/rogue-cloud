@@ -20,7 +20,7 @@ Building microservices and cloud-native applications requires tools that lets de
 Rogue Cloud is built on **Open Liberty**, the premier platform for building Java cloud-native applications and microservices.
   * Learn more about our latest and greatest [open source enterprise application server](https://openliberty.io/).
 
-Rogue Cloud is designed to showcase the capabilities of the **IBM Cloud Pak for Applications** and the public **IBM Cloud Kubernetes Service** services.
+Rogue Cloud is designed to showcase the capabilities of **IBM Cloud Pak for Applications** and the **IBM Cloud Kubernetes Service** service.
   * Learn more about deploying to Kubernetes using the [IBM Cloud Pak for Applications](https://www.ibm.com/cloud/cloud-pak-for-applications) and the [IBM Cloud Kubernetes Service](https://www.ibm.com/cloud/container-service) services.
 
 ## Playing the game
